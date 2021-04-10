@@ -20,10 +20,10 @@ GameTest >> testABoardGameKnowsThePlayersPosition [
  		
 	| aPlayer aBoardGame aGroupOfPlayers |
 	aPlayer:= Player called: 'Pau'.
-	aGroupOfPlayers:= #(aPlayer).
+	aGroupOfPlayers:= {aPlayer}.
 	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers.
 	
-	self assert: (aBoardGame actualPositionsOfPlayers) identicalTo: #('Pau: 0').
+	self assert: (aBoardGame actualPositionsOfPlayers) equals: #('Pau: 0').
 ]
 
 { #category : #tests }
