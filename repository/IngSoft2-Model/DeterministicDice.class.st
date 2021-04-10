@@ -20,9 +20,14 @@ DeterministicDice >> incrementByOnePatternIndexBasedOnTimesThrown [
 
 { #category : #initialize }
 DeterministicDice >> initializeWith: aNumberOfFaces  and: aPattern [ 
-	super initializeWith: aNumberOfFaces.
+	super  initializeWith: aNumberOfFaces.
 	pattern:= aPattern.
 	patterIndexBasedOnTimesThrown:=0.
+]
+
+{ #category : #actions }
+DeterministicDice >> resetPatterIndexBasenOnTimesThrown [
+	^1.
 ]
 
 { #category : #actions }
@@ -36,7 +41,12 @@ DeterministicDice >> throw [
 
 { #category : #actions }
 DeterministicDice >> updatePatterIndexBasenOnTimesThrown [
-	(patterIndexBasedOnTimesThrown == (pattern size)) 
-		ifTrue:[^1]
+	(self verifyIfThePatternIndexhasReachedTheLimit) 
+		ifTrue:[^self resetPatterIndexBasenOnTimesThrown]
 		ifFalse:[^ (self incrementByOnePatternIndexBasedOnTimesThrown)].
+]
+
+{ #category : #actions }
+DeterministicDice >> verifyIfThePatternIndexhasReachedTheLimit [
+	^patterIndexBasedOnTimesThrown == (pattern size)
 ]
