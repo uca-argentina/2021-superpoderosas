@@ -31,19 +31,19 @@ DeterministicDice >> resetPatterIndexBasenOnTimesThrown [
 ]
 
 { #category : #actions }
+DeterministicDice >> returnUpdatedPatterIndexBasenOnTimesThrown [
+	(self verifyIfThePatternIndexhasReachedTheLimit) 
+		ifTrue:[^self resetPatterIndexBasenOnTimesThrown]
+		ifFalse:[^ (self incrementByOnePatternIndexBasedOnTimesThrown)].
+]
+
+{ #category : #actions }
 DeterministicDice >> throw [
-	patterIndexBasedOnTimesThrown:= self updatePatterIndexBasenOnTimesThrown.
+	patterIndexBasedOnTimesThrown:= self returnUpdatedPatterIndexBasenOnTimesThrown.
 	^ pattern at: patterIndexBasedOnTimesThrown.
 	
 	
 	
-]
-
-{ #category : #actions }
-DeterministicDice >> updatePatterIndexBasenOnTimesThrown [
-	(self verifyIfThePatternIndexhasReachedTheLimit) 
-		ifTrue:[^self resetPatterIndexBasenOnTimesThrown]
-		ifFalse:[^ (self incrementByOnePatternIndexBasedOnTimesThrown)].
 ]
 
 { #category : #actions }

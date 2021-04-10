@@ -12,6 +12,14 @@ GameTest >> testADeterministicDiceHas6Faces [
 ]
 
 { #category : #tests }
+GameTest >> testAPlayerHasACertainName [
+ 
+	| aPlayer |
+	aPlayer:= Player called: 'Pau'.
+	self assert: (aPlayer name) equals: 'Pau'.
+]
+
+{ #category : #tests }
 GameTest >> testARandomDiceHas6Faces [	
 	| aRandomDice |
 	aRandomDice:= RandomDice newDiceWithNFaces: 6.		
@@ -34,12 +42,10 @@ GameTest >> testWhenThrowingADeterministicDiceWith6FacesWeGetACertainSequence [
 	"mas adelante agregar un bloque con un patron"
 	pattern:=#(2 3 4 1 1 6 5).
 	aDeterministicDice:= DeterministicDice newDiceWithNFaces: 6 andPattern: pattern.
-	1 to:7 do:
+	1 to:8 do:
 			[ :index | obtainedValue:= aDeterministicDice throw. 
-			self assert: obtainedValue identicalTo: (pattern at:index)].
-	obtainedValue:= aDeterministicDice throw.		
-	self assert: obtainedValue identicalTo: 2.
-
+			self assert: obtainedValue identicalTo: (#(2 3 4 1 1 6 5 2) at:index)].
+	
 	
 
 	
