@@ -5,6 +5,28 @@ Class {
 }
 
 { #category : #tests }
+GameTest >> testABoardGameHasOnePlayer [
+ 		
+	| aPlayer aBoardGame aGroupOfPlayers |
+	aPlayer:= Player called: 'Pau'.
+	aGroupOfPlayers:= #(aPlayer).
+	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers.
+	
+	self assert: (aBoardGame numberOfPlayers) identicalTo: 1.
+]
+
+{ #category : #tests }
+GameTest >> testABoardGameKnowsThePlayersPosition [
+ 		
+	| aPlayer aBoardGame aGroupOfPlayers |
+	aPlayer:= Player called: 'Pau'.
+	aGroupOfPlayers:= #(aPlayer).
+	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers.
+	
+	self assert: (aBoardGame actualPositionsOfPlayers) identicalTo: #('Pau: 0').
+]
+
+{ #category : #tests }
 GameTest >> testADeterministicDiceHas6Faces [	
 	| aDeterministicDice |
 	aDeterministicDice:= DeterministicDice newDiceWithNFaces: 6.		
@@ -20,10 +42,26 @@ GameTest >> testAPlayerHasACertainName [
 ]
 
 { #category : #tests }
+GameTest >> testAPlayerHasAnInitialPositionOnTheBoardGame [
+ 		
+	| aPlayer |
+	aPlayer:= Player called: 'Pau'.
+	self assert: (aPlayer actualPosition) identicalTo: 0.
+]
+
+{ #category : #tests }
 GameTest >> testARandomDiceHas6Faces [	
 	| aRandomDice |
 	aRandomDice:= RandomDice newDiceWithNFaces: 6.		
 	self assert: (aRandomDice hasNFaces: 6).
+]
+
+{ #category : #tests }
+GameTest >> testTheBoardHas26Fields [
+ 			
+	| aBoard |
+	aBoard:= Board withAnAmountOfFields: 26. 
+	self assert: (aBoard amountOfFields) identicalTo: 26.
 ]
 
 { #category : #tests }
