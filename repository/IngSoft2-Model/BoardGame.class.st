@@ -79,7 +79,7 @@ BoardGame >> textWithRanking: aRank andNameOf: aPlayer [
 { #category : #actions }
 BoardGame >> verifyIfTheGameHasFinish [
 	(currentState = 'In Process') 
-		ifTrue: [ Error signal: super errorMessageDoesNotHaveAWinnerYet ] .
+		ifTrue: [ Error signal: (self class) errorMessageDoesNotHaveAWinnerYet ] .
 ]
 
 { #category : #actions }
