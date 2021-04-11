@@ -43,13 +43,6 @@ BoardGame >> groupOfPlayersSortedInAscendingOrderByActualPosition [
 ]
 
 { #category : #initialize }
-BoardGame >> initializeWith: aGroupOfPlayers  playedOn: aBoard [ 
-	players := aGroupOfPlayers.
-	board := aBoard.
-	currentState := 'In Process'.
-]
-
-{ #category : #initialize }
 BoardGame >> initializeWith: aGroupOfPlayers  playedOn: aBoard with: aGroupOfDices [ 
 	dices := aGroupOfDices.
 	players := aGroupOfPlayers.
