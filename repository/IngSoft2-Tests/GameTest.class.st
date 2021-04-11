@@ -5,6 +5,24 @@ Class {
 }
 
 { #category : #tests }
+GameTest >> testABoardGameDoesntHaveAWinnerYet [
+ 		
+	| aPlayer aBoardGame aGroupOfPlayers aDice aBoard aGroupOfDices |
+	aPlayer:= Player called: 'Pau'.
+	aDice:= DeterministicDice newDiceWithNFaces: 7 andPattern:#(2 4 7 3).
+	aGroupOfPlayers:= {aPlayer}.
+	aBoard:= Board withAnAmountOfFields: 20.
+	aGroupOfDices := { aDice }.
+	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices.
+	aBoardGame notifyPlayerTurnAndChangeStatusIfNecessary.
+	
+	self 
+		should:[aBoardGame winner] 
+		raise: Error 
+		withExceptionDo: [:error | self assert: error messageText equals: BoardGame errorMessageDoesNotHaveAWinnerYet  ].
+]
+
+{ #category : #tests }
 GameTest >> testABoardGameHasFinished [
  		
 	| aPlayer aBoardGame aGroupOfPlayers aDice aBoard aGroupOfDices |

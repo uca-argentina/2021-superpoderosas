@@ -10,6 +10,11 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
+{ #category : #'error messages' }
+BoardGame class >> errorMessageDoesNotHaveAWinnerYet [
+	^ 'The board game has not finished yet, so it does not have a winner.'.
+]
+
 { #category : #initialization }
 BoardGame class >> withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices [ 
 		^ self new initializeWith: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices .
@@ -72,6 +77,13 @@ BoardGame >> textWithRanking: aRank andNameOf: aPlayer [
 ]
 
 { #category : #actions }
+BoardGame >> verifyIfTheGameHasFinish [
+	(currentState = 'In Process') 
+		ifTrue: [ Error signal: super errorMessageDoesNotHaveAWinnerYet ] .
+]
+
+{ #category : #actions }
 BoardGame >> winner [
+	self verifyIfTheGameHasFinish.
 	^ self groupOfPlayersSortedInAscendingOrderByActualPosition first.
 ]
