@@ -24,5 +24,5 @@ Dice >> initializeWith: aNumberOfFaces [
 
 { #category : #actions }
 Dice >> throw [
-	self shouldBeImplemented.
+	self subclassResponsibility.
 ]
