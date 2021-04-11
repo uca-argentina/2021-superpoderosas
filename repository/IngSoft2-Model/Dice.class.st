@@ -8,7 +8,7 @@ Class {
 }
 
 { #category : #initialization }
-Dice class >> newDiceWithNFaces: aNumberOfFaces [ 
+Dice class >> withNFaces: aNumberOfFaces [ 
 	^self new initializeWith: aNumberOfFaces.
 ]
 
