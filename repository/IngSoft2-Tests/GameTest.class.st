@@ -5,6 +5,26 @@ Class {
 }
 
 { #category : #tests }
+GameTest >> testABoardGameCanHaveFourPlayers [
+ 		
+	|aBoardGame aGroupOfPlayers aBoard aGroupOfDices firstDice secondDice thirdDice firstPlayer secondPlayer thirdPlayer fourthPlayer |
+	firstPlayer:= Player called: 'Pau'.
+	secondPlayer:= Player called: 'Male'.
+	thirdPlayer:= Player called: 'Belu'.
+	fourthPlayer:= Player called: 'Juli'.
+	firstDice:= DeterministicDice newDiceWithNFaces: 7 andPattern:#(2 4 7 2).
+	secondDice:= DeterministicDice newDiceWithNFaces: 8 andPattern:#(8 5 4 7 2).
+	thirdDice:= DeterministicDice newDiceWithNFaces: 5 andPattern:#(4 1 2 7 2).
+	aGroupOfPlayers:= {firstPlayer. secondPlayer. thirdPlayer. fourthPlayer}.
+	aBoard:= Board withAnAmountOfFields: 50.
+	aGroupOfDices:= { firstDice. secondDice. thirdDice}.
+	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices.
+	
+	self assert: (aBoardGame players size) identicalTo: 4.
+	
+]
+
+{ #category : #tests }
 GameTest >> testABoardGameDoesntHaveAWinnerYet [
  		
 	| aPlayer aBoardGame aGroupOfPlayers aDice aBoard aGroupOfDices |
@@ -96,6 +116,28 @@ GameTest >> testABoardGameIsInProcess [
 ]
 
 { #category : #tests }
+GameTest >> testABoardGameIsPlayedByFourPlayersAndCanDistinguishBetweenWhoseTurnIsIt [
+ 		
+	|aBoardGame aGroupOfPlayers aBoard aGroupOfDices firstDice secondDice thirdDice firstPlayer secondPlayer thirdPlayer fourthPlayer |
+	firstPlayer:= Player called: 'Pau'.
+	secondPlayer:= Player called: 'Male'.
+	thirdPlayer:= Player called: 'Belu'.
+	fourthPlayer:= Player called: 'Juli'.
+	firstDice:= DeterministicDice newDiceWithNFaces: 7 andPattern:#(2 4 7 2).
+	secondDice:= DeterministicDice newDiceWithNFaces: 8 andPattern:#(8 5 4 7 2).
+	thirdDice:= DeterministicDice newDiceWithNFaces: 5 andPattern:#(4 1 2 7 2).
+	aGroupOfPlayers:= {firstPlayer. secondPlayer. thirdPlayer. fourthPlayer}.
+	aBoard:= Board withAnAmountOfFields: 50.
+	aGroupOfDices:= { firstDice. secondDice. thirdDice}.
+	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices.
+	1 to: 5 do: [ :n | aBoardGame notifyPlayerTurnAndChangeStatusIfNecessary ].
+	
+	
+	self assert: (aBoardGame actualPositionsOfPlayers ) equals: #('Pau: 20' 'Juli: 16' 'Belu: 13' 'Male: 10').
+	 
+]
+
+{ #category : #tests }
 GameTest >> testABoardGameKnowsThePlayersPosition [
  		
 	| aPlayer aBoardGame aGroupOfPlayers aBoard aDice aGroupOfDices |
@@ -122,6 +164,24 @@ GameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowADiceAndMoveOnTheBoard
 	aBoardGame notifyPlayerTurnAndChangeStatusIfNecessary.
 	
 	self assert: (aBoardGame actualPositionsOfPlayers) equals: #('Pau: 2').
+]
+
+{ #category : #tests }
+GameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowThreeDicesSimultaneously [
+ 		
+	| aPlayer aBoardGame aGroupOfPlayers aBoard aGroupOfDices firstDice secondDice thirdDice |
+	aPlayer:= Player called: 'Pau'.
+	firstDice:= DeterministicDice newDiceWithNFaces: 7 andPattern:#(2 4 7 2).
+	secondDice:= DeterministicDice newDiceWithNFaces: 8 andPattern:#(8 5 4 7 2).
+	thirdDice:= DeterministicDice newDiceWithNFaces: 5 andPattern:#(4 1 2 7 2).
+	aGroupOfPlayers:= {aPlayer}.
+	aBoard:= Board withAnAmountOfFields: 50.
+	aGroupOfDices:= { firstDice. secondDice. thirdDice}.
+	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices.
+	aBoardGame notifyPlayerTurnAndChangeStatusIfNecessary.
+	aBoardGame notifyPlayerTurnAndChangeStatusIfNecessary.
+	
+	self assert: (aBoardGame actualPositionsOfPlayers) equals: #('Pau: 24').
 ]
 
 { #category : #tests }

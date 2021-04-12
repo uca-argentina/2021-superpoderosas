@@ -5,7 +5,8 @@ Class {
 		'players',
 		'currentState',
 		'board',
-		'dices'
+		'dices',
+		'playersTurnIdentificator'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -47,23 +48,37 @@ BoardGame >> groupOfPlayersSortedInAscendingOrderByActualPosition [
 	^ players sort: [ :onePlayer :anotherPlayer | onePlayer actualPosition > anotherPlayer actualPosition ].
 ]
 
+{ #category : #actions }
+BoardGame >> incrementByOnePlayersTurnIdentificator [
+	playersTurnIdentificator:= playersTurnIdentificator +1.
+]
+
 { #category : #initialize }
 BoardGame >> initializeWith: aGroupOfPlayers  playedOn: aBoard with: aGroupOfDices [ 
 	dices := aGroupOfDices.
 	players := aGroupOfPlayers.
 	board := aBoard.
 	currentState := 'In Process'.
+	playersTurnIdentificator := 1.
 ]
 
 { #category : #actions }
 BoardGame >> notifyPlayerTurnAndChangeStatusIfNecessary [
-	(players first) isYourTurnToPlayWith: dices.
-	self changeCurrentStateIfNecessary: (players first).
+	| aPlayer |
+	aPlayer:= players at: playersTurnIdentificator.
+	aPlayer isYourTurnToPlayWith: dices.
+	self changeCurrentStateIfNecessary: aPlayer.
+	self updatePlayersTurnIdentificator. 
 ]
 
 { #category : #actions }
 BoardGame >> numberOfPlayers [
 	^ players size.
+]
+
+{ #category : #characterizing }
+BoardGame >> players [
+	^ players
 ]
 
 { #category : #actions }
@@ -72,8 +87,27 @@ BoardGame >> playersRanking [
 ]
 
 { #category : #actions }
+BoardGame >> restartPlayersTurnIdentificator [
+	playersTurnIdentificator:= 1.
+]
+
+{ #category : #actions }
 BoardGame >> textWithRanking: aRank andNameOf: aPlayer [ 
 	^ (aRank asString , ': ' , aPlayer name ).
+]
+
+{ #category : #actions }
+BoardGame >> updatePlayersTurnIdentificator [
+	(self validateIfPlayersTurnIdentificatorNeedsToBeUpdated)
+		ifTrue: [ self restartPlayersTurnIdentificator]
+		ifFalse: [ self incrementByOnePlayersTurnIdentificator].
+		
+	
+]
+
+{ #category : #actions }
+BoardGame >> validateIfPlayersTurnIdentificatorNeedsToBeUpdated [
+	^ playersTurnIdentificator= players size.
 ]
 
 { #category : #actions }
