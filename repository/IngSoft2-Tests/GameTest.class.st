@@ -12,9 +12,9 @@ GameTest >> testABoardGameCanHaveFourPlayers [
 	secondPlayer:= Player called: 'Male'.
 	thirdPlayer:= Player called: 'Belu'.
 	fourthPlayer:= Player called: 'Juli'.
-	firstDice:= DeterministicDice newDiceWithNFaces: 7 andPattern:#(2 4 7 2).
-	secondDice:= DeterministicDice newDiceWithNFaces: 8 andPattern:#(8 5 4 7 2).
-	thirdDice:= DeterministicDice newDiceWithNFaces: 5 andPattern:#(4 1 2 7 2).
+	firstDice:= DeterministicDice determinedBy:#(2 4 7 2).
+	secondDice:= DeterministicDice determinedBy:#(8 5 4 7 2).
+	thirdDice:= DeterministicDice determinedBy:#(4 1 2 7 2).
 	aGroupOfPlayers:= {firstPlayer. secondPlayer. thirdPlayer. fourthPlayer}.
 	aBoard:= Board withAnAmountOfFields: 50.
 	aGroupOfDices:= { firstDice. secondDice. thirdDice}.
@@ -29,12 +29,12 @@ GameTest >> testABoardGameDoesntHaveAWinnerYet [
  		
 	| aPlayer aBoardGame aGroupOfPlayers aDice aBoard aGroupOfDices |
 	aPlayer:= Player called: 'Pau'.
-	aDice:= DeterministicDice newDiceWithNFaces: 7 andPattern:#(2 4 7 3).
+	aDice:= DeterministicDice determinedBy:#(2 4 7 3).
 	aGroupOfPlayers:= {aPlayer}.
 	aBoard:= Board withAnAmountOfFields: 20.
 	aGroupOfDices := { aDice }.
 	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices.
-	aBoardGame notifyPlayerTurnAndChangeStatusIfNecessary.
+	aBoardGame nextTurn.
 	
 	self 
 		should:[aBoardGame winner] 
@@ -47,12 +47,12 @@ GameTest >> testABoardGameHasFinished [
  		
 	| aPlayer aBoardGame aGroupOfPlayers aDice aBoard aGroupOfDices |
 	aPlayer:= Player called: 'Pau'.
-	aDice:= DeterministicDice newDiceWithNFaces: 7 andPattern:#(2 4 7 3).
+	aDice:= DeterministicDice determinedBy:#(2 4 7 3).
 	aGroupOfPlayers:= {aPlayer}.
 	aBoard:= Board withAnAmountOfFields: 20.
 	aGroupOfDices := { aDice }.
 	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices.
-	1 to: 6 do: [ :n | aBoardGame notifyPlayerTurnAndChangeStatusIfNecessary ].
+	1 to: 6 do: [ :n | aBoardGame nextTurn ].
 	
 	self assert: (aBoardGame winner) equals: aPlayer.
 ]
@@ -62,12 +62,12 @@ GameTest >> testABoardGameHasFinishedAndHasARankingOfPlayers [
  		
 	| aPlayer aBoardGame aGroupOfPlayers aDice aBoard aGroupOfDices |
 	aPlayer:= Player called: 'Pau'.
-	aDice:= DeterministicDice newDiceWithNFaces: 7 andPattern:#(2 4 7 3).
+	aDice:= DeterministicDice determinedBy:#(2 4 7 3).
 	aGroupOfPlayers:= {aPlayer}.
 	aBoard:= Board withAnAmountOfFields: 20.
 	aGroupOfDices := { aDice }.
 	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices.
-	1 to: 6 do: [ :n | aBoardGame notifyPlayerTurnAndChangeStatusIfNecessary ].
+	1 to: 6 do: [ :n | aBoardGame nextTurn ].
 	
 	self assert: (aBoardGame playersRanking) equals: {'1: Pau'}.
 ]
@@ -77,12 +77,12 @@ GameTest >> testABoardGameHasFinishedAndHasAWinner [
  		
 	| aPlayer aBoardGame aGroupOfPlayers aDice aBoard aGroupOfDices |
 	aPlayer:= Player called: 'Pau'.
-	aDice:= DeterministicDice newDiceWithNFaces: 7 andPattern:#(2 4 7 3).
+	aDice:= DeterministicDice determinedBy:#(2 4 7 3).
 	aGroupOfPlayers:= {aPlayer}.
 	aBoard:= Board withAnAmountOfFields: 20.
 	aGroupOfDices := { aDice }.
 	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices.
-	1 to: 6 do: [ :n | aBoardGame notifyPlayerTurnAndChangeStatusIfNecessary ].
+	1 to: 6 do: [ :n | aBoardGame nextTurn ].
 	
 	self assert: (aBoardGame winner) equals: aPlayer.
 ]
@@ -94,7 +94,7 @@ GameTest >> testABoardGameHasOnePlayer [
 	aPlayer:= Player called: 'Pau'.
 	aGroupOfPlayers:= #(aPlayer).
 	aBoard:= Board withAnAmountOfFields: 20.
-	aDice:= DeterministicDice newDiceWithNFaces: 7 andPattern:#(2 4 7 3).
+	aDice:= DeterministicDice determinedBy:#(2 4 7 3).
 	aGroupOfDices := { aDice }.
 	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices.
 	
@@ -108,7 +108,7 @@ GameTest >> testABoardGameIsInProcess [
 	aPlayer:= Player called: 'Pau'.
 	aGroupOfPlayers:= {aPlayer}.
 	aBoard:= Board withAnAmountOfFields: 20.
-	aDice:= DeterministicDice newDiceWithNFaces: 7 andPattern:#(2 4 7 3).
+	aDice:= DeterministicDice determinedBy:#(2 4 7 3).
 	aGroupOfDices := { aDice }.
 	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices.
 	
@@ -123,14 +123,14 @@ GameTest >> testABoardGameIsPlayedByFourPlayersAndCanDistinguishBetweenWhoseTurn
 	secondPlayer:= Player called: 'Male'.
 	thirdPlayer:= Player called: 'Belu'.
 	fourthPlayer:= Player called: 'Juli'.
-	firstDice:= DeterministicDice newDiceWithNFaces: 7 andPattern:#(2 4 7 2).
-	secondDice:= DeterministicDice newDiceWithNFaces: 8 andPattern:#(8 5 4 7 2).
-	thirdDice:= DeterministicDice newDiceWithNFaces: 5 andPattern:#(4 1 2 7 2).
+	firstDice:= DeterministicDice determinedBy:#(2 4 7 2).
+	secondDice:= DeterministicDice determinedBy:#(8 5 4 7 2).
+	thirdDice:= DeterministicDice determinedBy:#(4 1 2 7 2).
 	aGroupOfPlayers:= {firstPlayer. secondPlayer. thirdPlayer. fourthPlayer}.
 	aBoard:= Board withAnAmountOfFields: 50.
 	aGroupOfDices:= { firstDice. secondDice. thirdDice}.
 	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices.
-	1 to: 5 do: [ :n | aBoardGame notifyPlayerTurnAndChangeStatusIfNecessary ].
+	1 to: 5 do: [ :n | aBoardGame nextTurn ].
 	
 	
 	self assert: (aBoardGame actualPositionsOfPlayers ) equals: #('Pau: 20' 'Juli: 16' 'Belu: 13' 'Male: 10').
@@ -144,7 +144,7 @@ GameTest >> testABoardGameKnowsThePlayersPosition [
 	aPlayer:= Player called: 'Pau'.
 	aGroupOfPlayers:= {aPlayer}.
 	aBoard:= Board withAnAmountOfFields: 20.
-	aDice:= DeterministicDice newDiceWithNFaces: 7 andPattern:#(2 4 7 3).
+	aDice:= DeterministicDice determinedBy:#(2 4 7 3).
 	aGroupOfDices := { aDice }.
 	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices.
 	
@@ -156,12 +156,12 @@ GameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowADiceAndMoveOnTheBoard
  		
 	| aPlayer aBoardGame aGroupOfPlayers aDice aBoard aGroupOfDices |
 	aPlayer:= Player called: 'Pau'.
-	aDice:= DeterministicDice newDiceWithNFaces: 7 andPattern:#(2 4 7 2).
+	aDice:= DeterministicDice determinedBy:#(2 4 7 2).
 	aGroupOfPlayers:= {aPlayer}.
 	aBoard:= Board withAnAmountOfFields: 20.
 	aGroupOfDices:= { aDice }.
 	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices.
-	aBoardGame notifyPlayerTurnAndChangeStatusIfNecessary.
+	aBoardGame nextTurn.
 	
 	self assert: (aBoardGame actualPositionsOfPlayers) equals: #('Pau: 2').
 ]
@@ -171,24 +171,17 @@ GameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowThreeDicesSimultaneous
  		
 	| aPlayer aBoardGame aGroupOfPlayers aBoard aGroupOfDices firstDice secondDice thirdDice |
 	aPlayer:= Player called: 'Pau'.
-	firstDice:= DeterministicDice newDiceWithNFaces: 7 andPattern:#(2 4 7 2).
-	secondDice:= DeterministicDice newDiceWithNFaces: 8 andPattern:#(8 5 4 7 2).
-	thirdDice:= DeterministicDice newDiceWithNFaces: 5 andPattern:#(4 1 2 7 2).
+	firstDice:= DeterministicDice determinedBy:#(2 4 7 2).
+	secondDice:= DeterministicDice determinedBy:#(8 5 4 7 2).
+	thirdDice:= DeterministicDice determinedBy:#(4 1 2 7 2).
 	aGroupOfPlayers:= {aPlayer}.
 	aBoard:= Board withAnAmountOfFields: 50.
 	aGroupOfDices:= { firstDice. secondDice. thirdDice}.
 	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices.
-	aBoardGame notifyPlayerTurnAndChangeStatusIfNecessary.
-	aBoardGame notifyPlayerTurnAndChangeStatusIfNecessary.
+	aBoardGame nextTurn.
+	aBoardGame nextTurn.
 	
 	self assert: (aBoardGame actualPositionsOfPlayers) equals: #('Pau: 24').
-]
-
-{ #category : #tests }
-GameTest >> testADeterministicDiceHas6Faces [	
-	| aDeterministicDice |
-	aDeterministicDice:= DeterministicDice withNFaces: 6.		
-	self assert: (aDeterministicDice hasNFaces: 6).
 ]
 
 { #category : #tests }
@@ -227,7 +220,7 @@ GameTest >> testWhenAPlayerThrowsFiveTimesADeterministicDiceChangesPositionOnThe
  		
 	| aPlayer aBoardGame aGroupOfPlayers aDice aBoard aGroupOfDices |
 	aPlayer:= Player called: 'Pau'.
-	aDice:= DeterministicDice newDiceWithNFaces: 7 andPattern:#(2 4 7 3).
+	aDice:= DeterministicDice determinedBy:#(2 4 7 3).
 	aGroupOfPlayers:= {aPlayer}.
 	aBoard:= Board withAnAmountOfFields: 20.
 	aGroupOfDices := { aDice }.
@@ -242,7 +235,7 @@ GameTest >> testWhenAPlayerThrowsOneTimeADeterministicDiceChangesPositionOnTheBo
  		
 	| aPlayer aBoardGame aGroupOfPlayers aDice aBoard aGroupOfDices |
 	aPlayer:= Player called: 'Pau'.
-	aDice:= DeterministicDice newDiceWithNFaces: 7 andPattern:#(2 4 7 2).
+	aDice:= DeterministicDice determinedBy:#(2 4 7 2).
 	aGroupOfPlayers:= {aPlayer}.
 	aBoard:= Board withAnAmountOfFields: 20.
 	aGroupOfDices := { aDice }.
@@ -257,7 +250,7 @@ GameTest >> testWhenThrowingADeterministicDiceWith6FacesWeGet2 [
  	| obtainedValue aDeterministicDice pattern |
 	"mas adelante agregar un bloque con un patron"
 	pattern:=#(2 3 4 1 1 6 5).
-	aDeterministicDice:= DeterministicDice newDiceWithNFaces: 6 andPattern: pattern.
+	aDeterministicDice:= DeterministicDice determinedBy: pattern.
 	obtainedValue:= aDeterministicDice throw.		
 	self assert: obtainedValue identicalTo: 2.
 ]
@@ -267,7 +260,7 @@ GameTest >> testWhenThrowingADeterministicDiceWith6FacesWeGetACertainSequence [
  	| obtainedValue aDeterministicDice pattern |
 	"mas adelante agregar un bloque con un patron"
 	pattern:=#(2 3 4 1 1 6 5).
-	aDeterministicDice:= DeterministicDice newDiceWithNFaces: 6 andPattern: pattern.
+	aDeterministicDice:= DeterministicDice determinedBy: pattern.
 	1 to:8 do:
 			[ :index | obtainedValue:= aDeterministicDice throw. 
 			self assert: obtainedValue identicalTo: (#(2 3 4 1 1 6 5 2) at:index)].

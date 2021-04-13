@@ -9,8 +9,8 @@ Class {
 }
 
 { #category : #initialization }
-DeterministicDice class >> newDiceWithNFaces: aNumberOfFaces  andPattern: aPattern [. 
-	^self new initializeWith: aNumberOfFaces and: aPattern.
+DeterministicDice class >> determinedBy: aPattern [. 
+	^self new initializeWith: aPattern.
 ]
 
 { #category : #actions }
@@ -19,8 +19,7 @@ DeterministicDice >> incrementByOnePatternIndexBasedOnTimesThrown [
 ]
 
 { #category : #initialize }
-DeterministicDice >> initializeWith: aNumberOfFaces  and: aPattern [ 
-	super  initializeWith: aNumberOfFaces.
+DeterministicDice >> initializeWith: aPattern [ 
 	pattern:= aPattern.
 	patterIndexBasedOnTimesThrown:=0.
 ]

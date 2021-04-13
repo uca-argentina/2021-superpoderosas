@@ -63,7 +63,7 @@ BoardGame >> initializeWith: aGroupOfPlayers  playedOn: aBoard with: aGroupOfDic
 ]
 
 { #category : #actions }
-BoardGame >> notifyPlayerTurnAndChangeStatusIfNecessary [
+BoardGame >> nextTurn [
 	| aPlayer |
 	aPlayer:= players at: playersTurnIdentificator.
 	aPlayer isYourTurnToPlayWith: dices.
