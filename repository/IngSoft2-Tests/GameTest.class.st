@@ -7,7 +7,7 @@ Class {
 { #category : #tests }
 GameTest >> testABoardGameCanHaveFourPlayers [
  		
-	|aBoardGame aGroupOfPlayers aBoard aGroupOfDices firstDice secondDice thirdDice firstPlayer secondPlayer thirdPlayer fourthPlayer |
+	|aBoardGame aGroupOfPlayers aGroupOfDices firstDice secondDice thirdDice firstPlayer secondPlayer thirdPlayer fourthPlayer aNumberOfFields |
 	firstPlayer:= Player called: 'Pau'.
 	secondPlayer:= Player called: 'Male'.
 	thirdPlayer:= Player called: 'Belu'.
@@ -16,9 +16,9 @@ GameTest >> testABoardGameCanHaveFourPlayers [
 	secondDice:= DeterministicDice determinedBy:#(8 5 4 7 2).
 	thirdDice:= DeterministicDice determinedBy:#(4 1 2 7 2).
 	aGroupOfPlayers:= {firstPlayer. secondPlayer. thirdPlayer. fourthPlayer}.
-	aBoard:= Board withAnAmountOfFields: 50.
 	aGroupOfDices:= { firstDice. secondDice. thirdDice}.
-	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices.
+	aNumberOfFields:= 50.
+	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers with: aGroupOfDices onABoardWith: aNumberOfFields .
 	
 	self assert: (aBoardGame players size) identicalTo: 4.
 	
@@ -27,13 +27,13 @@ GameTest >> testABoardGameCanHaveFourPlayers [
 { #category : #tests }
 GameTest >> testABoardGameDoesntHaveAWinnerYet [
  		
-	| aPlayer aBoardGame aGroupOfPlayers aDice aBoard aGroupOfDices |
+	| aPlayer aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields |
 	aPlayer:= Player called: 'Pau'.
 	aDice:= DeterministicDice determinedBy:#(2 4 7 3).
 	aGroupOfPlayers:= {aPlayer}.
-	aBoard:= Board withAnAmountOfFields: 20.
 	aGroupOfDices := { aDice }.
-	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices.
+	aNumberOfFields:= 20.
+	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers with: aGroupOfDices onABoardWith: aNumberOfFields .
 	aBoardGame nextTurn.
 	
 	self 
@@ -45,13 +45,13 @@ GameTest >> testABoardGameDoesntHaveAWinnerYet [
 { #category : #tests }
 GameTest >> testABoardGameHasFinished [
  		
-	| aPlayer aBoardGame aGroupOfPlayers aDice aBoard aGroupOfDices |
+	| aPlayer aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields |
 	aPlayer:= Player called: 'Pau'.
 	aDice:= DeterministicDice determinedBy:#(2 4 7 3).
 	aGroupOfPlayers:= {aPlayer}.
-	aBoard:= Board withAnAmountOfFields: 20.
 	aGroupOfDices := { aDice }.
-	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices.
+	aNumberOfFields:= 20.
+	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers with: aGroupOfDices onABoardWith: aNumberOfFields .
 	1 to: 6 do: [ :n | aBoardGame nextTurn ].
 	
 	self assert: (aBoardGame winner) equals: aPlayer.
@@ -60,13 +60,13 @@ GameTest >> testABoardGameHasFinished [
 { #category : #tests }
 GameTest >> testABoardGameHasFinishedAndHasARankingOfPlayers [
  		
-	| aPlayer aBoardGame aGroupOfPlayers aDice aBoard aGroupOfDices |
+	| aPlayer aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields |
 	aPlayer:= Player called: 'Pau'.
 	aDice:= DeterministicDice determinedBy:#(2 4 7 3).
 	aGroupOfPlayers:= {aPlayer}.
-	aBoard:= Board withAnAmountOfFields: 20.
 	aGroupOfDices := { aDice }.
-	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices.
+	aNumberOfFields:= 20.
+	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers with: aGroupOfDices onABoardWith: aNumberOfFields .
 	1 to: 6 do: [ :n | aBoardGame nextTurn ].
 	
 	self assert: (aBoardGame playersRanking) equals: {'1: Pau'}.
@@ -75,13 +75,13 @@ GameTest >> testABoardGameHasFinishedAndHasARankingOfPlayers [
 { #category : #tests }
 GameTest >> testABoardGameHasFinishedAndHasAWinner [
  		
-	| aPlayer aBoardGame aGroupOfPlayers aDice aBoard aGroupOfDices |
+	| aPlayer aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields |
 	aPlayer:= Player called: 'Pau'.
 	aDice:= DeterministicDice determinedBy:#(2 4 7 3).
 	aGroupOfPlayers:= {aPlayer}.
-	aBoard:= Board withAnAmountOfFields: 20.
 	aGroupOfDices := { aDice }.
-	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices.
+	aNumberOfFields:= 20.
+	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers with: aGroupOfDices onABoardWith: aNumberOfFields .
 	1 to: 6 do: [ :n | aBoardGame nextTurn ].
 	
 	self assert: (aBoardGame winner) equals: aPlayer.
@@ -90,13 +90,13 @@ GameTest >> testABoardGameHasFinishedAndHasAWinner [
 { #category : #tests }
 GameTest >> testABoardGameHasOnePlayer [
  		
-	| aPlayer aBoardGame aGroupOfPlayers aBoard aDice aGroupOfDices |
+	| aPlayer aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields |
 	aPlayer:= Player called: 'Pau'.
 	aGroupOfPlayers:= #(aPlayer).
-	aBoard:= Board withAnAmountOfFields: 20.
 	aDice:= DeterministicDice determinedBy:#(2 4 7 3).
 	aGroupOfDices := { aDice }.
-	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices.
+	aNumberOfFields:= 20.
+	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers with: aGroupOfDices onABoardWith: aNumberOfFields .
 	
 	self assert: (aBoardGame numberOfPlayers) identicalTo: 1.
 ]
@@ -104,13 +104,13 @@ GameTest >> testABoardGameHasOnePlayer [
 { #category : #tests }
 GameTest >> testABoardGameIsInProcess [
  		
-	| aPlayer aBoardGame aGroupOfPlayers aBoard aDice aGroupOfDices |
+	| aPlayer aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields |
 	aPlayer:= Player called: 'Pau'.
 	aGroupOfPlayers:= {aPlayer}.
-	aBoard:= Board withAnAmountOfFields: 20.
 	aDice:= DeterministicDice determinedBy:#(2 4 7 3).
 	aGroupOfDices := { aDice }.
-	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices.
+	aNumberOfFields:= 20.
+	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers with: aGroupOfDices onABoardWith: aNumberOfFields .
 	
 	self assert: (aBoardGame currentState) equals: 'In Process'.
 ]
@@ -118,7 +118,7 @@ GameTest >> testABoardGameIsInProcess [
 { #category : #tests }
 GameTest >> testABoardGameIsPlayedByFourPlayersAndCanDistinguishBetweenWhoseTurnIsIt [
  		
-	|aBoardGame aGroupOfPlayers aBoard aGroupOfDices firstDice secondDice thirdDice firstPlayer secondPlayer thirdPlayer fourthPlayer |
+	|aBoardGame aGroupOfPlayers aGroupOfDices firstDice secondDice thirdDice firstPlayer secondPlayer thirdPlayer fourthPlayer aNumberOfFields |
 	firstPlayer:= Player called: 'Pau'.
 	secondPlayer:= Player called: 'Male'.
 	thirdPlayer:= Player called: 'Belu'.
@@ -127,9 +127,9 @@ GameTest >> testABoardGameIsPlayedByFourPlayersAndCanDistinguishBetweenWhoseTurn
 	secondDice:= DeterministicDice determinedBy:#(8 5 4 7 2).
 	thirdDice:= DeterministicDice determinedBy:#(4 1 2 7 2).
 	aGroupOfPlayers:= {firstPlayer. secondPlayer. thirdPlayer. fourthPlayer}.
-	aBoard:= Board withAnAmountOfFields: 50.
 	aGroupOfDices:= { firstDice. secondDice. thirdDice}.
-	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices.
+	aNumberOfFields:= 50.
+	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers with: aGroupOfDices onABoardWith: aNumberOfFields .
 	1 to: 5 do: [ :n | aBoardGame nextTurn ].
 	
 	
@@ -140,13 +140,13 @@ GameTest >> testABoardGameIsPlayedByFourPlayersAndCanDistinguishBetweenWhoseTurn
 { #category : #tests }
 GameTest >> testABoardGameKnowsThePlayersPosition [
  		
-	| aPlayer aBoardGame aGroupOfPlayers aBoard aDice aGroupOfDices |
+	| aPlayer aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields |
 	aPlayer:= Player called: 'Pau'.
 	aGroupOfPlayers:= {aPlayer}.
-	aBoard:= Board withAnAmountOfFields: 20.
 	aDice:= DeterministicDice determinedBy:#(2 4 7 3).
 	aGroupOfDices := { aDice }.
-	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices.
+	aNumberOfFields:= 20.
+	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers with: aGroupOfDices onABoardWith: aNumberOfFields .
 	
 	self assert: (aBoardGame actualPositionsOfPlayers) equals: #('Pau: 0').
 ]
@@ -154,13 +154,13 @@ GameTest >> testABoardGameKnowsThePlayersPosition [
 { #category : #tests }
 GameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowADiceAndMoveOnTheBoard [
  		
-	| aPlayer aBoardGame aGroupOfPlayers aDice aBoard aGroupOfDices |
+	| aPlayer aBoardGame aGroupOfPlayers aGroupOfDices aDice aNumberOfFields |
 	aPlayer:= Player called: 'Pau'.
 	aDice:= DeterministicDice determinedBy:#(2 4 7 2).
 	aGroupOfPlayers:= {aPlayer}.
-	aBoard:= Board withAnAmountOfFields: 20.
 	aGroupOfDices:= { aDice }.
-	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices.
+	aNumberOfFields:= 20.
+	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers with: aGroupOfDices onABoardWith: aNumberOfFields .
 	aBoardGame nextTurn.
 	
 	self assert: (aBoardGame actualPositionsOfPlayers) equals: #('Pau: 2').
@@ -169,15 +169,15 @@ GameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowADiceAndMoveOnTheBoard
 { #category : #tests }
 GameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowThreeDicesSimultaneously [
  		
-	| aPlayer aBoardGame aGroupOfPlayers aBoard aGroupOfDices firstDice secondDice thirdDice |
+	| aPlayer aBoardGame aGroupOfPlayers aGroupOfDices firstDice secondDice thirdDice aNumberOfFields |
 	aPlayer:= Player called: 'Pau'.
 	firstDice:= DeterministicDice determinedBy:#(2 4 7 2).
 	secondDice:= DeterministicDice determinedBy:#(8 5 4 7 2).
 	thirdDice:= DeterministicDice determinedBy:#(4 1 2 7 2).
 	aGroupOfPlayers:= {aPlayer}.
-	aBoard:= Board withAnAmountOfFields: 50.
 	aGroupOfDices:= { firstDice. secondDice. thirdDice}.
-	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices.
+	aNumberOfFields:= 50.
+	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers with: aGroupOfDices onABoardWith: aNumberOfFields .
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	
@@ -193,11 +193,17 @@ GameTest >> testAPlayerHasACertainName [
 ]
 
 { #category : #tests }
-GameTest >> testAPlayerHasAnInitialPositionOnTheBoardGame [
+GameTest >> testAPlayerHasAnInitialPositionOnTheBoard [
  		
-	| aPlayer |
+	| aPlayer aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields |
 	aPlayer:= Player called: 'Pau'.
-	self assert: (aPlayer actualPosition) identicalTo: 0.
+	aGroupOfPlayers:= {aPlayer}.
+	aDice:= DeterministicDice determinedBy:#(2 4 7 3).
+	aGroupOfDices := { aDice }.
+	aNumberOfFields:= 20.
+	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers with: aGroupOfDices onABoardWith: aNumberOfFields .
+	
+	self assert: (aBoardGame actualPositionsOfPlayers) equals: #('Pau: 0').
 ]
 
 { #category : #tests }
@@ -209,22 +215,25 @@ GameTest >> testARandomDiceHas6Faces [
 
 { #category : #tests }
 GameTest >> testTheBoardHas26Fields [
- 			
-	| aBoard |
-	aBoard:= Board withAnAmountOfFields: 26. 
-	self assert: (aBoard amountOfFields) identicalTo: 26.
+ 
+	| aGroupOfPlayers aGroupOfDices aBoardGame anNumberOfFields |
+	aGroupOfPlayers:= {}.
+	aGroupOfDices:= {}.
+	anNumberOfFields:= 26.
+	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers with: aGroupOfDices onABoardWith: anNumberOfFields.
+	self assert: (aBoardGame numberOfFields) identicalTo: 26.
 ]
 
 { #category : #tests }
 GameTest >> testWhenAPlayerThrowsFiveTimesADeterministicDiceChangesPositionOnTheBoard [
  		
-	| aPlayer aBoardGame aGroupOfPlayers aDice aBoard aGroupOfDices |
+	| aPlayer aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields |
 	aPlayer:= Player called: 'Pau'.
 	aDice:= DeterministicDice determinedBy:#(2 4 7 3).
 	aGroupOfPlayers:= {aPlayer}.
-	aBoard:= Board withAnAmountOfFields: 20.
 	aGroupOfDices := { aDice }.
-	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices.
+	aNumberOfFields:= 20.
+	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers with: aGroupOfDices onABoardWith: aNumberOfFields .
 	1 to: 5 do: [ :n | aPlayer isYourTurnToPlayWith: aGroupOfDices ].
 	
 	self assert: (aBoardGame actualPositionsOfPlayers) equals: #('Pau: 18').
@@ -233,13 +242,13 @@ GameTest >> testWhenAPlayerThrowsFiveTimesADeterministicDiceChangesPositionOnThe
 { #category : #tests }
 GameTest >> testWhenAPlayerThrowsOneTimeADeterministicDiceChangesPositionOnTheBoard [
  		
-	| aPlayer aBoardGame aGroupOfPlayers aDice aBoard aGroupOfDices |
+	| aPlayer aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields |
 	aPlayer:= Player called: 'Pau'.
 	aDice:= DeterministicDice determinedBy:#(2 4 7 2).
 	aGroupOfPlayers:= {aPlayer}.
-	aBoard:= Board withAnAmountOfFields: 20.
 	aGroupOfDices := { aDice }.
-	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices.
+	aNumberOfFields:= 20.
+	aBoardGame:= BoardGame withPlayers: aGroupOfPlayers with: aGroupOfDices onABoardWith: aNumberOfFields .
 	aPlayer isYourTurnToPlayWith: aGroupOfDices.
 	
 	self assert: (aBoardGame actualPositionsOfPlayers) equals: #('Pau: 2').

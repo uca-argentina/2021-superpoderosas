@@ -6,7 +6,8 @@ Class {
 		'currentState',
 		'board',
 		'dices',
-		'playersTurnIdentificator'
+		'playersTurnIdentificator',
+		'numberOfFields'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -17,14 +18,13 @@ BoardGame class >> errorMessageDoesNotHaveAWinnerYet [
 ]
 
 { #category : #initialization }
-BoardGame class >> withPlayers: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices [ 
-		^ self new initializeWith: aGroupOfPlayers playedOn: aBoard with: aGroupOfDices .
+BoardGame class >> withPlayers: aGroupOfPlayers with: aGroupOfDices onABoardWith: aNumberOfFields [ 
+		^ self new initializeWith: aGroupOfPlayers with: aGroupOfDices onABoardWith: aNumberOfFields .
 ]
 
 { #category : #characterizing }
 BoardGame >> actualPositionsOfPlayers [
-	^ (self groupOfPlayersSortedInAscendingOrderByActualPosition)  
-	     collect: [:aPlayer | aPlayer reportNameAndActualPosition ].
+	^ board actualPositionsOfPlayers.
 ]
 
 { #category : #actions }
@@ -54,12 +54,12 @@ BoardGame >> incrementByOnePlayersTurnIdentificator [
 ]
 
 { #category : #initialize }
-BoardGame >> initializeWith: aGroupOfPlayers  playedOn: aBoard with: aGroupOfDices [ 
+BoardGame >> initializeWith: aGroupOfPlayers with: aGroupOfDices onABoardWith: aNumberOfFields [
 	dices := aGroupOfDices.
 	players := aGroupOfPlayers.
-	board := aBoard.
 	currentState := 'In Process'.
 	playersTurnIdentificator := 1.
+	numberOfFields:= aNumberOfFields.
 ]
 
 { #category : #actions }
@@ -69,6 +69,11 @@ BoardGame >> nextTurn [
 	aPlayer isYourTurnToPlayWith: dices.
 	self changeCurrentStateIfNecessary: aPlayer.
 	self updatePlayersTurnIdentificator. 
+]
+
+{ #category : #Characterizing }
+BoardGame >> numberOfFields [
+	^ numberOfFields
 ]
 
 { #category : #actions }
