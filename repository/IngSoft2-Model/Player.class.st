@@ -22,6 +22,7 @@ Player >> isYourTurnToPlayWith: aGroupOfDices [
 	| resultOfThrowingAGroupOfDices |
 	resultOfThrowingAGroupOfDices :=0.
 	aGroupOfDices do: [ :aDice | resultOfThrowingAGroupOfDices := resultOfThrowingAGroupOfDices + (self throws: aDice) ].
+	^ resultOfThrowingAGroupOfDices.
 
 
 ]
