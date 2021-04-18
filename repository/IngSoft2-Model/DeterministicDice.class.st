@@ -9,7 +9,7 @@ Class {
 }
 
 { #category : #initialization }
-DeterministicDice class >> determinedBy: aPattern [. 
+DeterministicDice class >> with: aPattern [. 
 	^self new initializeWith: aPattern.
 ]
 

@@ -4,12 +4,9 @@ Class {
 	#instVars : [
 		'players',
 		'currentState',
-		'board',
-		'dices',
 		'playersTurnIdentificator',
 		'numberOfFields',
-		'positionOfPlayers',
-		'playersPosition'
+		'diceCup'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -19,15 +16,20 @@ BoardGame class >> errorMessageDoesNotHaveAWinnerYet [
 	^ 'The board game has not finished yet, so it does not have a winner.'.
 ]
 
-{ #category : #initialization }
-BoardGame class >> withPlayers: aGroupOfPlayers with: aGroupOfDices onABoardWith: aNumberOfFields [ 
-		^ self new initializeWith: aGroupOfPlayers with: aGroupOfDices onABoardWith: aNumberOfFields .
+{ #category : #'error messages' }
+BoardGame class >> errorMessageTheGameHasFinished [
+	^ 'The board game has already finished, contestants can not play anymore .'.
 ]
 
-{ #category : #actions }
-BoardGame >> changeCurrentStateIfNecessary: aPlayer [ 
-	( (playersPosition at: aPlayer) = numberOfFields )
-		ifTrue: [ self changeCurrentStateToFinished ].
+{ #category : #initialization }
+BoardGame class >> with: aGroupOfPlayers and: aDiceCup playedOnABoardwith: aNumberOfFields [ 
+		^ self new initializeWith: aGroupOfPlayers and: aDiceCup playedOnABoardwith: aNumberOfFields.
+]
+
+{ #category : #characterizing }
+BoardGame >> actualPositionsOfPlayers [
+	^ (self groupOfPlayersSortedInAscendingOrderByActualPosition)  
+	     collect: [:aPlayer | aPlayer reportNameAndActualPosition ].
 ]
 
 { #category : #actions }
@@ -41,6 +43,15 @@ BoardGame >> currentState [
 ]
 
 { #category : #actions }
+BoardGame >> determinateNewPositionWith: aNumberOfFieldsToMoveAlong and: aPositionOnTheBoard [
+	| newPlayerPosition |
+	newPlayerPosition := (self numberOfFields) min:(aNumberOfFieldsToMoveAlong + aPositionOnTheBoard).
+	self verifyIfThePlayerHasWon: newPlayerPosition.
+	^ newPlayerPosition.
+	
+]
+
+{ #category : #actions }
 BoardGame >> groupOfPlayersSortedInAscendingOrderByActualPosition [
 	^ players sort: [ :onePlayer :anotherPlayer | onePlayer actualPosition > anotherPlayer actualPosition ].
 ]
@@ -51,27 +62,32 @@ BoardGame >> incrementByOnePlayersTurnIdentificator [
 ]
 
 { #category : #initialize }
-BoardGame >> initializeWith: aGroupOfPlayers with: aGroupOfDices onABoardWith: aNumberOfFields [
-	dices := aGroupOfDices.
-	playersPosition := OrderedDictionary newFromKeys: aGroupOfPlayers andValues: (OrderedCollection new: aGroupOfPlayers size withAll: 0).
+BoardGame >> initializeWith: aGroupOfPlayers and: aDiceCup playedOnABoardwith: aNumberOfFields [
+	diceCup := aDiceCup.
+	players := aGroupOfPlayers.
+	numberOfFields :=aNumberOfFields.
 	currentState := 'In Process'.
 	playersTurnIdentificator := 1.
-	numberOfFields:= aNumberOfFields.
 ]
 
 { #category : #actions }
 BoardGame >> nextTurn [
-	| aPlayer aNumberOfFields |
-	aPlayer:= playersPosition keyAtIndex: playersTurnIdentificator.
-	aNumberOfFields:= aPlayer isYourTurnToPlayWith: dices. 
-	self update: aPlayer positionAdding: aNumberOfFields.
-	self changeCurrentStateIfNecessary: aPlayer.
+	| aPlayer |
+	self verifyIfTheGameHasFinished.
+	aPlayer:= players at: playersTurnIdentificator.
+	aPlayer isYourTurnToThrow: diceCup andMoveAlong: self.
 	self updatePlayersTurnIdentificator. 
+	
 ]
 
-{ #category : #Characterizing }
+{ #category : #characterizing }
 BoardGame >> numberOfFields [
 	^ numberOfFields
+]
+
+{ #category : #actions }
+BoardGame >> numberOfPlayers [
+	^ players size.
 ]
 
 { #category : #characterizing }
@@ -82,11 +98,6 @@ BoardGame >> players [
 { #category : #actions }
 BoardGame >> playersRanking [
 	^ self groupOfPlayersSortedInAscendingOrderByActualPosition  withIndexCollect: [:aPlayer :anIndex | self textWithRanking: anIndex andNameOf: aPlayer ].
-]
-
-{ #category : #characterizing }
-BoardGame >> positionOfPlayers [
-	^ playersPosition .
 ]
 
 { #category : #actions }
@@ -100,18 +111,6 @@ BoardGame >> textWithRanking: aRank andNameOf: aPlayer [
 ]
 
 { #category : #actions }
-BoardGame >> update: aPlayer positionAdding: aNumberOfFields [ 
-	| actualPosition |
-	actualPosition:= playersPosition at: aPlayer.
-	playersPosition at: aPlayer put: aNumberOfFields + actualPosition.
-]
-
-{ #category : #'as yet unclassified' }
-BoardGame >> updateAPlayersPosition: anInteger [ 
-	self shouldBeImplemented.
-]
-
-{ #category : #actions }
 BoardGame >> updatePlayersTurnIdentificator [
 	(self validateIfPlayersTurnIdentificatorNeedsToBeUpdated)
 		ifTrue: [ self restartPlayersTurnIdentificator]
@@ -122,17 +121,28 @@ BoardGame >> updatePlayersTurnIdentificator [
 
 { #category : #actions }
 BoardGame >> validateIfPlayersTurnIdentificatorNeedsToBeUpdated [
-	^ playersTurnIdentificator= playersPosition size.
+	^ playersTurnIdentificator= self numberOfPlayers .
 ]
 
 { #category : #actions }
-BoardGame >> verifyIfTheGameHasFinish [
+BoardGame >> verifyIfTheGameHasFinished [
+	(currentState = 'Finished') 
+		ifTrue: [ Error signal: (self class) errorMessageTheGameHasFinished] .
+]
+
+{ #category : #actions }
+BoardGame >> verifyIfTheGameIsInProcess [
 	(currentState = 'In Process') 
 		ifTrue: [ Error signal: (self class) errorMessageDoesNotHaveAWinnerYet ] .
 ]
 
 { #category : #actions }
+BoardGame >> verifyIfThePlayerHasWon: aPosition [ 
+	(aPosition = numberOfFields) ifTrue:[self changeCurrentStateToFinished].
+]
+
+{ #category : #actions }
 BoardGame >> winner [
-	self verifyIfTheGameHasFinish.
+	self verifyIfTheGameIsInProcess.	
 	^ self groupOfPlayersSortedInAscendingOrderByActualPosition first.
 ]

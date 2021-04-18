@@ -2,7 +2,8 @@ Class {
 	#name : #Player,
 	#superclass : #Object,
 	#instVars : [
-		'name'
+		'name',
+		'actualPosition'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -12,18 +13,23 @@ Player class >> called: aName [
 	^ self new initializeWith: aName.
 ]
 
+{ #category : #characterizing }
+Player >> actualPosition [
+	^ actualPosition.
+]
+
 { #category : #initialize }
 Player >> initializeWith: aName [
 	name:= aName.
+	actualPosition := 0.
 ]
 
 { #category : #actions }
-Player >> isYourTurnToPlayWith: aGroupOfDices [
+Player >> isYourTurnToThrow: aDiceCup andMoveAlong: aBoardGame [
 	| resultOfThrowingAGroupOfDices |
-	resultOfThrowingAGroupOfDices :=0.
-	aGroupOfDices do: [ :aDice | resultOfThrowingAGroupOfDices := resultOfThrowingAGroupOfDices + (self throws: aDice) ].
-	^ resultOfThrowingAGroupOfDices.
-
+	resultOfThrowingAGroupOfDices := aDiceCup throw.
+	actualPosition := aBoardGame determinateNewPositionWith: resultOfThrowingAGroupOfDices and: self actualPosition.
+	
 
 ]
 
@@ -33,7 +39,6 @@ Player >> name [
 ]
 
 { #category : #actions }
-Player >> throws: aDice [ 
-	^ aDice throw.
-	
+Player >> reportNameAndActualPosition [
+	^ name,': ',(actualPosition asString).
 ]
