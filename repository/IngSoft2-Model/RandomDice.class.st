@@ -17,7 +17,7 @@ RandomDice >> hasNFaces: aNumberOfFaces [
 	^ (aNumberOfFaces = numberOfFaces).
 ]
 
-{ #category : #characterizing }
+{ #category : #initialize }
 RandomDice >> initializeWith: aNumberOfFaces [  
 	numberOfFaces:= aNumberOfFaces.
 ]

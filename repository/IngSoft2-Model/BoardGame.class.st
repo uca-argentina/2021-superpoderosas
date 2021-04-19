@@ -32,7 +32,7 @@ BoardGame >> actualPositionsOfPlayers [
 	     collect: [:aPlayer | aPlayer reportNameAndActualPosition ].
 ]
 
-{ #category : #actions }
+{ #category : #private }
 BoardGame >> changeCurrentStateToFinished [
 	currentState := 'Finished'.
 ]
@@ -42,7 +42,7 @@ BoardGame >> currentState [
 	^ currentState.
 ]
 
-{ #category : #actions }
+{ #category : #private }
 BoardGame >> determinateNewPositionWith: aNumberOfFieldsToMoveAlong and: aPositionOnTheBoard [
 	| newPlayerPosition |
 	newPlayerPosition := (self numberOfFields) min:(aNumberOfFieldsToMoveAlong + aPositionOnTheBoard).
@@ -51,12 +51,12 @@ BoardGame >> determinateNewPositionWith: aNumberOfFieldsToMoveAlong and: aPositi
 	
 ]
 
-{ #category : #actions }
+{ #category : #private }
 BoardGame >> groupOfPlayersSortedInAscendingOrderByActualPosition [
 	^ players sort: [ :onePlayer :anotherPlayer | onePlayer actualPosition > anotherPlayer actualPosition ].
 ]
 
-{ #category : #actions }
+{ #category : #private }
 BoardGame >> incrementByOnePlayersTurnIdentificator [
 	playersTurnIdentificator:= playersTurnIdentificator +1.
 ]
@@ -100,17 +100,17 @@ BoardGame >> playersRanking [
 	^ self groupOfPlayersSortedInAscendingOrderByActualPosition  withIndexCollect: [:aPlayer :anIndex | self textWithRanking: anIndex andNameOf: aPlayer ].
 ]
 
-{ #category : #actions }
+{ #category : #private }
 BoardGame >> restartPlayersTurnIdentificator [
 	playersTurnIdentificator:= 1.
 ]
 
-{ #category : #actions }
+{ #category : #private }
 BoardGame >> textWithRanking: aRank andNameOf: aPlayer [ 
 	^ (aRank asString , ': ' , aPlayer name ).
 ]
 
-{ #category : #actions }
+{ #category : #private }
 BoardGame >> updatePlayersTurnIdentificator [
 	(self validateIfPlayersTurnIdentificatorNeedsToBeUpdated)
 		ifTrue: [ self restartPlayersTurnIdentificator]
@@ -119,24 +119,24 @@ BoardGame >> updatePlayersTurnIdentificator [
 	
 ]
 
-{ #category : #actions }
+{ #category : #private }
 BoardGame >> validateIfPlayersTurnIdentificatorNeedsToBeUpdated [
 	^ playersTurnIdentificator= self numberOfPlayers .
 ]
 
-{ #category : #actions }
+{ #category : #exceptions }
 BoardGame >> verifyIfTheGameHasFinished [
 	(currentState = 'Finished') 
 		ifTrue: [ Error signal: (self class) errorMessageTheGameHasFinished] .
 ]
 
-{ #category : #actions }
+{ #category : #exceptions }
 BoardGame >> verifyIfTheGameIsInProcess [
 	(currentState = 'In Process') 
 		ifTrue: [ Error signal: (self class) errorMessageDoesNotHaveAWinnerYet ] .
 ]
 
-{ #category : #actions }
+{ #category : #private }
 BoardGame >> verifyIfThePlayerHasWon: aPosition [ 
 	(aPosition = numberOfFields) ifTrue:[self changeCurrentStateToFinished].
 ]

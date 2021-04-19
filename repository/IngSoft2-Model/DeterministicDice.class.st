@@ -13,7 +13,7 @@ DeterministicDice class >> with: aPattern [.
 	^self new initializeWith: aPattern.
 ]
 
-{ #category : #actions }
+{ #category : #private }
 DeterministicDice >> incrementByOnePatternIndexBasedOnTimesThrown [
 	^patterIndexBasedOnTimesThrown+1.
 ]
@@ -24,12 +24,12 @@ DeterministicDice >> initializeWith: aPattern [
 	patterIndexBasedOnTimesThrown:=0.
 ]
 
-{ #category : #actions }
+{ #category : #private }
 DeterministicDice >> resetPatterIndexBasenOnTimesThrown [
 	^1.
 ]
 
-{ #category : #actions }
+{ #category : #private }
 DeterministicDice >> returnUpdatedPatterIndexBasenOnTimesThrown [
 	(self verifyIfThePatternIndexhasReachedTheLimit) 
 		ifTrue:[^self resetPatterIndexBasenOnTimesThrown]
@@ -45,7 +45,7 @@ DeterministicDice >> throw [
 	
 ]
 
-{ #category : #actions }
+{ #category : #private }
 DeterministicDice >> verifyIfThePatternIndexhasReachedTheLimit [
 	^patterIndexBasedOnTimesThrown == (pattern size)
 ]
