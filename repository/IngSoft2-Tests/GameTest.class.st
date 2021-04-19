@@ -210,7 +210,7 @@ GameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowThreeDicesSimultaneous
 	self assert: (aBoardGame actualPositionsOfPlayers) equals: #('Pau: 24').
 ]
 
-{ #category : #tests }
+{ #category : #'test - aPlayer' }
 GameTest >> testAPlayerHasACertainName [
  
 	| aPlayer |
@@ -218,7 +218,7 @@ GameTest >> testAPlayerHasACertainName [
 	self assert: (aPlayer name) equals: 'Pau'.
 ]
 
-{ #category : #tests }
+{ #category : #'test - aPlayer' }
 GameTest >> testAPlayerHasAnInitialPositionOnTheBoardGame [
  		
 	| aPlayer |
@@ -226,7 +226,7 @@ GameTest >> testAPlayerHasAnInitialPositionOnTheBoardGame [
 	self assert: (aPlayer actualPosition) identicalTo: 0.
 ]
 
-{ #category : #tests }
+{ #category : #'test - aDice' }
 GameTest >> testARandomDiceHas6Faces [	
 	| aRandomDice |
 	aRandomDice:= RandomDice with: 6.		
@@ -244,7 +244,7 @@ GameTest >> testTheBoardGameHas26Fields [
 	self assert: (aBoardGame numberOfFields) equals: aNumberOfFields.
 ]
 
-{ #category : #tests }
+{ #category : #'test - aDice' }
 GameTest >> testWhenThrowingADeterministicDiceWeGet2 [
  	| obtainedValue aDeterministicDice aPattern |
 	"mas adelante agregar un bloque con un patron"
@@ -254,7 +254,7 @@ GameTest >> testWhenThrowingADeterministicDiceWeGet2 [
 	self assert: obtainedValue identicalTo: 2.
 ]
 
-{ #category : #tests }
+{ #category : #'test - aDice' }
 GameTest >> testWhenThrowingADeterministicDiceWeGetACertainSequence [
  	| obtainedValue aDeterministicDice pattern |
 	"mas adelante agregar un bloque con un patron"
@@ -269,7 +269,7 @@ GameTest >> testWhenThrowingADeterministicDiceWeGetACertainSequence [
 	
 ]
 
-{ #category : #tests }
+{ #category : #'test - aDice' }
 GameTest >> testWhenThrowingARandomDiceWith6FacesWeCanGetAValueBetween1and6 [
  	| obtainedValue aRandomDice |
 	aRandomDice:= RandomDice with: 6.
