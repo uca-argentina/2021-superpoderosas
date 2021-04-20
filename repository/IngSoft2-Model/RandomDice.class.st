@@ -19,7 +19,7 @@ RandomDice >> hasNFaces: aNumberOfFaces [
 
 { #category : #initialize }
 RandomDice >> initializeWith: aNumberOfFaces [  
-	numberOfFaces:= aNumberOfFaces.
+	numberOfFaces:= aNumberOfFaces max:2.
 ]
 
 { #category : #actions }

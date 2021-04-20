@@ -233,6 +233,15 @@ GameTest >> testARandomDiceHas6Faces [
 	self assert: (aRandomDice hasNFaces: 6).
 ]
 
+{ #category : #'test - aDice' }
+GameTest >> testARandomDiceHasAtLeastTwoFaces [	
+	| aRandomDice anotherRandomDice |
+	aRandomDice:= RandomDice with: 0.	
+	anotherRandomDice:= RandomDice with: 1.	
+	self assert: ((aRandomDice hasNFaces: 2) and:(anotherRandomDice hasNFaces: 2)) .
+
+]
+
 { #category : #tests }
 GameTest >> testTheBoardGameHas26Fields [
  			
