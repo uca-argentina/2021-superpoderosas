@@ -210,6 +210,45 @@ GameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowThreeDicesSimultaneous
 	self assert: (aBoardGame actualPositionsOfPlayers) equals: #('Pau: 24').
 ]
 
+{ #category : #tests }
+GameTest >> testABoardGameNeedsAtLeastOnePlayer [
+ 		
+	|aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup |
+	aDice:= DeterministicDice with:#(2 4 7 3).
+	aGroupOfPlayers:= {}.
+	aGroupOfDices := { aDice }.
+	aNumberOfFields:= 20.
+	aDiceCup:= DiceCup containing: aGroupOfDices.
+
+	self 
+		should:[BoardGame with: aGroupOfPlayers and: aDiceCup playedOnABoardwith: aNumberOfFields.] 
+		raise: Error 
+		withExceptionDo: [:error | self assert: error messageText equals: BoardGame errorMessageMustHaveAtLeastAPlayer].
+]
+
+{ #category : #'test - aDice' }
+GameTest >> testADiceCupContainsThreeDices [
+ 	|firstDice secondDice thirdDice aGroupOfDices aDiceCup |
+	firstDice:= DeterministicDice with:#(2 4 7 2).
+	secondDice:= DeterministicDice with:#(8 5 4 7 2).
+	thirdDice:= DeterministicDice with:#(4 1 2 7 2).
+	aGroupOfDices:= { firstDice. secondDice. thirdDice}.
+	aDiceCup:= DiceCup containing: aGroupOfDices.
+		
+	self assert: (aDiceCup numberOfDices) identicalTo: 3.
+]
+
+{ #category : #'test - aDice' }
+GameTest >> testADiceCupMustHaveAtLeastOneDice [
+	| aGroupOfDices|
+	aGroupOfDices := {}.
+
+	self 
+		should:[DiceCup containing: aGroupOfDices.] 
+		raise: Error 
+		withExceptionDo: [:error | self assert: error messageText equals: DiceCup errorMessageMustHaveAtLeastOneDice].
+]
+
 { #category : #'test - aPlayer' }
 GameTest >> testAPlayerHasACertainName [
  
@@ -245,9 +284,11 @@ GameTest >> testARandomDiceHasAtLeastTwoFaces [
 { #category : #tests }
 GameTest >> testTheBoardGameHas26Fields [
  			
-	|  aGroupOfPlayers aGroupOfDices aNumberOfFields aBoardGame |
-	aGroupOfPlayers:= {}.
-	aGroupOfDices:= {}.
+	|  aGroupOfPlayers aGroupOfDices aNumberOfFields aBoardGame aPlayer aDice |
+	aPlayer:= Player called: 'Pau'.
+	aGroupOfPlayers:= {aPlayer}.
+	aDice:= DeterministicDice with:#(2 4 7 3).
+	aGroupOfDices := { aDice }.
 	aNumberOfFields:= 26.
 	aBoardGame:= BoardGame with: aGroupOfPlayers and: aGroupOfDices playedOnABoardwith: aNumberOfFields .
 	self assert: (aBoardGame numberOfFields) equals: aNumberOfFields.
@@ -256,7 +297,6 @@ GameTest >> testTheBoardGameHas26Fields [
 { #category : #'test - aDice' }
 GameTest >> testWhenThrowingADeterministicDiceWeGet2 [
  	| obtainedValue aDeterministicDice aPattern |
-	"mas adelante agregar un bloque con un patron"
 	aPattern:=#(2 3 4 1 1 6 5).
 	aDeterministicDice:= DeterministicDice with: aPattern.
 	obtainedValue:= aDeterministicDice throw.		
@@ -266,7 +306,6 @@ GameTest >> testWhenThrowingADeterministicDiceWeGet2 [
 { #category : #'test - aDice' }
 GameTest >> testWhenThrowingADeterministicDiceWeGetACertainSequence [
  	| obtainedValue aDeterministicDice pattern |
-	"mas adelante agregar un bloque con un patron"
 	pattern:=#(2 3 4 1 1 6 5).
 	aDeterministicDice:= DeterministicDice with: pattern.
 	1 to:8 do:
@@ -276,6 +315,18 @@ GameTest >> testWhenThrowingADeterministicDiceWeGetACertainSequence [
 	
 
 	
+]
+
+{ #category : #'test - aDice' }
+GameTest >> testWhenThrowingADiceCupWeObtainACertainValue [
+ 	|firstDice secondDice thirdDice aGroupOfDices aDiceCup |
+	firstDice:= DeterministicDice with:#(2 4 7 2).
+	secondDice:= DeterministicDice with:#(8 5 4 7 2).
+	thirdDice:= DeterministicDice with:#(4 1 2 7 2).
+	aGroupOfDices:= { firstDice. secondDice. thirdDice}.
+	aDiceCup:= DiceCup containing: aGroupOfDices.
+		
+	self assert: (aDiceCup throw) identicalTo: 14.
 ]
 
 { #category : #'test - aDice' }

@@ -17,6 +17,11 @@ BoardGame class >> errorMessageDoesNotHaveAWinnerYet [
 ]
 
 { #category : #'error messages' }
+BoardGame class >> errorMessageMustHaveAtLeastAPlayer [
+	^ 'The board game must have at leaste ONE player'
+]
+
+{ #category : #'error messages' }
 BoardGame class >> errorMessageTheGameHasFinished [
 	^ 'The board game has already finished, contestants can not play anymore .'.
 ]
@@ -63,6 +68,8 @@ BoardGame >> incrementByOnePlayersTurnIdentificator [
 
 { #category : #initialize }
 BoardGame >> initializeWith: aGroupOfPlayers and: aDiceCup playedOnABoardwith: aNumberOfFields [
+	self verifyIsNotEmpty: aGroupOfPlayers  .
+	
 	diceCup := aDiceCup.
 	players := aGroupOfPlayers.
 	numberOfFields :=aNumberOfFields.
@@ -139,6 +146,13 @@ BoardGame >> verifyIfTheGameIsInProcess [
 { #category : #private }
 BoardGame >> verifyIfThePlayerHasWon: aPosition [ 
 	(aPosition = numberOfFields) ifTrue:[self changeCurrentStateToFinished].
+]
+
+{ #category : #exceptions }
+BoardGame >> verifyIsNotEmpty: aGroupOfPlayers [ 
+	
+	(aGroupOfPlayers isEmpty ) 
+		ifTrue: [ Error signal: (self class) errorMessageMustHaveAtLeastAPlayer ] .
 ]
 
 { #category : #actions }
