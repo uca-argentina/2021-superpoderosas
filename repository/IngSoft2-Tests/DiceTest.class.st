@@ -8,7 +8,7 @@ Class {
 DiceTest >> testADiceCupContainsThreeDices [
  	|firstDice secondDice thirdDice aGroupOfDices aDiceCup |
 	firstDice:= DeterministicDice with:#(2 4 7 2).
-	secondDice:= DeterministicDice with:#(8 5 4 7 2).
+	secondDice:= DeterministicDice with: #(8 5 4 7 2).
 	thirdDice:= DeterministicDice with:#(4 1 2 7 2).
 	aGroupOfDices:= { firstDice. secondDice. thirdDice}.
 	aDiceCup:= DiceCup containing: aGroupOfDices.
@@ -30,17 +30,16 @@ DiceTest >> testADiceCupMustHaveAtLeastOneDice [
 { #category : #tests }
 DiceTest >> testARandomDiceHas6Faces [	
 	| aRandomDice |
-	aRandomDice:= RandomDice with: 6.		
+	aRandomDice:= RandomDice having: 6.		
 	self assert: (aRandomDice hasNFaces: 6).
 ]
 
 { #category : #tests }
 DiceTest >> testARandomDiceHasAtLeastTwoFaces [	
-	| aRandomDice anotherRandomDice |
-	aRandomDice:= RandomDice with: 0.	
-	anotherRandomDice:= RandomDice with: 1.	
-	self assert: ((aRandomDice hasNFaces: 2) and:(anotherRandomDice hasNFaces: 2)) .
-
+	self 
+		should:[(RandomDice having: 0) and:(RandomDice having: 1).] 
+		raise: Error 
+		withExceptionDo: [:error | self assert: error messageText equals: RandomDice errorMessageMustHaveAtLeastThreeFaces].
 ]
 
 { #category : #tests }
@@ -81,7 +80,7 @@ DiceTest >> testWhenThrowingADiceCupWeObtainACertainValue [
 { #category : #tests }
 DiceTest >> testWhenThrowingARandomDiceWith6FacesWeCanGetAValueBetween1and6 [
  	| obtainedValue aRandomDice |
-	aRandomDice:= RandomDice with: 6.
+	aRandomDice:= RandomDice having: 6.
 	obtainedValue:= aRandomDice throw.		
 	self assert: (obtainedValue between: 1 and:6).
 ]

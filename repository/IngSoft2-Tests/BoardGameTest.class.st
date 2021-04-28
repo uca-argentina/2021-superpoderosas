@@ -52,7 +52,7 @@ BoardGameTest >> testABoardGameDoesntHaveAWinnerYet [
  		
 	| aPlayer aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup |
 	aPlayer:= Player called: 'Pau'.
-	aDice:= DeterministicDice with:#(2 4 7 3).
+	aDice:= DeterministicDice with: #(2 4 7 3).
 	aGroupOfPlayers:= {aPlayer}.
 	aGroupOfDices := { aDice }.
 	aNumberOfFields:= 20.

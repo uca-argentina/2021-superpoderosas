@@ -7,9 +7,14 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
+{ #category : #'error messages' }
+RandomDice class >> errorMessageMustHaveAtLeastThreeFaces [
+	^ 'A random dice must have at least three faces'
+]
+
 { #category : #'instance creation' }
-RandomDice class >> with: aNumberOfFaces [. 
-	^ self new initializeCalled: aNumberOfFaces.
+RandomDice class >> having: aNumberOfFaces [. 
+	^ self new initializeHaving: aNumberOfFaces.
 ]
 
 { #category : #accessing }
@@ -18,11 +23,18 @@ RandomDice >> hasNFaces: aNumberOfFaces [
 ]
 
 { #category : #initialize }
-RandomDice >> initializeCalled: aNumberOfFaces [  
-	numberOfFaces:= aNumberOfFaces max:2.
+RandomDice >> initializeHaving: aNumberOfFaces [  
+	self verifyIfItHasAtLeastThreeFaces: aNumberOfFaces.
+	numberOfFaces:= aNumberOfFaces.
 ]
 
 { #category : #actions }
 RandomDice >> throw [
 	^(1 to: numberOfFaces) atRandom.
+]
+
+{ #category : #validations }
+RandomDice >> verifyIfItHasAtLeastThreeFaces: aNumberOfFaces [  
+	(aNumberOfFaces < 3) 
+		ifTrue: [ Error signal: (self class) errorMessageMustHaveAtLeastThreeFaces ] .
 ]

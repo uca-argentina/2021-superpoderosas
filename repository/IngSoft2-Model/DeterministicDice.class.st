@@ -10,18 +10,12 @@ Class {
 
 { #category : #initialization }
 DeterministicDice class >> with: aPattern [. 
-	^self new initializeCalled: aPattern.
+	^self new with: aPattern.
 ]
 
 { #category : #private }
 DeterministicDice >> incrementByOnePatternIndexBasedOnTimesThrown [
 	^ patternIndexBasedOnTimesThrown + 1.
-]
-
-{ #category : #initialize }
-DeterministicDice >> initializeCalled: aPattern [ 
-	pattern := aPattern.
-	patternIndexBasedOnTimesThrown := 0.
 ]
 
 { #category : #private }
@@ -48,4 +42,10 @@ DeterministicDice >> throw [
 { #category : #private }
 DeterministicDice >> verifyIfThePatternIndexhasReachedTheLimit [
 	^ patternIndexBasedOnTimesThrown == (pattern size)
+]
+
+{ #category : #initialize }
+DeterministicDice >> with: aPattern [ 
+	pattern := aPattern.
+	patternIndexBasedOnTimesThrown := 0.
 ]
