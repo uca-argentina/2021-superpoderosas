@@ -3,43 +3,43 @@ Class {
 	#superclass : #Dice,
 	#instVars : [
 		'pattern',
-		'patterIndexBasedOnTimesThrown'
+		'patternIndexBasedOnTimesThrown'
 	],
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #initialization }
 DeterministicDice class >> with: aPattern [. 
-	^self new initializeWith: aPattern.
+	^self new initializeCalled: aPattern.
 ]
 
 { #category : #private }
 DeterministicDice >> incrementByOnePatternIndexBasedOnTimesThrown [
-	^patterIndexBasedOnTimesThrown+1.
+	^ patternIndexBasedOnTimesThrown + 1.
 ]
 
 { #category : #initialize }
-DeterministicDice >> initializeWith: aPattern [ 
-	pattern:= aPattern.
-	patterIndexBasedOnTimesThrown:=0.
+DeterministicDice >> initializeCalled: aPattern [ 
+	pattern := aPattern.
+	patternIndexBasedOnTimesThrown := 0.
 ]
 
 { #category : #private }
-DeterministicDice >> resetPatterIndexBasenOnTimesThrown [
-	^1.
-]
-
-{ #category : #private }
-DeterministicDice >> returnUpdatedPatterIndexBasenOnTimesThrown [
+DeterministicDice >> nextValueIndex [
 	(self verifyIfThePatternIndexhasReachedTheLimit) 
-		ifTrue:[^self resetPatterIndexBasenOnTimesThrown]
+		ifTrue:[^self resetPatternIndexBasenOnTimesThrown]
 		ifFalse:[^ (self incrementByOnePatternIndexBasedOnTimesThrown)].
+]
+
+{ #category : #private }
+DeterministicDice >> resetPatternIndexBasenOnTimesThrown [
+	^ 1.
 ]
 
 { #category : #actions }
 DeterministicDice >> throw [
-	patterIndexBasedOnTimesThrown:= self returnUpdatedPatterIndexBasenOnTimesThrown.
-	^ pattern at: patterIndexBasedOnTimesThrown.
+	patternIndexBasedOnTimesThrown:= self nextValueIndex.
+	^ pattern at: patternIndexBasedOnTimesThrown.
 	
 	
 	
@@ -47,5 +47,5 @@ DeterministicDice >> throw [
 
 { #category : #private }
 DeterministicDice >> verifyIfThePatternIndexhasReachedTheLimit [
-	^patterIndexBasedOnTimesThrown == (pattern size)
+	^ patternIndexBasedOnTimesThrown == (pattern size)
 ]

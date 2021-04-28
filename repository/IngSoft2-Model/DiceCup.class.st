@@ -23,7 +23,7 @@ DiceCup >> initializeContaining: aGroupOfDices [
 	dices:= aGroupOfDices.
 ]
 
-{ #category : #characterizing }
+{ #category : #accessing }
 DiceCup >> numberOfDices [
 	^ dices size.
 ]
@@ -36,7 +36,7 @@ DiceCup >> throw [
 	^resultOfThrowingAGroupOfDices.
 ]
 
-{ #category : #exceptions }
+{ #category : #validations }
 DiceCup >> verifyIsNotEmpty: aGroupOfDices [
 	(aGroupOfDices  isEmpty ) 
 		ifTrue: [ Error signal: (self class) errorMessageMustHaveAtLeastOneDice ] .

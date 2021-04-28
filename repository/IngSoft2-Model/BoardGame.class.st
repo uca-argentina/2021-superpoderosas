@@ -3,7 +3,7 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'players',
-		'currentState',
+		'isFinished',
 		'playersTurnIdentificator',
 		'numberOfFields',
 		'diceCup'
@@ -27,31 +27,26 @@ BoardGame class >> errorMessageTheGameHasFinished [
 ]
 
 { #category : #initialization }
-BoardGame class >> with: aGroupOfPlayers and: aDiceCup playedOnABoardwith: aNumberOfFields [ 
+BoardGame class >> playedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields [ 
 		^ self new initializeWith: aGroupOfPlayers and: aDiceCup playedOnABoardwith: aNumberOfFields.
 ]
 
-{ #category : #characterizing }
+{ #category : #accessing }
 BoardGame >> actualPositionsOfPlayers [
 	^ (self groupOfPlayersSortedInAscendingOrderByActualPosition)  
-	     collect: [:aPlayer | aPlayer reportNameAndActualPosition ].
+	     collect: [:aPlayer | aPlayer nameAndActualPosition ].
 ]
 
 { #category : #private }
 BoardGame >> changeCurrentStateToFinished [
-	currentState := 'Finished'.
-]
-
-{ #category : #characterizing }
-BoardGame >> currentState [
-	^ currentState.
+	isFinished := true.
 ]
 
 { #category : #private }
 BoardGame >> determinateNewPositionWith: aNumberOfFieldsToMoveAlong and: aPositionOnTheBoard [
 	| newPlayerPosition |
 	newPlayerPosition := (self numberOfFields) min:(aNumberOfFieldsToMoveAlong + aPositionOnTheBoard).
-	self verifyIfThePlayerHasWon: newPlayerPosition.
+	self verifyIfTheFinishingMarkIsAt: newPlayerPosition.
 	^ newPlayerPosition.
 	
 ]
@@ -68,13 +63,18 @@ BoardGame >> incrementByOnePlayersTurnIdentificator [
 
 { #category : #initialize }
 BoardGame >> initializeWith: aGroupOfPlayers and: aDiceCup playedOnABoardwith: aNumberOfFields [
-	self verifyIsNotEmpty: aGroupOfPlayers  .
+	self verifyIsNotEmpty: aGroupOfPlayers .
 	
 	diceCup := aDiceCup.
 	players := aGroupOfPlayers.
 	numberOfFields :=aNumberOfFields.
-	currentState := 'In Process'.
+	isFinished := false.
 	playersTurnIdentificator := 1.
+]
+
+{ #category : #accessing }
+BoardGame >> isFinished [
+	^ isFinished.
 ]
 
 { #category : #actions }
@@ -82,12 +82,12 @@ BoardGame >> nextTurn [
 	| aPlayer |
 	self verifyIfTheGameHasFinished.
 	aPlayer:= players at: playersTurnIdentificator.
-	aPlayer isYourTurnToThrow: diceCup andMoveAlong: self.
+	aPlayer throw: diceCup movingOn: self.
 	self updatePlayersTurnIdentificator. 
 	
 ]
 
-{ #category : #characterizing }
+{ #category : #accessing }
 BoardGame >> numberOfFields [
 	^ numberOfFields
 ]
@@ -97,7 +97,7 @@ BoardGame >> numberOfPlayers [
 	^ players size.
 ]
 
-{ #category : #characterizing }
+{ #category : #accessing }
 BoardGame >> players [
 	^ players
 ]
@@ -131,24 +131,24 @@ BoardGame >> validateIfPlayersTurnIdentificatorNeedsToBeUpdated [
 	^ playersTurnIdentificator= self numberOfPlayers .
 ]
 
-{ #category : #exceptions }
-BoardGame >> verifyIfTheGameHasFinished [
-	(currentState = 'Finished') 
-		ifTrue: [ Error signal: (self class) errorMessageTheGameHasFinished] .
-]
-
-{ #category : #exceptions }
-BoardGame >> verifyIfTheGameIsInProcess [
-	(currentState = 'In Process') 
-		ifTrue: [ Error signal: (self class) errorMessageDoesNotHaveAWinnerYet ] .
-]
-
-{ #category : #private }
-BoardGame >> verifyIfThePlayerHasWon: aPosition [ 
+{ #category : #validations }
+BoardGame >> verifyIfTheFinishingMarkIsAt: aPosition [ 
 	(aPosition = numberOfFields) ifTrue:[self changeCurrentStateToFinished].
 ]
 
-{ #category : #exceptions }
+{ #category : #validations }
+BoardGame >> verifyIfTheGameHasFinished [
+	(isFinished) 
+		ifTrue: [ Error signal: (self class) errorMessageTheGameHasFinished] .
+]
+
+{ #category : #validations }
+BoardGame >> verifyIfTheGameIsInProcess [
+	(isFinished not) 
+		ifTrue: [ Error signal: (self class) errorMessageDoesNotHaveAWinnerYet ] .
+]
+
+{ #category : #validations }
 BoardGame >> verifyIsNotEmpty: aGroupOfPlayers [ 
 	
 	(aGroupOfPlayers isEmpty ) 

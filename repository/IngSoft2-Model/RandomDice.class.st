@@ -9,16 +9,16 @@ Class {
 
 { #category : #'instance creation' }
 RandomDice class >> with: aNumberOfFaces [. 
-	^ self new initializeWith: aNumberOfFaces.
+	^ self new initializeCalled: aNumberOfFaces.
 ]
 
-{ #category : #characterizing }
+{ #category : #accessing }
 RandomDice >> hasNFaces: aNumberOfFaces [ 
 	^ (aNumberOfFaces = numberOfFaces).
 ]
 
 { #category : #initialize }
-RandomDice >> initializeWith: aNumberOfFaces [  
+RandomDice >> initializeCalled: aNumberOfFaces [  
 	numberOfFaces:= aNumberOfFaces max:2.
 ]
 

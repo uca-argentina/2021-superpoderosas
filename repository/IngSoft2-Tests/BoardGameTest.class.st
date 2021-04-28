@@ -1,11 +1,11 @@
 Class {
-	#name : #GameTest,
+	#name : #BoardGameTest,
 	#superclass : #TestCase,
 	#category : #'IngSoft2-Tests'
 }
 
 { #category : #tests }
-GameTest >> testABoardGameCanDistinguishBetweenWhoseTurnIsIt [
+BoardGameTest >> testABoardGameCanDistinguishBetweenWhoseTurnIsIt [
  		
 	|aBoardGame aGroupOfPlayers aGroupOfDices firstDice secondDice thirdDice firstPlayer secondPlayer thirdPlayer fourthPlayer aNumberOfFields aDiceCup |
 	firstPlayer:= Player called: 'Pau'.
@@ -19,7 +19,7 @@ GameTest >> testABoardGameCanDistinguishBetweenWhoseTurnIsIt [
 	aGroupOfDices:= { firstDice. secondDice. thirdDice}.
 	aDiceCup:= DiceCup containing: aGroupOfDices.
 	aNumberOfFields:= 50.
-	aBoardGame:= BoardGame with: aGroupOfPlayers and: aDiceCup playedOnABoardwith: aNumberOfFields .
+	aBoardGame:= BoardGame playedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields .
 	1 to: 5 do: [ :n | aBoardGame nextTurn ].
 	
 	
@@ -28,7 +28,7 @@ GameTest >> testABoardGameCanDistinguishBetweenWhoseTurnIsIt [
 ]
 
 { #category : #tests }
-GameTest >> testABoardGameCanHaveFourPlayers [
+BoardGameTest >> testABoardGameCanHaveFourPlayers [
  		
 	|aBoardGame aGroupOfPlayers aGroupOfDices firstDice secondDice thirdDice firstPlayer secondPlayer thirdPlayer fourthPlayer aNumberOfFields |
 	firstPlayer:= Player called: 'Pau'.
@@ -41,14 +41,14 @@ GameTest >> testABoardGameCanHaveFourPlayers [
 	aGroupOfPlayers:= {firstPlayer. secondPlayer. thirdPlayer. fourthPlayer}.
 	aGroupOfDices:= { firstDice. secondDice. thirdDice}.
 	aNumberOfFields:= 50.
-	aBoardGame:= BoardGame with: aGroupOfPlayers and: aGroupOfDices playedOnABoardwith: aNumberOfFields .
+	aBoardGame:= BoardGame playedBy: aGroupOfPlayers using: aGroupOfDices onABoardOf: aNumberOfFields .
 	
 	self assert: (aBoardGame players size) identicalTo: 4.
 	
 ]
 
 { #category : #tests }
-GameTest >> testABoardGameDoesntHaveAWinnerYet [
+BoardGameTest >> testABoardGameDoesntHaveAWinnerYet [
  		
 	| aPlayer aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup |
 	aPlayer:= Player called: 'Pau'.
@@ -57,7 +57,7 @@ GameTest >> testABoardGameDoesntHaveAWinnerYet [
 	aGroupOfDices := { aDice }.
 	aNumberOfFields:= 20.
 	aDiceCup:= DiceCup containing: aGroupOfDices.
-	aBoardGame:= BoardGame with: aGroupOfPlayers and: aDiceCup playedOnABoardwith: aNumberOfFields .
+	aBoardGame:= BoardGame playedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields .
 	aBoardGame nextTurn.
 	
 	self 
@@ -67,7 +67,7 @@ GameTest >> testABoardGameDoesntHaveAWinnerYet [
 ]
 
 { #category : #tests }
-GameTest >> testABoardGameHasARanking [
+BoardGameTest >> testABoardGameHasARanking [
  		
 	| aPlayer aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup |
 	aPlayer:= Player called: 'Pau'.
@@ -76,14 +76,14 @@ GameTest >> testABoardGameHasARanking [
 	aGroupOfDices := { aDice }.
 	aNumberOfFields:= 20.
 	aDiceCup:= DiceCup containing: aGroupOfDices.
-	aBoardGame:= BoardGame with: aGroupOfPlayers and: aDiceCup playedOnABoardwith: aNumberOfFields .
+	aBoardGame:= BoardGame playedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields .
 	1 to: 6 do: [ :n | aBoardGame nextTurn ].
 	
 	self assert: (aBoardGame playersRanking) equals: {'1: Pau'}.
 ]
 
 { #category : #tests }
-GameTest >> testABoardGameHasFinished [
+BoardGameTest >> testABoardGameHasFinished [
  		
 	| aPlayer aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup |
 	aPlayer:= Player called: 'Pau'.
@@ -92,30 +92,50 @@ GameTest >> testABoardGameHasFinished [
 	aGroupOfDices := { aDice }.
 	aNumberOfFields:= 20.
 	aDiceCup:= DiceCup containing: aGroupOfDices.
-	aBoardGame:= BoardGame with: aGroupOfPlayers and: aDiceCup playedOnABoardwith: aNumberOfFields .
+	aBoardGame:= BoardGame playedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields .
 	1 to: 6 do: [ :n | aBoardGame nextTurn ].
 	
-	self assert: (aBoardGame currentState) equals: 'Finished'.
+	self assert: (aBoardGame isFinished).
 ]
 
 { #category : #tests }
-GameTest >> testABoardGameHasFinishedAndHasAWinner [
- 		
-	| aPlayer aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup |
-	aPlayer:= Player called: 'Pau'.
-	aDice:= DeterministicDice with:#(2 4 7 3).
-	aGroupOfPlayers:= {aPlayer}.
-	aGroupOfDices := { aDice }.
-	aNumberOfFields:= 20.
-	aDiceCup:= DiceCup containing: aGroupOfDices.
-	aBoardGame:= BoardGame with: aGroupOfPlayers and: aDiceCup playedOnABoardwith: aNumberOfFields .
-	1 to: 6 do: [ :n | aBoardGame nextTurn ].
-	
-	self assert: (aBoardGame winner) equals: aPlayer.
+BoardGameTest >> testABoardGameHasFinishedAndHasAWinner [
+	| paula aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup jorge |
+	paula := Player called: 'Pau'.
+	jorge := Player called: 'Jorge'.
+	aDice := DeterministicDice with: #(2 4 7 3).
+	aGroupOfPlayers := {paula.
+	jorge}.
+	aGroupOfDices := {aDice}.
+	aNumberOfFields := 10.
+	aDiceCup := DiceCup containing: aGroupOfDices.
+	aBoardGame := BoardGame
+		playedBy: aGroupOfPlayers
+		using: aDiceCup
+		onABoardOf: aNumberOfFields.
+	self assert: paula actualPosition equals: 0.
+	self assert: jorge actualPosition equals: 0.
+	aBoardGame nextTurn.
+	self deny: aBoardGame isFinished.
+	self assert: paula actualPosition equals: 2.
+	self assert: jorge actualPosition equals: 0.
+	aBoardGame nextTurn.
+	self assert: paula actualPosition equals: 2.
+	self assert: jorge actualPosition equals: 4.
+	aBoardGame nextTurn.
+	self assert: paula actualPosition equals: 9.
+	self assert: jorge actualPosition equals: 4.
+	aBoardGame nextTurn.
+	self assert: paula actualPosition equals: 9.
+	self assert: jorge actualPosition equals: 7.
+	aBoardGame nextTurn.
+	self assert: paula actualPosition equals: 10.
+	self assert: jorge actualPosition equals: 7.
+	self assert: aBoardGame winner equals: paula
 ]
 
 { #category : #tests }
-GameTest >> testABoardGameHasFinishedAndPlayersMustBeHalted [
+BoardGameTest >> testABoardGameHasFinishedAndPlayersMustBeHalted [
  		
 	| aPlayer aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup |
 	aPlayer:= Player called: 'Pau'.
@@ -124,7 +144,7 @@ GameTest >> testABoardGameHasFinishedAndPlayersMustBeHalted [
 	aGroupOfDices := { aDice }.
 	aNumberOfFields:= 20.
 	aDiceCup:= DiceCup containing: aGroupOfDices.
-	aBoardGame:= BoardGame with: aGroupOfPlayers and: aDiceCup playedOnABoardwith: aNumberOfFields .
+	aBoardGame:= BoardGame playedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields .
 	1 to: 6 do: [ :n | aBoardGame nextTurn ].
 	
 	self 
@@ -134,7 +154,7 @@ GameTest >> testABoardGameHasFinishedAndPlayersMustBeHalted [
 ]
 
 { #category : #tests }
-GameTest >> testABoardGameHasOnePlayer [
+BoardGameTest >> testABoardGameHasOnePlayer [
  		
 	| aPlayer aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields |
 	aPlayer:= Player called: 'Pau'.
@@ -142,13 +162,13 @@ GameTest >> testABoardGameHasOnePlayer [
 	aDice:= DeterministicDice with:#(2 4 7 3).
 	aGroupOfDices := { aDice }.
 	aNumberOfFields:= 20.
-	aBoardGame:= BoardGame with: aGroupOfPlayers and: aGroupOfDices playedOnABoardwith: aNumberOfFields .
+	aBoardGame:= BoardGame playedBy: aGroupOfPlayers using: aGroupOfDices onABoardOf: aNumberOfFields .
 	
 	self assert: (aBoardGame numberOfPlayers) identicalTo: 1.
 ]
 
 { #category : #tests }
-GameTest >> testABoardGameIsInProcess [
+BoardGameTest >> testABoardGameIsInProcess [
  		
 	| aPlayer aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields |
 	aPlayer:= Player called: 'Pau'.
@@ -156,13 +176,13 @@ GameTest >> testABoardGameIsInProcess [
 	aDice:= DeterministicDice with:#(2 4 7 3).
 	aGroupOfDices := { aDice }.
 	aNumberOfFields:= 20.
-	aBoardGame:= BoardGame with: aGroupOfPlayers and: aGroupOfDices playedOnABoardwith: aNumberOfFields .
+	aBoardGame:= BoardGame playedBy: aGroupOfPlayers using: aGroupOfDices onABoardOf: aNumberOfFields .
 	
-	self assert: (aBoardGame currentState) equals: 'In Process'.
+	self deny: (aBoardGame isFinished).
 ]
 
 { #category : #tests }
-GameTest >> testABoardGameKnowsThePlayersPosition [
+BoardGameTest >> testABoardGameKnowsThePlayersPosition [
  		
 	| aPlayer aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields |
 	aPlayer:= Player called: 'Pau'.
@@ -170,13 +190,13 @@ GameTest >> testABoardGameKnowsThePlayersPosition [
 	aDice:= DeterministicDice with:#(2 4 7 3).
 	aGroupOfDices := { aDice }.
 	aNumberOfFields:= 20.
-	aBoardGame:= BoardGame with: aGroupOfPlayers and: aGroupOfDices playedOnABoardwith: aNumberOfFields .
+	aBoardGame:= BoardGame playedBy: aGroupOfPlayers using: aGroupOfDices onABoardOf: aNumberOfFields .
 	
 	self assert: (aBoardGame actualPositionsOfPlayers) equals: #('Pau: 0').
 ]
 
 { #category : #tests }
-GameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowADiceAndMoveOnTheBoard [
+BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowADiceAndMoveOnTheBoard [
  		
 	| aPlayer aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup |
 	aPlayer:= Player called: 'Pau'.
@@ -185,14 +205,14 @@ GameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowADiceAndMoveOnTheBoard
 	aGroupOfDices:= { aDice }.
 	aNumberOfFields:= 20.
 	aDiceCup:= DiceCup containing: aGroupOfDices.
-	aBoardGame:= BoardGame with: aGroupOfPlayers and: aDiceCup playedOnABoardwith: aNumberOfFields .
+	aBoardGame:= BoardGame playedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields .
 	aBoardGame nextTurn.
 	
 	self assert: (aBoardGame actualPositionsOfPlayers) equals: #('Pau: 2').
 ]
 
 { #category : #tests }
-GameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowThreeDicesSimultaneously [
+BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowThreeDicesSimultaneously [
  		
 	| aPlayer aBoardGame aGroupOfPlayers aGroupOfDices firstDice secondDice thirdDice aNumberOfFields aDiceCup |
 	aPlayer:= Player called: 'Pau'.
@@ -203,7 +223,7 @@ GameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowThreeDicesSimultaneous
 	aGroupOfDices:= { firstDice. secondDice. thirdDice}.
 	aNumberOfFields:= 50.
 	aDiceCup:= DiceCup containing: aGroupOfDices.
-	aBoardGame:= BoardGame with: aGroupOfPlayers and: aDiceCup playedOnABoardwith: aNumberOfFields .
+	aBoardGame:= BoardGame playedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields .
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	
@@ -211,7 +231,7 @@ GameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowThreeDicesSimultaneous
 ]
 
 { #category : #tests }
-GameTest >> testABoardGameNeedsAtLeastOnePlayer [
+BoardGameTest >> testABoardGameNeedsAtLeastOnePlayer [
  		
 	|aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup |
 	aDice:= DeterministicDice with:#(2 4 7 3).
@@ -221,68 +241,13 @@ GameTest >> testABoardGameNeedsAtLeastOnePlayer [
 	aDiceCup:= DiceCup containing: aGroupOfDices.
 
 	self 
-		should:[BoardGame with: aGroupOfPlayers and: aDiceCup playedOnABoardwith: aNumberOfFields.] 
+		should:[BoardGame playedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields.] 
 		raise: Error 
 		withExceptionDo: [:error | self assert: error messageText equals: BoardGame errorMessageMustHaveAtLeastAPlayer].
 ]
 
-{ #category : #'test - aDice' }
-GameTest >> testADiceCupContainsThreeDices [
- 	|firstDice secondDice thirdDice aGroupOfDices aDiceCup |
-	firstDice:= DeterministicDice with:#(2 4 7 2).
-	secondDice:= DeterministicDice with:#(8 5 4 7 2).
-	thirdDice:= DeterministicDice with:#(4 1 2 7 2).
-	aGroupOfDices:= { firstDice. secondDice. thirdDice}.
-	aDiceCup:= DiceCup containing: aGroupOfDices.
-		
-	self assert: (aDiceCup numberOfDices) identicalTo: 3.
-]
-
-{ #category : #'test - aDice' }
-GameTest >> testADiceCupMustHaveAtLeastOneDice [
-	| aGroupOfDices|
-	aGroupOfDices := {}.
-
-	self 
-		should:[DiceCup containing: aGroupOfDices.] 
-		raise: Error 
-		withExceptionDo: [:error | self assert: error messageText equals: DiceCup errorMessageMustHaveAtLeastOneDice].
-]
-
-{ #category : #'test - aPlayer' }
-GameTest >> testAPlayerHasACertainName [
- 
-	| aPlayer |
-	aPlayer:= Player called: 'Pau'.
-	self assert: (aPlayer name) equals: 'Pau'.
-]
-
-{ #category : #'test - aPlayer' }
-GameTest >> testAPlayerHasAnInitialPositionOnTheBoardGame [
- 		
-	| aPlayer |
-	aPlayer:= Player called: 'Pau'.
-	self assert: (aPlayer actualPosition) identicalTo: 0.
-]
-
-{ #category : #'test - aDice' }
-GameTest >> testARandomDiceHas6Faces [	
-	| aRandomDice |
-	aRandomDice:= RandomDice with: 6.		
-	self assert: (aRandomDice hasNFaces: 6).
-]
-
-{ #category : #'test - aDice' }
-GameTest >> testARandomDiceHasAtLeastTwoFaces [	
-	| aRandomDice anotherRandomDice |
-	aRandomDice:= RandomDice with: 0.	
-	anotherRandomDice:= RandomDice with: 1.	
-	self assert: ((aRandomDice hasNFaces: 2) and:(anotherRandomDice hasNFaces: 2)) .
-
-]
-
 { #category : #tests }
-GameTest >> testTheBoardGameHas26Fields [
+BoardGameTest >> testTheBoardGameHas26Fields [
  			
 	|  aGroupOfPlayers aGroupOfDices aNumberOfFields aBoardGame aPlayer aDice |
 	aPlayer:= Player called: 'Pau'.
@@ -290,49 +255,6 @@ GameTest >> testTheBoardGameHas26Fields [
 	aDice:= DeterministicDice with:#(2 4 7 3).
 	aGroupOfDices := { aDice }.
 	aNumberOfFields:= 26.
-	aBoardGame:= BoardGame with: aGroupOfPlayers and: aGroupOfDices playedOnABoardwith: aNumberOfFields .
+	aBoardGame:= BoardGame playedBy: aGroupOfPlayers using: aGroupOfDices onABoardOf: aNumberOfFields .
 	self assert: (aBoardGame numberOfFields) equals: aNumberOfFields.
-]
-
-{ #category : #'test - aDice' }
-GameTest >> testWhenThrowingADeterministicDiceWeGet2 [
- 	| obtainedValue aDeterministicDice aPattern |
-	aPattern:=#(2 3 4 1 1 6 5).
-	aDeterministicDice:= DeterministicDice with: aPattern.
-	obtainedValue:= aDeterministicDice throw.		
-	self assert: obtainedValue identicalTo: 2.
-]
-
-{ #category : #'test - aDice' }
-GameTest >> testWhenThrowingADeterministicDiceWeGetACertainSequence [
- 	| obtainedValue aDeterministicDice pattern |
-	pattern:=#(2 3 4 1 1 6 5).
-	aDeterministicDice:= DeterministicDice with: pattern.
-	1 to:8 do:
-			[ :index | obtainedValue:= aDeterministicDice throw. 
-			self assert: obtainedValue identicalTo: (#(2 3 4 1 1 6 5 2) at:index)].
-	
-	
-
-	
-]
-
-{ #category : #'test - aDice' }
-GameTest >> testWhenThrowingADiceCupWeObtainACertainValue [
- 	|firstDice secondDice thirdDice aGroupOfDices aDiceCup |
-	firstDice:= DeterministicDice with:#(2 4 7 2).
-	secondDice:= DeterministicDice with:#(8 5 4 7 2).
-	thirdDice:= DeterministicDice with:#(4 1 2 7 2).
-	aGroupOfDices:= { firstDice. secondDice. thirdDice}.
-	aDiceCup:= DiceCup containing: aGroupOfDices.
-		
-	self assert: (aDiceCup throw) identicalTo: 14.
-]
-
-{ #category : #'test - aDice' }
-GameTest >> testWhenThrowingARandomDiceWith6FacesWeCanGetAValueBetween1and6 [
- 	| obtainedValue aRandomDice |
-	aRandomDice:= RandomDice with: 6.
-	obtainedValue:= aRandomDice throw.		
-	self assert: (obtainedValue between: 1 and:6).
 ]
