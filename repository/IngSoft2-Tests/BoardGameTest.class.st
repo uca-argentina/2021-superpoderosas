@@ -43,7 +43,7 @@ BoardGameTest >> testABoardGameCanHaveFourPlayers [
 	aNumberOfFields:= 50.
 	aBoardGame:= BoardGame playedBy: aGroupOfPlayers using: aGroupOfDices onABoardOf: aNumberOfFields .
 	
-	self assert: (aBoardGame players size) identicalTo: 4.
+	self assert: (aBoardGame numberOfPlayers) identicalTo: 4.
 	
 ]
 

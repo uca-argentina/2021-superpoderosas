@@ -28,13 +28,6 @@ DiceTest >> testADiceCupMustHaveAtLeastOneDice [
 ]
 
 { #category : #tests }
-DiceTest >> testARandomDiceHas6Faces [	
-	| aRandomDice |
-	aRandomDice:= RandomDice having: 6.		
-	self assert: (aRandomDice hasNFaces: 6).
-]
-
-{ #category : #tests }
 DiceTest >> testARandomDiceHasAtLeastTwoFaces [	
 	self 
 		should:[(RandomDice having: 0) and:(RandomDice having: 1).] 

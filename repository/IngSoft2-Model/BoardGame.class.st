@@ -97,11 +97,6 @@ BoardGame >> numberOfPlayers [
 	^ players size.
 ]
 
-{ #category : #accessing }
-BoardGame >> players [
-	^ players
-]
-
 { #category : #actions }
 BoardGame >> playersRanking [
 	^ self groupOfPlayersSortedInAscendingOrderByActualPosition  withIndexCollect: [:aPlayer :anIndex | self textWithRanking: anIndex andNameOf: aPlayer ].

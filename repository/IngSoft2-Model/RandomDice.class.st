@@ -17,11 +17,6 @@ RandomDice class >> having: aNumberOfFaces [.
 	^ self new initializeHaving: aNumberOfFaces.
 ]
 
-{ #category : #accessing }
-RandomDice >> hasNFaces: aNumberOfFaces [ 
-	^ (aNumberOfFaces = numberOfFaces).
-]
-
 { #category : #initialize }
 RandomDice >> initializeHaving: aNumberOfFaces [  
 	self verifyIfItHasAtLeastThreeFaces: aNumberOfFaces.

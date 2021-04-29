@@ -1,6 +1,6 @@
 Class {
 	#name : #DiceCup,
-	#superclass : #Dice,
+	#superclass : #Object,
 	#instVars : [
 		'dices'
 	],
