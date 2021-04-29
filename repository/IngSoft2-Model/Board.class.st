@@ -34,7 +34,7 @@ Board >> findInWichPositionIs: aPlayer [
 { #category : #initialization }
 Board >> initializeMadeUpOf: aNumberOfFields havingAtAnInitialPosition: players [
 	numberOfFields := aNumberOfFields.
-	playingFields:= self createFields: players.
+	playingFields:= self initializePlayingFields: players.
 ]
 
 { #category : #initialization }
