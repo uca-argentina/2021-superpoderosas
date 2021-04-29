@@ -15,18 +15,20 @@ Board class >> madeUpOf: aNumberOfFields havingAtAnInitialPosition: players [.
 
 { #category : #initialization }
 Board >> createFields [
-	| fields |
-	OrderedDictionary new:numberOfFields.
+	| fields emptyField |
 	fields := OrderedDictionary new:numberOfFields.
-	1 to: numberOfFields do:[:i | fields add:(i)->{}].
+	"en una ordered collection podemos aplicar el remove, es por esto que se crea antes de mandarse"
+	emptyField:= OrderedCollection newFrom: {}.
+	1 to: numberOfFields do:[:i | fields add:(i)->emptyField].
 	^fields
 ]
 
 { #category : #accessing }
 Board >> findInWichPositionIs: aPlayer [
-	playingFields detect:[:i | (playingFields at:i) contains:aPlayer ]
-	"Deberíamos hacer andar lo siguiente para obtener la posicion del jugador
-	^playerPosition := dic detect:[:i | (dic at:i) contains: aPlayer]. "
+	
+	^playingFields keyAtValue: (playingFields detect:[:value | value includes:aPlayer ]).
+	"d := OrderedDictionary newFrom: { 1 -> {'hola' . 'male'} . 3 -> {'hey'} . 5 ->{'juana' . 'valen'}}.
+	d keyAtValue: (d detect:[:value | value includes:'hey']). FUNCAAAA"
 ]
 
 { #category : #initialization }
@@ -54,7 +56,20 @@ Board >> move: player alongTheBoardSomeFields: aNumberOfFields [
 
 { #category : #positions }
 Board >> move: player from: oldPosition to: newPosition [.
-	self removePlayerFrom: oldPosition.
-	self movePlayerTo: newPosition .
+	self remove:player from: oldPosition.
+	self move: player to: newPosition .
+	
+]
+
+{ #category : #positions }
+Board >> move: player to: newPosition [ 
+	(playingFields at: newPosition) add:player.
+	
+]
+
+{ #category : #positions }
+Board >> remove:player from: oldPosition [.
+	(playingFields at: oldPosition) removeAllSuchThat: [ :aPlayer | aPlayer = player ].
+	
 	
 ]
