@@ -6,7 +6,10 @@ Class {
 		'isFinished',
 		'playersTurnIdentificator',
 		'numberOfFields',
-		'diceCup'
+		'diceCup',
+		'result',
+		'actualPosition',
+		'board'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -18,6 +21,7 @@ BoardGame class >> playedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumber
 
 { #category : #accessing }
 BoardGame >> actualPositionsOfPlayers [
+	"cambiar adaptandolo al dic"
 	^ (self groupOfPlayersSortedInAscendingOrderByActualPosition)  
 	     collect: [:aPlayer | aPlayer nameAndActualPosition ].
 ]
@@ -35,6 +39,7 @@ BoardGame >> changeCurrentStateToFinished [
 { #category : #private }
 BoardGame >> determinateNewPositionBasedOn: aNumberOfFieldsToMoveAlong and: aPositionOnTheBoard [
 	| newPlayerPosition |
+	"eliminar"
 	newPlayerPosition := (self numberOfFields) min:(aNumberOfFieldsToMoveAlong + aPositionOnTheBoard).
 	self verifyIfTheFinishLineIsAt: newPlayerPosition.
 	^ newPlayerPosition.
@@ -58,6 +63,7 @@ BoardGame >> errorMessageTheGameHasFinished [
 
 { #category : #private }
 BoardGame >> groupOfPlayersSortedInAscendingOrderByActualPosition [
+	"eliminar"
 	^ players sort: [ :onePlayer :anotherPlayer | onePlayer actualPosition > anotherPlayer actualPosition ].
 ]
 
@@ -70,6 +76,8 @@ BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNu
 	numberOfFields :=aNumberOfFields.
 	isFinished := false.
 	playersTurnIdentificator := 1.
+	"esta bien que se cree aca el board ya que sino deberíamos pasar dos veces por paran a players a board y a board game cosa que queda desprolija"
+	board:= Board madeUpOf: aNumberOfFields havingAtAnInitialPosition: players.
 ]
 
 { #category : #accessing }
@@ -79,10 +87,11 @@ BoardGame >> isFinished [
 
 { #category : #actions }
 BoardGame >> nextTurn [
-	| aPlayer |
+	| player |
 	self verifyIfTheGameHasFinished.
-	aPlayer:= players at: playersTurnIdentificator.
-	aPlayer throw: diceCup movingOn: self.
+	player:= players at: playersTurnIdentificator.
+	result := diceCup throw.
+	actualPosition := board move: player alongTheBoardSomeFields: result.
 	self updatePlayersTurnIdentificator. 
 	
 ]
@@ -104,11 +113,13 @@ BoardGame >> originalPlayersTurnIdentificator [
 
 { #category : #actions }
 BoardGame >> playersRanking [
+	"cambiar adaptandolo al dic"
 	^ self groupOfPlayersSortedInAscendingOrderByActualPosition  withIndexCollect: [:aPlayer :anIndex | self textWith: anIndex andTheNameOf: aPlayer ].
 ]
 
 { #category : #private }
 BoardGame >> textWith: aRank andTheNameOf: aPlayer [ 
+	"eliminar"
 	^ (aRank asString , ': ' , aPlayer name ).
 ]
 

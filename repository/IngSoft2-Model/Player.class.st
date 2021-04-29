@@ -15,12 +15,14 @@ Player class >> called: aName [
 
 { #category : #accessing }
 Player >> actualPosition [
+	"eliminar"
 	^ actualPosition.
 ]
 
 { #category : #initialize }
 Player >> initializeCalled: aName [
 	name:= aName.
+	"eliminar actual position"
 	actualPosition := 0.
 ]
 
@@ -31,11 +33,13 @@ Player >> name [
 
 { #category : #actions }
 Player >> nameAndActualPosition [
+	"eliminar"
 	^ name,': ',(actualPosition asString).
 ]
 
 { #category : #actions }
 Player >> throw: aDiceCup movingOn: aBoardGame [
+	"eliminar dependiendo si le queremos o no asignar esta responsabilidad"
 	| resultOfThrowingAGroupOfDices |
 	resultOfThrowingAGroupOfDices := aDiceCup throw.
 	actualPosition := aBoardGame determinateNewPositionBasedOn: resultOfThrowingAGroupOfDices and: actualPosition.
