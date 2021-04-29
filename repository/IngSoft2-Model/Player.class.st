@@ -38,7 +38,7 @@ Player >> nameAndActualPosition [
 Player >> throw: aDiceCup movingOn: aBoardGame [
 	| resultOfThrowingAGroupOfDices |
 	resultOfThrowingAGroupOfDices := aDiceCup throw.
-	actualPosition := aBoardGame determinateNewPositionWith: resultOfThrowingAGroupOfDices and: actualPosition.
+	actualPosition := aBoardGame determinateNewPositionBasedOn: resultOfThrowingAGroupOfDices and: actualPosition.
 	
 
 ]

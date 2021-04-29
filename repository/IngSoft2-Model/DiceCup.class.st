@@ -13,19 +13,14 @@ DiceCup class >> containing: aGroupOfDices [
 ]
 
 { #category : #'error messages' }
-DiceCup class >> errorMessageMustHaveAtLeastOneDice [
+DiceCup >> errorMessageMustHaveAtLeastOneDice [
 	^ 'A dice cup must contain at leaste ONE dice'
 ]
 
 { #category : #initialize }
 DiceCup >> initializeContaining: aGroupOfDices [  
-	self verifyIsNotEmpty: aGroupOfDices.
+	self verifyIfItIsNotEmpty: aGroupOfDices.
 	dices:= aGroupOfDices.
-]
-
-{ #category : #accessing }
-DiceCup >> numberOfDices [
-	^ dices size.
 ]
 
 { #category : #actions }
@@ -37,7 +32,7 @@ DiceCup >> throw [
 ]
 
 { #category : #validations }
-DiceCup >> verifyIsNotEmpty: aGroupOfDices [
+DiceCup >> verifyIfItIsNotEmpty: aGroupOfDices [
 	(aGroupOfDices  isEmpty ) 
-		ifTrue: [ Error signal: (self class) errorMessageMustHaveAtLeastOneDice ] .
+		ifTrue: [ Error signal: self errorMessageMustHaveAtLeastOneDice ] .
 ]

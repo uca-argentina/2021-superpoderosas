@@ -11,24 +11,9 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #'error messages' }
-BoardGame class >> errorMessageDoesNotHaveAWinnerYet [
-	^ 'The board game has not finished yet, so it does not have a winner.'.
-]
-
-{ #category : #'error messages' }
-BoardGame class >> errorMessageMustHaveAtLeastAPlayer [
-	^ 'The board game must have at leaste ONE player'
-]
-
-{ #category : #'error messages' }
-BoardGame class >> errorMessageTheGameHasFinished [
-	^ 'The board game has already finished, contestants can not play anymore .'.
-]
-
 { #category : #initialization }
 BoardGame class >> playedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields [ 
-		^ self new initializeWith: aGroupOfPlayers and: aDiceCup playedOnABoardwith: aNumberOfFields.
+		^ self new initializePlayedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields.
 ]
 
 { #category : #accessing }
@@ -38,17 +23,37 @@ BoardGame >> actualPositionsOfPlayers [
 ]
 
 { #category : #private }
+BoardGame >> addOneToPlayersTurnIdentificator [
+	playersTurnIdentificator := playersTurnIdentificator +1.
+]
+
+{ #category : #private }
 BoardGame >> changeCurrentStateToFinished [
 	isFinished := true.
 ]
 
 { #category : #private }
-BoardGame >> determinateNewPositionWith: aNumberOfFieldsToMoveAlong and: aPositionOnTheBoard [
+BoardGame >> determinateNewPositionBasedOn: aNumberOfFieldsToMoveAlong and: aPositionOnTheBoard [
 	| newPlayerPosition |
 	newPlayerPosition := (self numberOfFields) min:(aNumberOfFieldsToMoveAlong + aPositionOnTheBoard).
-	self verifyIfTheFinishingMarkIsAt: newPlayerPosition.
+	self verifyIfTheFinishLineIsAt: newPlayerPosition.
 	^ newPlayerPosition.
 	
+]
+
+{ #category : #'error messages' }
+BoardGame >> errorMessageDoesNotHaveAWinnerYet [
+	^ 'The board game has not finished yet, so it does not have a winner.'.
+]
+
+{ #category : #'error messages' }
+BoardGame >> errorMessageMustHaveAtLeastAPlayer [
+	^ 'The board game must have at leaste ONE player'
+]
+
+{ #category : #'error messages' }
+BoardGame >> errorMessageTheGameHasFinished [
+	^ 'The board game has already finished, contestants can not play anymore.'.
 ]
 
 { #category : #private }
@@ -56,14 +61,9 @@ BoardGame >> groupOfPlayersSortedInAscendingOrderByActualPosition [
 	^ players sort: [ :onePlayer :anotherPlayer | onePlayer actualPosition > anotherPlayer actualPosition ].
 ]
 
-{ #category : #private }
-BoardGame >> incrementByOnePlayersTurnIdentificator [
-	playersTurnIdentificator:= playersTurnIdentificator +1.
-]
-
 { #category : #initialize }
-BoardGame >> initializeWith: aGroupOfPlayers and: aDiceCup playedOnABoardwith: aNumberOfFields [
-	self verifyIsNotEmpty: aGroupOfPlayers .
+BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields [
+	self verifyIfItIsNotEmpty: aGroupOfPlayers .
 	
 	diceCup := aDiceCup.
 	players := aGroupOfPlayers.
@@ -97,57 +97,55 @@ BoardGame >> numberOfPlayers [
 	^ players size.
 ]
 
-{ #category : #actions }
-BoardGame >> playersRanking [
-	^ self groupOfPlayersSortedInAscendingOrderByActualPosition  withIndexCollect: [:aPlayer :anIndex | self textWithRanking: anIndex andNameOf: aPlayer ].
-]
-
 { #category : #private }
-BoardGame >> restartPlayersTurnIdentificator [
+BoardGame >> originalPlayersTurnIdentificator [
 	playersTurnIdentificator:= 1.
 ]
 
+{ #category : #actions }
+BoardGame >> playersRanking [
+	^ self groupOfPlayersSortedInAscendingOrderByActualPosition  withIndexCollect: [:aPlayer :anIndex | self textWith: anIndex andTheNameOf: aPlayer ].
+]
+
 { #category : #private }
-BoardGame >> textWithRanking: aRank andNameOf: aPlayer [ 
+BoardGame >> textWith: aRank andTheNameOf: aPlayer [ 
 	^ (aRank asString , ': ' , aPlayer name ).
 ]
 
 { #category : #private }
 BoardGame >> updatePlayersTurnIdentificator [
-	(self validateIfPlayersTurnIdentificatorNeedsToBeUpdated)
-		ifTrue: [ self restartPlayersTurnIdentificator]
-		ifFalse: [ self incrementByOnePlayersTurnIdentificator].
-		
-	
+	(self validateIfPlayersTurnIdentificatorHasToBeTheOriginal)
+        ifTrue: [ self originalPlayersTurnIdentificator]
+        ifFalse: [ self addOneToPlayersTurnIdentificator].
 ]
 
 { #category : #private }
-BoardGame >> validateIfPlayersTurnIdentificatorNeedsToBeUpdated [
+BoardGame >> validateIfPlayersTurnIdentificatorHasToBeTheOriginal [
 	^ playersTurnIdentificator= self numberOfPlayers .
 ]
 
 { #category : #validations }
-BoardGame >> verifyIfTheFinishingMarkIsAt: aPosition [ 
+BoardGame >> verifyIfItIsNotEmpty: aGroupOfPlayers [ 
+	
+	(aGroupOfPlayers isEmpty ) 
+		ifTrue: [ Error signal: self errorMessageMustHaveAtLeastAPlayer ] .
+]
+
+{ #category : #validations }
+BoardGame >> verifyIfTheFinishLineIsAt: aPosition [ 
 	(aPosition = numberOfFields) ifTrue:[self changeCurrentStateToFinished].
 ]
 
 { #category : #validations }
 BoardGame >> verifyIfTheGameHasFinished [
 	(isFinished) 
-		ifTrue: [ Error signal: (self class) errorMessageTheGameHasFinished] .
+		ifTrue: [ Error signal: self errorMessageTheGameHasFinished] .
 ]
 
 { #category : #validations }
 BoardGame >> verifyIfTheGameIsInProcess [
 	(isFinished not) 
-		ifTrue: [ Error signal: (self class) errorMessageDoesNotHaveAWinnerYet ] .
-]
-
-{ #category : #validations }
-BoardGame >> verifyIsNotEmpty: aGroupOfPlayers [ 
-	
-	(aGroupOfPlayers isEmpty ) 
-		ifTrue: [ Error signal: (self class) errorMessageMustHaveAtLeastAPlayer ] .
+		ifTrue: [ Error signal: self errorMessageDoesNotHaveAWinnerYet ] .
 ]
 
 { #category : #actions }

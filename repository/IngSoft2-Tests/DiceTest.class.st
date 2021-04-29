@@ -4,38 +4,15 @@ Class {
 	#category : #'IngSoft2-Tests'
 }
 
-{ #category : #tests }
-DiceTest >> testADiceCupContainsThreeDices [
- 	|firstDice secondDice thirdDice aGroupOfDices aDiceCup |
-	firstDice:= DeterministicDice with:#(2 4 7 2).
-	secondDice:= DeterministicDice with: #(8 5 4 7 2).
-	thirdDice:= DeterministicDice with:#(4 1 2 7 2).
-	aGroupOfDices:= { firstDice. secondDice. thirdDice}.
-	aDiceCup:= DiceCup containing: aGroupOfDices.
-		
-	self assert: (aDiceCup numberOfDices) identicalTo: 3.
-]
-
-{ #category : #tests }
-DiceTest >> testADiceCupMustHaveAtLeastOneDice [
-	| aGroupOfDices|
-	aGroupOfDices := {}.
-
-	self 
-		should:[DiceCup containing: aGroupOfDices.] 
-		raise: Error 
-		withExceptionDo: [:error | self assert: error messageText equals: DiceCup errorMessageMustHaveAtLeastOneDice].
-]
-
-{ #category : #tests }
+{ #category : #randomDiceTests }
 DiceTest >> testARandomDiceHasAtLeastTwoFaces [	
 	self 
 		should:[(RandomDice having: 0) and:(RandomDice having: 1).] 
 		raise: Error 
-		withExceptionDo: [:error | self assert: error messageText equals: RandomDice errorMessageMustHaveAtLeastThreeFaces].
+		withExceptionDo: [:error | self assert: error messageText equals: 'A random dice must have at least three faces'].
 ]
 
-{ #category : #tests }
+{ #category : #deterministicDiceTests }
 DiceTest >> testWhenThrowingADeterministicDiceWeGet2 [
  	| obtainedValue aDeterministicDice aPattern |
 	aPattern:=#(2 3 4 1 1 6 5).
@@ -44,7 +21,7 @@ DiceTest >> testWhenThrowingADeterministicDiceWeGet2 [
 	self assert: obtainedValue identicalTo: 2.
 ]
 
-{ #category : #tests }
+{ #category : #deterministicDiceTests }
 DiceTest >> testWhenThrowingADeterministicDiceWeGetACertainSequence [
  	| obtainedValue aDeterministicDice pattern |
 	pattern:=#(2 3 4 1 1 6 5).
@@ -58,19 +35,7 @@ DiceTest >> testWhenThrowingADeterministicDiceWeGetACertainSequence [
 	
 ]
 
-{ #category : #tests }
-DiceTest >> testWhenThrowingADiceCupWeObtainACertainValue [
- 	|firstDice secondDice thirdDice aGroupOfDices aDiceCup |
-	firstDice:= DeterministicDice with:#(2 4 7 2).
-	secondDice:= DeterministicDice with:#(8 5 4 7 2).
-	thirdDice:= DeterministicDice with:#(4 1 2 7 2).
-	aGroupOfDices:= { firstDice. secondDice. thirdDice}.
-	aDiceCup:= DiceCup containing: aGroupOfDices.
-		
-	self assert: (aDiceCup throw) identicalTo: 14.
-]
-
-{ #category : #tests }
+{ #category : #randomDiceTests }
 DiceTest >> testWhenThrowingARandomDiceWith6FacesWeCanGetAValueBetween1and6 [
  	| obtainedValue aRandomDice |
 	aRandomDice:= RandomDice having: 6.
