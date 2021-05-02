@@ -91,7 +91,7 @@ BoardGame >> nextTurn [
 	self verifyIfTheGameHasFinished.
 	player:= players at: playersTurnIdentificator.
 	result := diceCup throw.
-	board move: player alongTheBoardSomeFields: result.
+	board move: player along: result.
 	self updatePlayersTurnIdentificator. 
 	
 ]

@@ -16,19 +16,16 @@ Board class >> madeUpOf: aNumberOfFields havingAtAnInitialPosition: players [.
 { #category : #initialization }
 Board >> createFields [
 	| fields emptyField |
-	fields := OrderedDictionary new:numberOfFields.
-	"en una ordered collection podemos aplicar el remove, es por esto que se crea antes de mandarse"
-	emptyField:= OrderedCollection newFrom: {}.
+	fields := OrderedDictionary new: numberOfFields.
+	emptyField:= OrderedCollection new.
 	1 to: numberOfFields do:[:i | fields add:(i)->emptyField].
-	^fields
+	^fields.
 ]
 
 { #category : #accessing }
 Board >> findInWichPositionIs: aPlayer [
 	
-	^playingFields keyAtValue: (playingFields detect:[:value | value includes:aPlayer ]).
-	"d := OrderedDictionary newFrom: { 1 -> {'hola' . 'male'} . 3 -> {'hey'} . 5 ->{'juana' . 'valen'}}.
-	d keyAtValue: (d detect:[:value | value includes:'hey']). FUNCAAAA"
+	^ playingFields keyAtValue: (playingFields detect:[:value | value includes:aPlayer ]).
 ]
 
 { #category : #initialization }
@@ -41,35 +38,46 @@ Board >> initializeMadeUpOf: aNumberOfFields havingAtAnInitialPosition: players 
 Board >> initializePlayingFields: players [
 	playingFields := self createFields.
 	playingFields at:1 put: players.
-	^playingFields
+	
+	^ playingFields.
 ]
 
 { #category : #positions }
-Board >> move: player alongTheBoardSomeFields: aNumberOfFields [ 
+Board >> move: aPlayer along: aNumberOfFields [ 
 	| actualPosition newPosition |
-	actualPosition := self findInWichPositionIs: player.
+	actualPosition := self findInWichPositionIs: aPlayer.
 	newPosition := aNumberOfFields  + actualPosition.
-	self move: player from: actualPosition to: newPosition.
+	self move: aPlayer from: actualPosition to: newPosition.
 	
 	
 ]
 
 { #category : #positions }
-Board >> move: player from: oldPosition to: newPosition [.
-	self remove:player from: oldPosition.
-	self move: player to: newPosition .
+Board >> move: aPlayer from: oldPosition to: newPosition [.
+
+	self remove: aPlayer from: oldPosition.
+	self move: aPlayer to: newPosition.
 	
 ]
 
 { #category : #positions }
-Board >> move: player to: newPosition [ 
-	(playingFields at: newPosition) add:player.
+Board >> move: aPlayer to: newPosition [ 
+	| playersAtNewPositionBeforeTheNewPlayerArrives playersAtNewPositionAfterTheNewPlayerArrives |
+	playersAtNewPositionBeforeTheNewPlayerArrives := (playingFields at: newPosition).
+	playersAtNewPositionAfterTheNewPlayerArrives := OrderedCollection newFrom: playersAtNewPositionBeforeTheNewPlayerArrives.
+	playersAtNewPositionBeforeTheNewPlayerArrives add: aPlayer.
+	
+	playingFields at: newPosition put: playersAtNewPositionAfterTheNewPlayerArrives.
 	
 ]
 
 { #category : #positions }
-Board >> remove:player from: oldPosition [.
-	(playingFields at: oldPosition) removeAllSuchThat: [ :aPlayer | aPlayer = player ].
+Board >> remove: aPlayer from: oldPosition [
+	| playersAtOldPositionOfCurrentPlayer |
+	playersAtOldPositionOfCurrentPlayer := (playingFields at: oldPosition).
+	playersAtOldPositionOfCurrentPlayer removeAllSuchThat: [ :anotherPlayer | anotherPlayer = aPlayer ].
+	
+	playingFields at: oldPosition put: playersAtOldPositionOfCurrentPlayer.
 	
 	
 ]
