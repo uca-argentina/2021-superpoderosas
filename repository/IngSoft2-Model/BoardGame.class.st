@@ -19,13 +19,6 @@ BoardGame class >> playedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumber
 		^ self new initializePlayedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields.
 ]
 
-{ #category : #accessing }
-BoardGame >> actualPositionsOfPlayers [
-	"cambiar adaptandolo al dic"
-	^ (self groupOfPlayersSortedInAscendingOrderByActualPosition)  
-	     collect: [:aPlayer | aPlayer nameAndActualPosition ].
-]
-
 { #category : #private }
 BoardGame >> addOneToPlayersTurnIdentificator [
 	playersTurnIdentificator := playersTurnIdentificator +1.
@@ -61,10 +54,9 @@ BoardGame >> errorMessageTheGameHasFinished [
 	^ 'The board game has already finished, contestants can not play anymore.'.
 ]
 
-{ #category : #private }
-BoardGame >> groupOfPlayersSortedInAscendingOrderByActualPosition [
-	"eliminar"
-	^ players sort: [ :onePlayer :anotherPlayer | onePlayer actualPosition > anotherPlayer actualPosition ].
+{ #category : #accessing }
+BoardGame >> findPlayersRanking [
+	^ board findPlayersRanking.
 ]
 
 { #category : #initialize }

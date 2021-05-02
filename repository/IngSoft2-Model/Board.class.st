@@ -6,7 +6,8 @@ Class {
 		'playingFields',
 		'arr',
 		'playersAtFirstField',
-		'firstFieldInitialize'
+		'firstFieldInitialize',
+		'playersPosition'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -26,9 +27,18 @@ Board >> createFields [
 ]
 
 { #category : #accessing }
-Board >> findInWichPositionIs: aPlayer [
+Board >> findInWhichPositionIs: aPlayer [
 	
 	^ playingFields keyAtValue: (playingFields detect:[:value | value includes:aPlayer ]).
+]
+
+{ #category : #accessing }
+Board >> findPlayersRanking [
+	"Extract method"
+	playersPosition:= OrderedCollection new.
+	playingFields valuesDo: [ :aValue |aValue do: [ :aPlayer | playersPosition add: (aPlayer name , ': ', (playingFields keyAtValue: aValue) asString )]].
+	playersPosition:= (playersPosition reversed)  withIndexCollect: [:rank :index | ( index asString),') ',rank].
+	^playersPosition.
 ]
 
 { #category : #initialization }
@@ -49,7 +59,7 @@ Board >> initializePlayingFields: players [
 { #category : #positions }
 Board >> move: aPlayer along: aNumberOfFields [ 
 	| actualPosition newPosition |
-	actualPosition := self findInWichPositionIs: aPlayer.
+	actualPosition := self findInWhichPositionIs: aPlayer.
 	newPosition := aNumberOfFields  + actualPosition.
 	self move: aPlayer from: actualPosition to: newPosition.
 	

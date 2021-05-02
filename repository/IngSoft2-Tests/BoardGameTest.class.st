@@ -49,7 +49,7 @@ BoardGameTest >> testABoardGameCanDistinguishBetweenWhoseTurnIsIt [
 	aBoardGame := self newBoardGameWithMultiplePlayers.
 	1 to: 5 do: [ :n | aBoardGame nextTurn ].
 	
-	self assert: (aBoardGame actualPositionsOfPlayers ) equals: #('Pau: 20' 'Juli: 16' 'Belu: 13' 'Male: 10').
+	self assert: (aBoardGame findPlayersRanking ) equals: (OrderedCollection newFrom: (#('1) Pau: 21' '2) Juli: 17' '3) Belu: 14' '4) Male: 11'))).
 	 
 ]
 
@@ -163,7 +163,7 @@ BoardGameTest >> testABoardGameKnowsThePlayersPosition [
 	| aBoardGame |
 	aBoardGame := self newBoardGameWithASinglePlayer.
 	
-	self assert: (aBoardGame actualPositionsOfPlayers) equals: #('Pau: 0').
+	self assert: (aBoardGame findPlayersRanking) equals: #('Pau: 0').
 ]
 
 { #category : #playingTests }
@@ -173,7 +173,7 @@ BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowADiceAndMoveOnThe
 	aBoardGame := self newBoardGameWithASinglePlayer.
 	aBoardGame nextTurn.
 	
-	self assert: (aBoardGame actualPositionsOfPlayers) equals: #('Pau: 2').
+	self assert: (aBoardGame findPlayersRanking) equals: #('Pau: 2').
 ]
 
 { #category : #playingTests }
@@ -192,7 +192,7 @@ BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowThreeDicesSimulta
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	
-	self assert: (aBoardGame actualPositionsOfPlayers) equals: #('Pau: 24').
+	self assert: (aBoardGame findPlayersRanking) equals: #('Pau: 24').
 ]
 
 { #category : #validationTests }
