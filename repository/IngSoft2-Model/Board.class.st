@@ -3,7 +3,10 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'numberOfFields',
-		'playingFields'
+		'playingFields',
+		'arr',
+		'playersAtFirstField',
+		'firstFieldInitialize'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -37,7 +40,8 @@ Board >> initializeMadeUpOf: aNumberOfFields havingAtAnInitialPosition: players 
 { #category : #initialization }
 Board >> initializePlayingFields: players [
 	playingFields := self createFields.
-	playingFields at:1 put: players.
+	firstFieldInitialize := OrderedCollection newFrom: players.
+	playingFields at:1 put: firstFieldInitialize.
 	
 	^ playingFields.
 ]
@@ -65,10 +69,9 @@ Board >> move: aPlayer to: newPosition [
 	| playersAtNewPositionBeforeTheNewPlayerArrives playersAtNewPositionAfterTheNewPlayerArrives |
 	playersAtNewPositionBeforeTheNewPlayerArrives := (playingFields at: newPosition).
 	playersAtNewPositionAfterTheNewPlayerArrives := OrderedCollection newFrom: playersAtNewPositionBeforeTheNewPlayerArrives.
-	playersAtNewPositionBeforeTheNewPlayerArrives add: aPlayer.
+	playersAtNewPositionAfterTheNewPlayerArrives add: aPlayer.
 	
 	playingFields at: newPosition put: playersAtNewPositionAfterTheNewPlayerArrives.
-	
 ]
 
 { #category : #positions }

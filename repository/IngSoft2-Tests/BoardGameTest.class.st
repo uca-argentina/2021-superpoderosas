@@ -9,7 +9,7 @@ BoardGameTest >> newBoardGameWithASinglePlayer [
 	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers |
 	aPlayer := Player called: 'Pau'.
 	aDice := DeterministicDice with: #(2 4 7 3).
-	aGroupOfPlayers := OrderedCollection newFrom: {aPlayer}.
+	aGroupOfPlayers := {aPlayer}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 20.
 	aDiceCup := DiceCup containing: aGroupOfDices.
@@ -30,7 +30,7 @@ BoardGameTest >> newBoardGameWithMultiplePlayers [
 	firstDice := DeterministicDice with: #(2 4 7 2).
 	secondDice := DeterministicDice with: #(8 5 4 7 2).
 	thirdDice := DeterministicDice with: #(4 1 2 7 2).
-	aGroupOfPlayers := OrderedCollection newFrom:{firstPlayer.  secondPlayer . thirdPlayer . fourthPlayer}.
+	aGroupOfPlayers := {firstPlayer.  secondPlayer . thirdPlayer . fourthPlayer}.
 	aGroupOfDices := {firstDice. secondDice. thirdDice}.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aNumberOfFields := 50.
@@ -97,7 +97,7 @@ BoardGameTest >> testABoardGameHasFinishedAndHasAWinner [
 	paula := Player called: 'Pau'.
 	jorge := Player called: 'Jorge'.
 	aDice := DeterministicDice with: #(2 4 7 3).
-	aGroupOfPlayers := OrderedCollection newFrom: {paula. jorge}.
+	aGroupOfPlayers := {paula. jorge}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 10.
 	aDiceCup := DiceCup containing: aGroupOfDices.
@@ -184,7 +184,7 @@ BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowThreeDicesSimulta
 	firstDice:= DeterministicDice with:#(2 4 7 2).
 	secondDice:= DeterministicDice with:#(8 5 4 7 2).
 	thirdDice:= DeterministicDice with:#(4 1 2 7 2).
-	aGroupOfPlayers:= OrderedCollection newFrom: {aPlayer}.
+	aGroupOfPlayers:= {aPlayer}.
 	aGroupOfDices:= { firstDice. secondDice. thirdDice}.
 	aNumberOfFields:= 50.
 	aDiceCup:= DiceCup containing: aGroupOfDices.
