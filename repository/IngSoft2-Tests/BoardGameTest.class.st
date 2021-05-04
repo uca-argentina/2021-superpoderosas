@@ -78,7 +78,7 @@ BoardGameTest >> testABoardGameHasARanking [
 	| aBoardGame |
 	aBoardGame := self newBoardGameWithASinglePlayer.
 	1 to: 6 do: [ :n | aBoardGame nextTurn ].
-	self assert: aBoardGame playersRanking equals: {'1: Pau'}
+	self assert: aBoardGame findPlayersRanking equals: (OrderedCollection newFrom: {'1) Pau: 20'}).
 ]
 
 { #category : #statusTests }
@@ -99,30 +99,30 @@ BoardGameTest >> testABoardGameHasFinishedAndHasAWinner [
 	aDice := DeterministicDice with: #(2 4 7 3).
 	aGroupOfPlayers := {paula. jorge}.
 	aGroupOfDices := {aDice}.
-	aNumberOfFields := 10.
+	aNumberOfFields := 11.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aBoardGame := BoardGame
 		playedBy: aGroupOfPlayers
 		using: aDiceCup
 		onABoardOf: aNumberOfFields.
-	self assert: paula actualPosition equals: 0.
-	self assert: jorge actualPosition equals: 0.
+	self assert: (aBoardGame findInWhichPositionIs: paula) equals: 1.
+	self assert: (aBoardGame findInWhichPositionIs: jorge) equals: 1.
 	aBoardGame nextTurn.
 	self deny: aBoardGame isFinished.
-	self assert: paula actualPosition equals: 2.
-	self assert: jorge actualPosition equals: 0.
+	self assert: (aBoardGame findInWhichPositionIs: paula) equals: 3.
+	self assert: (aBoardGame findInWhichPositionIs: jorge) equals: 1.
 	aBoardGame nextTurn.
-	self assert: paula actualPosition equals: 2.
-	self assert: jorge actualPosition equals: 4.
+	self assert: (aBoardGame findInWhichPositionIs: paula) equals: 3.
+	self assert: (aBoardGame findInWhichPositionIs: jorge) equals: 5.
 	aBoardGame nextTurn.
-	self assert: paula actualPosition equals: 9.
-	self assert: jorge actualPosition equals: 4.
+	self assert: (aBoardGame findInWhichPositionIs: paula) equals: 10.
+	self assert: (aBoardGame findInWhichPositionIs: jorge) equals: 5.
 	aBoardGame nextTurn.
-	self assert: paula actualPosition equals: 9.
-	self assert: jorge actualPosition equals: 7.
+	self assert: (aBoardGame findInWhichPositionIs: paula) equals: 10.
+	self assert: (aBoardGame findInWhichPositionIs: jorge) equals: 8.
 	aBoardGame nextTurn.
-	self assert: paula actualPosition equals: 10.
-	self assert: jorge actualPosition equals: 7.
+	self assert: (aBoardGame findInWhichPositionIs: paula) equals: 11.
+	self assert: (aBoardGame findInWhichPositionIs: jorge) equals: 8.
 	self assert: aBoardGame winner equals: paula
 ]
 
@@ -163,7 +163,7 @@ BoardGameTest >> testABoardGameKnowsThePlayersPosition [
 	| aBoardGame |
 	aBoardGame := self newBoardGameWithASinglePlayer.
 	
-	self assert: (aBoardGame findPlayersRanking) equals: #('Pau: 0').
+	self assert: (aBoardGame findPlayersRanking) equals: (OrderedCollection newFrom: #('1) Pau: 1')).
 ]
 
 { #category : #playingTests }
@@ -173,7 +173,7 @@ BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowADiceAndMoveOnThe
 	aBoardGame := self newBoardGameWithASinglePlayer.
 	aBoardGame nextTurn.
 	
-	self assert: (aBoardGame findPlayersRanking) equals: #('Pau: 2').
+	self assert: (aBoardGame findPlayersRanking) equals: (OrderedCollection newFrom: #('1) Pau: 3')).
 ]
 
 { #category : #playingTests }
@@ -192,7 +192,7 @@ BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowThreeDicesSimulta
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	
-	self assert: (aBoardGame findPlayersRanking) equals: #('Pau: 24').
+	self assert: (aBoardGame findPlayersRanking) equals: (OrderedCollection newFrom: #('1) Pau: 25'))..
 ]
 
 { #category : #validationTests }

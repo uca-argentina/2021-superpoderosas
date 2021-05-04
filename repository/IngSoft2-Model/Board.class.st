@@ -41,6 +41,11 @@ Board >> findPlayersRanking [
 	^playersPosition.
 ]
 
+{ #category : #actions }
+Board >> findThePlayerAtTheFinishLine [
+	^ (playingFields at: numberOfFields ) first.
+]
+
 { #category : #initialization }
 Board >> initializeMadeUpOf: aNumberOfFields havingAtAnInitialPosition: players [
 	numberOfFields := aNumberOfFields.
@@ -56,17 +61,7 @@ Board >> initializePlayingFields: players [
 	^ playingFields.
 ]
 
-{ #category : #positions }
-Board >> move: aPlayer along: aNumberOfFields [ 
-	| actualPosition newPosition |
-	actualPosition := self findInWhichPositionIs: aPlayer.
-	newPosition := aNumberOfFields  + actualPosition.
-	self move: aPlayer from: actualPosition to: newPosition.
-	
-	
-]
-
-{ #category : #positions }
+{ #category : #private }
 Board >> move: aPlayer from: oldPosition to: newPosition [.
 
 	self remove: aPlayer from: oldPosition.
@@ -75,6 +70,20 @@ Board >> move: aPlayer from: oldPosition to: newPosition [.
 ]
 
 { #category : #positions }
+Board >> move: aPlayer over: aNumberOfFields in: aBoardGame [ 
+	| actualPosition newPosition |
+	actualPosition := self findInWhichPositionIs: aPlayer.
+	newPosition := (aNumberOfFields  + actualPosition) min: numberOfFields .
+	self move: aPlayer from: actualPosition to: newPosition.
+	self verifyIfTheFinishLineIsAt: newPosition in: aBoardGame .
+	
+	
+	
+	
+	
+]
+
+{ #category : #private }
 Board >> move: aPlayer to: newPosition [ 
 	| playersAtNewPositionBeforeTheNewPlayerArrives playersAtNewPositionAfterTheNewPlayerArrives |
 	playersAtNewPositionBeforeTheNewPlayerArrives := (playingFields at: newPosition).
@@ -84,7 +93,12 @@ Board >> move: aPlayer to: newPosition [
 	playingFields at: newPosition put: playersAtNewPositionAfterTheNewPlayerArrives.
 ]
 
-{ #category : #positions }
+{ #category : #accessing }
+Board >> numberOfFields [
+	^ numberOfFields
+]
+
+{ #category : #private }
 Board >> remove: aPlayer from: oldPosition [
 	| playersAtOldPositionOfCurrentPlayer |
 	playersAtOldPositionOfCurrentPlayer := (playingFields at: oldPosition).
@@ -93,4 +107,9 @@ Board >> remove: aPlayer from: oldPosition [
 	playingFields at: oldPosition put: playersAtOldPositionOfCurrentPlayer.
 	
 	
+]
+
+{ #category : #private }
+Board >> verifyIfTheFinishLineIsAt: newPosition in: aBoardGame [ 
+	^ (newPosition = numberOfFields) ifTrue:[aBoardGame changeCurrentStateToFinished].
 ]

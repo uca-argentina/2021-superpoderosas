@@ -5,7 +5,6 @@ Class {
 		'players',
 		'isFinished',
 		'playersTurnIdentificator',
-		'numberOfFields',
 		'diceCup',
 		'result',
 		'actualPosition',
@@ -29,16 +28,6 @@ BoardGame >> changeCurrentStateToFinished [
 	isFinished := true.
 ]
 
-{ #category : #private }
-BoardGame >> determinateNewPositionBasedOn: aNumberOfFieldsToMoveAlong and: aPositionOnTheBoard [
-	| newPlayerPosition |
-	"eliminar"
-	newPlayerPosition := (self numberOfFields) min:(aNumberOfFieldsToMoveAlong + aPositionOnTheBoard).
-	self verifyIfTheFinishLineIsAt: newPlayerPosition.
-	^ newPlayerPosition.
-	
-]
-
 { #category : #'error messages' }
 BoardGame >> errorMessageDoesNotHaveAWinnerYet [
 	^ 'The board game has not finished yet, so it does not have a winner.'.
@@ -54,6 +43,11 @@ BoardGame >> errorMessageTheGameHasFinished [
 	^ 'The board game has already finished, contestants can not play anymore.'.
 ]
 
+{ #category : #actions }
+BoardGame >> findInWhichPositionIs: aPlayer [ 
+	^ board findInWhichPositionIs: aPlayer.
+]
+
 { #category : #accessing }
 BoardGame >> findPlayersRanking [
 	^ board findPlayersRanking.
@@ -62,13 +56,10 @@ BoardGame >> findPlayersRanking [
 { #category : #initialize }
 BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields [
 	self verifyIfItIsNotEmpty: aGroupOfPlayers .
-	
 	diceCup := aDiceCup.
 	players := aGroupOfPlayers.
-	numberOfFields :=aNumberOfFields.
 	isFinished := false.
 	playersTurnIdentificator := 1.
-	"esta bien que se cree aca el board ya que sino deberíamos pasar dos veces por paran a players a board y a board game cosa que queda desprolija"
 	board:= Board madeUpOf: aNumberOfFields havingAtAnInitialPosition: players.
 ]
 
@@ -83,14 +74,14 @@ BoardGame >> nextTurn [
 	self verifyIfTheGameHasFinished.
 	player:= players at: playersTurnIdentificator.
 	result := diceCup throw.
-	board move: player along: result.
+	board move: player over: result in: self.
 	self updatePlayersTurnIdentificator. 
 	
 ]
 
-{ #category : #accessing }
+{ #category : #actions }
 BoardGame >> numberOfFields [
-	^ numberOfFields
+	^ board numberOfFields. 
 ]
 
 { #category : #actions }
@@ -101,18 +92,6 @@ BoardGame >> numberOfPlayers [
 { #category : #private }
 BoardGame >> originalPlayersTurnIdentificator [
 	playersTurnIdentificator:= 1.
-]
-
-{ #category : #actions }
-BoardGame >> playersRanking [
-	"cambiar adaptandolo al dic"
-	^ self groupOfPlayersSortedInAscendingOrderByActualPosition  withIndexCollect: [:aPlayer :anIndex | self textWith: anIndex andTheNameOf: aPlayer ].
-]
-
-{ #category : #private }
-BoardGame >> textWith: aRank andTheNameOf: aPlayer [ 
-	"eliminar"
-	^ (aRank asString , ': ' , aPlayer name ).
 ]
 
 { #category : #private }
@@ -135,11 +114,6 @@ BoardGame >> verifyIfItIsNotEmpty: aGroupOfPlayers [
 ]
 
 { #category : #validations }
-BoardGame >> verifyIfTheFinishLineIsAt: aPosition [ 
-	(aPosition = numberOfFields) ifTrue:[self changeCurrentStateToFinished].
-]
-
-{ #category : #validations }
 BoardGame >> verifyIfTheGameHasFinished [
 	(isFinished) 
 		ifTrue: [ Error signal: self errorMessageTheGameHasFinished] .
@@ -154,5 +128,5 @@ BoardGame >> verifyIfTheGameIsInProcess [
 { #category : #actions }
 BoardGame >> winner [
 	self verifyIfTheGameIsInProcess.	
-	^ self groupOfPlayersSortedInAscendingOrderByActualPosition first.
+	^ board findThePlayerAtTheFinishLine.
 ]
