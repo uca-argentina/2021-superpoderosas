@@ -34,16 +34,11 @@ Board >> findInWhichPositionIs: aPlayer [
 
 { #category : #accessing }
 Board >> findPlayersRanking [
-	"Extract method"
 	playersPosition:= OrderedCollection new.
 	playingFields valuesDo: [ :aValue |aValue do: [ :aPlayer | playersPosition add: (aPlayer name , ': ', (playingFields keyAtValue: aValue) asString )]].
 	playersPosition:= (playersPosition reversed)  withIndexCollect: [:rank :index | ( index asString),') ',rank].
 	^playersPosition.
-]
-
-{ #category : #actions }
-Board >> findThePlayerAtTheFinishLine [
-	^ (playingFields at: numberOfFields ) first.
+	
 ]
 
 { #category : #initialization }
@@ -70,12 +65,13 @@ Board >> move: aPlayer from: oldPosition to: newPosition [.
 ]
 
 { #category : #positions }
-Board >> move: aPlayer over: aNumberOfFields in: aBoardGame [ 
-	| actualPosition newPosition |
+Board >> move: aPlayer over: aNumberOfFields [
+	| actualPosition newPosition estimatedPosition |
 	actualPosition := self findInWhichPositionIs: aPlayer.
-	newPosition := (aNumberOfFields  + actualPosition) min: numberOfFields .
+	estimatedPosition := aNumberOfFields  + actualPosition.
+	newPosition := estimatedPosition % numberOfFields.
+	(estimatedPosition//numberOfFields = 1) ifTrue: [aPlayer startsANewSpin].
 	self move: aPlayer from: actualPosition to: newPosition.
-	self verifyIfTheFinishLineIsAt: newPosition in: aBoardGame .
 	
 	
 	
@@ -107,9 +103,4 @@ Board >> remove: aPlayer from: oldPosition [
 	playingFields at: oldPosition put: playersAtOldPositionOfCurrentPlayer.
 	
 	
-]
-
-{ #category : #private }
-Board >> verifyIfTheFinishLineIsAt: newPosition in: aBoardGame [ 
-	^ (newPosition = numberOfFields) ifTrue:[aBoardGame changeCurrentStateToFinished].
 ]

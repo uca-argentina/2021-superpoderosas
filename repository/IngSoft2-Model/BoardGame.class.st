@@ -8,14 +8,16 @@ Class {
 		'diceCup',
 		'result',
 		'actualPosition',
-		'board'
+		'board',
+		'spinsNeededToWin',
+		'winner'
 	],
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #initialization }
-BoardGame class >> playedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields [ 
-		^ self new initializePlayedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields.
+BoardGame class >> playedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields winnedWhenReach: aSpinNumber [
+		^ self new initializePlayedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields winnedWhenReach: aSpinNumber.
 ]
 
 { #category : #private }
@@ -50,16 +52,18 @@ BoardGame >> findInWhichPositionIs: aPlayer [
 
 { #category : #accessing }
 BoardGame >> findPlayersRanking [
-	^ board findPlayersRanking.
+	^board playersRanking.
 ]
 
 { #category : #initialize }
-BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields [
+BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields winnedWhenReach: aSpinNumber [
 	self verifyIfItIsNotEmpty: aGroupOfPlayers .
 	diceCup := aDiceCup.
 	players := aGroupOfPlayers.
 	isFinished := false.
 	playersTurnIdentificator := 1.
+	spinsNeededToWin := aSpinNumber.
+	"winner := nil."
 	board:= Board madeUpOf: aNumberOfFields havingAtAnInitialPosition: players.
 ]
 
@@ -69,12 +73,18 @@ BoardGame >> isFinished [
 ]
 
 { #category : #actions }
+BoardGame >> knowsInWhichSpinIs: aPlayer [ 
+	^ aPlayer spin.
+]
+
+{ #category : #actions }
 BoardGame >> nextTurn [
 	| player |
 	self verifyIfTheGameHasFinished.
 	player:= players at: playersTurnIdentificator.
 	result := diceCup throw.
-	board move: player over: result in: self.
+	board move: player over: result.
+	(player spin > spinsNeededToWin) ifTrue: [self changeCurrentStateToFinished ].
 	self updatePlayersTurnIdentificator. 
 	
 ]
@@ -128,5 +138,5 @@ BoardGame >> verifyIfTheGameIsInProcess [
 { #category : #actions }
 BoardGame >> winner [
 	self verifyIfTheGameIsInProcess.	
-	^ board findThePlayerAtTheFinishLine.
+	^ winner.
 ]

@@ -2,7 +2,8 @@ Class {
 	#name : #Player,
 	#superclass : #Object,
 	#instVars : [
-		'name'
+		'name',
+		'spin'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -15,9 +16,20 @@ Player class >> called: aName [
 { #category : #initialize }
 Player >> initializeCalled: aName [
 	name:= aName.
+	spin:= 1.
 ]
 
 { #category : #accessing }
 Player >> name [
   ^ name
+]
+
+{ #category : #accesing }
+Player >> spin [
+	^ spin
+]
+
+{ #category : #actions }
+Player >> startsANewSpin [
+	 spin := spin +1.
 ]
