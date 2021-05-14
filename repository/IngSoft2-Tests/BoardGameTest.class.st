@@ -4,6 +4,27 @@ Class {
 	#category : #'IngSoft2-Tests'
 }
 
+{ #category : #positionTest }
+BoardGameTest >> creationOfBoardGameWithThreePlayers [
+	| aBoardGame aGroupOfDices aDiceCup aSpinNumber aNumberOfFields secondDice firstDice aGroupOfPlayers thirdDice |
+	firstDice := DeterministicDice with: #(2 4 7 2).
+	secondDice := DeterministicDice with: #(8 5 4 7 2).
+	thirdDice := DeterministicDice with: #(4 1 2 7 2).
+	aGroupOfPlayers := {'Pau' . 'Male' . 'Belu'}.
+	aGroupOfDices := {firstDice.
+	secondDice.
+	thirdDice}.
+	aDiceCup := DiceCup containing: aGroupOfDices.
+	aNumberOfFields := 50.
+	aSpinNumber := 3.
+	aBoardGame := BoardGame
+		playedBy: aGroupOfPlayers
+		using: aDiceCup
+		onABoardOf: aNumberOfFields
+		winnedWhenReach: aSpinNumber.
+	^ aBoardGame
+]
+
 { #category : #accessingTests }
 BoardGameTest >> newBoardGameWithASinglePlayer [
 	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber |
@@ -140,6 +161,30 @@ BoardGameTest >> testABoardGameHasOnePlayer [
 	aBoardGame := self newBoardGameWithASinglePlayer.
 	
 	self assert: (aBoardGame numberOfPlayers) identicalTo: 1.
+]
+
+{ #category : #positionTest }
+BoardGameTest >> testABoardGameHasThreePlayersThatChangePositionOvertime [
+	| aBoardGame |
+	aBoardGame := self creationOfBoardGameWithThreePlayers.
+	1 to: 5 do: [ :n | aBoardGame nextTurn ].
+	self
+		assert: aBoardGame ranking
+		equals:
+			(OrderedCollection
+				newFrom:
+					{'1) Pau, round: 1 field: 31' . '2) Male, round: 1 field: 17'.
+					'3) Belu, round: 1 field: 14'})
+]
+
+{ #category : #positionTest }
+BoardGameTest >> testABoardGameHasThreePlayersWithAnInitialPosition [
+	| aBoardGame |
+	aBoardGame := self creationOfBoardGameWithThreePlayers.
+
+	self assert: (aBoardGame ranking) equals: (OrderedCollection newFrom: { '1) Pau, round: 1 field: 1'. '2) Male, round: 1 field: 1'. '3) Belu, round: 1 field: 1'}).
+
+	
 ]
 
 { #category : #statusTests }

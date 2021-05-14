@@ -10,7 +10,9 @@ Class {
 		'actualPosition',
 		'board',
 		'spinsNeededToWin',
-		'winner'
+		'winner',
+		'playersPosition',
+		'numberOfFields'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -28,6 +30,24 @@ BoardGame >> addOneToPlayersTurnIdentificator [
 { #category : #private }
 BoardGame >> changeCurrentStateToFinished [
 	isFinished := true.
+]
+
+{ #category : #'as yet unclassified' }
+BoardGame >> comparePositions [
+	self shouldBeImplemented.
+]
+
+{ #category : #actions }
+BoardGame >> comparePositions: positionOne with: positionTwo [
+	| digits |
+	digits:= numberOfFields asString size.
+	^ (self idOf: positionOne )> (self idOf: positionTwo).
+]
+
+{ #category : #initialize }
+BoardGame >> createCollectionWithInitialPositions [
+	^ players collect: [ :aPlayer | Position determinedMainlyBy: 1 andSecondlyBy: 1 has: aPlayer].
+	
 ]
 
 { #category : #'error messages' }
@@ -55,6 +75,13 @@ BoardGame >> findPlayersRanking [
 	^board playersRanking.
 ]
 
+{ #category : #actions }
+BoardGame >> idOf: aPosition [ 
+	| digits |
+	digits:= numberOfFields asString size.
+	^((aPosition round *(10**(digits-1)))+ aPosition field )
+]
+
 { #category : #initialize }
 BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields winnedWhenReach: aSpinNumber [
 	self verifyIfItIsNotEmpty: aGroupOfPlayers .
@@ -63,8 +90,10 @@ BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNu
 	isFinished := false.
 	playersTurnIdentificator := 1.
 	spinsNeededToWin := aSpinNumber.
+	numberOfFields := aNumberOfFields.
 	"winner := nil."
-	board:= Board madeUpOf: aNumberOfFields havingAtAnInitialPosition: players.
+	"board:= Board madeUpOf: aNumberOfFields havingAtAnInitialPosition: players."
+	playersPosition:= OrderedCollection newFrom: (self createCollectionWithInitialPositions).
 ]
 
 { #category : #accessing }
@@ -78,13 +107,25 @@ BoardGame >> knowsInWhichSpinIs: aPlayer [
 ]
 
 { #category : #actions }
+BoardGame >> move: aPlayer over: aNumberOfFields [ 
+	| oldPosition newPosition |
+	oldPosition:=playersPosition detect: [ :aPosition | aPosition player= aPlayer ].
+	newPosition:= Position determinedMainlyBy: (oldPosition round) andSecondlyBy: (oldPosition field  + aNumberOfFields ) has: aPlayer. 
+	playersPosition remove: oldPosition.
+	playersPosition add: newPosition.
+	playersPosition sort: [ :positionOne :positionTwo | self comparePositions: positionOne with: positionTwo].
+	
+]
+
+{ #category : #actions }
 BoardGame >> nextTurn [
 	| player |
 	self verifyIfTheGameHasFinished.
 	player:= players at: playersTurnIdentificator.
 	result := diceCup throw.
-	board move: player over: result.
-	(player spin > spinsNeededToWin) ifTrue: [self changeCurrentStateToFinished ].
+	"board move: player over: result."
+	self move: player over: result.
+	((self spinOf: player ) > spinsNeededToWin) ifTrue: [self changeCurrentStateToFinished ].
 	self updatePlayersTurnIdentificator. 
 	
 ]
@@ -102,6 +143,18 @@ BoardGame >> numberOfPlayers [
 { #category : #private }
 BoardGame >> originalPlayersTurnIdentificator [
 	playersTurnIdentificator:= 1.
+]
+
+{ #category : #accesing }
+BoardGame >> ranking [
+	^ playersPosition withIndexCollect: [:aPosition :index | index asString, ') ',aPosition description].
+]
+
+{ #category : #actions }
+BoardGame >> spinOf: aPlayer [
+	| aPosition |
+	aPosition:= playersPosition detect: [:position | position player= aPlayer ].
+	^ aPosition round.
 ]
 
 { #category : #private }
