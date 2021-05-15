@@ -4,7 +4,7 @@ Class {
 	#category : #'IngSoft2-Tests'
 }
 
-{ #category : #positionTest }
+{ #category : #positionTests }
 BoardGameTest >> creationOfBoardGameWithThreePlayers [
 	| aBoardGame aGroupOfDices aDiceCup aSpinNumber aNumberOfFields secondDice firstDice aGroupOfPlayers thirdDice |
 	firstDice := DeterministicDice with: #(2 4 7 2).
@@ -28,7 +28,7 @@ BoardGameTest >> creationOfBoardGameWithThreePlayers [
 { #category : #accessingTests }
 BoardGameTest >> newBoardGameWithASinglePlayer [
 	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber |
-	aPlayer := Player called: 'Pau'.
+	aPlayer := 'Pau'.
 	aDice := DeterministicDice with: #(2 4 7 3).
 	aGroupOfPlayers := {aPlayer}.
 	aGroupOfDices := {aDice}.
@@ -41,15 +41,11 @@ BoardGameTest >> newBoardGameWithASinglePlayer [
 
 { #category : #accessingTests }
 BoardGameTest >> newBoardGameWithMultiplePlayers [
-	| aBoardGame firstPlayer secondDice aGroupOfPlayers aGroupOfDices firstDice aNumberOfFields thirdPlayer fourthPlayer secondPlayer thirdDice aDiceCup aSpinNumber |
-	firstPlayer := Player called: 'Pau'.
-	secondPlayer := Player called: 'Male'.
-	thirdPlayer := Player called: 'Belu'.
-	fourthPlayer := Player called: 'Juli'.
+	| aBoardGame secondDice aGroupOfPlayers aGroupOfDices firstDice aNumberOfFields thirdDice aDiceCup aSpinNumber |
 	firstDice := DeterministicDice with: #(2 4 7 2).
 	secondDice := DeterministicDice with: #(8 5 4 7 2).
 	thirdDice := DeterministicDice with: #(4 1 2 7 2).
-	aGroupOfPlayers := {firstPlayer.  secondPlayer . thirdPlayer . fourthPlayer}.
+	aGroupOfPlayers := {'Pau' . 'Male' . 'Belu' . 'Juli'}.
 	aGroupOfDices := {firstDice. secondDice. thirdDice}.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aNumberOfFields := 50.
@@ -65,9 +61,7 @@ BoardGameTest >> testABoardGameCanDistinguishBetweenWhoseTurnIsIt [
 	| aBoardGame |
 	aBoardGame := self newBoardGameWithMultiplePlayers.
 	1 to: 5 do: [ :n | aBoardGame nextTurn ].
-	
-	self assert: (aBoardGame findPlayersRanking ) equals: (OrderedCollection newFrom: (#('1) Pau: 21' '2) Juli: 17' '3) Belu: 14' '4) Male: 11'))).
-	 
+	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: #('1) Pau, round: 1 field: 21' '2) Juli, round: 1 field: 17' '3) Belu, round: 1 field: 14'  '4) Male, round: 1 field: 11')).
 ]
 
 { #category : #accessingTests }
@@ -90,12 +84,47 @@ BoardGameTest >> testABoardGameDoesntHaveAWinnerYet [
 		withExceptionDo: [:error | self assert: error messageText equals: 'The board game has not finished yet, so it does not have a winner.' ].
 ]
 
+{ #category : #positionTests }
+BoardGameTest >> testABoardGameHasAFinalRanking [
+	| aBoardGame |
+	aBoardGame := self creationOfBoardGameWithThreePlayers.
+	1 to: 34 do: [ :n | aBoardGame nextTurn ].
+	self
+		assert: aBoardGame ranking
+		equals:
+			(OrderedCollection
+				newFrom:
+					{'1) Pau, round: 4 field: 6' . '2) Belu, round: 3 field: 34'.
+					'3) Male, round: 3 field: 29'})
+]
+
 { #category : #accessingTests }
 BoardGameTest >> testABoardGameHasARanking [
 	| aBoardGame |
 	aBoardGame := self newBoardGameWithASinglePlayer.
 	1 to: 6 do: [ :n | aBoardGame nextTurn ].
-	self assert: aBoardGame findPlayersRanking equals: (OrderedCollection newFrom: {'1) Pau: 20'}).
+	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {'1) Pau, round: 2 field: 3'}).
+]
+
+{ #category : #positionTests }
+BoardGameTest >> testABoardGameHasAWinner [
+	| aBoardGame |
+	aBoardGame := self creationOfBoardGameWithThreePlayers.
+	1 to: 34 do: [ :n | aBoardGame nextTurn ].
+	self
+		assert: aBoardGame winner 
+		equals: 'Pau'.
+]
+
+{ #category : #positionTests }
+BoardGameTest >> testABoardGameHasAlreayFinishedSoNoOneCanContinuePlaying [
+	| aBoardGame |
+	aBoardGame := self creationOfBoardGameWithThreePlayers.
+	1 to: 34 do: [ :n | aBoardGame nextTurn ].
+	self 
+		should:[aBoardGame nextTurn] 
+		raise: Error 
+		withExceptionDo: [:error | self assert: error messageText equals: 'The board game has already finished, contestants can not play anymore.' ].
 ]
 
 { #category : #statusTests }
@@ -110,35 +139,33 @@ BoardGameTest >> testABoardGameHasFinished [
 
 { #category : #statusTests }
 BoardGameTest >> testABoardGameHasFinishedAndHasAWinner [
-	| paula aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup jorge aSpinNumber |
-	paula := Player called: 'Pau'.
-	jorge := Player called: 'Jorge'.
+	| pau aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup jorge aSpinNumber |
+	pau := 'Pau'.
+	jorge := 'Jorge'.
 	aDice := DeterministicDice with: #(2 4 7 3).
-	aGroupOfPlayers := {paula. jorge}.
+	aGroupOfPlayers := {pau. jorge}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 11.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aSpinNumber:=1.
 	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields winnedWhenReach: aSpinNumber.
-	self assert: (aBoardGame findInWhichPositionIs: paula) equals: 1.
-	self assert: (aBoardGame findInWhichPositionIs: jorge) equals: 1.
+	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 1.
+	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 1.
 	aBoardGame nextTurn.
 	self deny: aBoardGame isFinished.
-	self assert: (aBoardGame findInWhichPositionIs: paula) equals: 3.
-	self assert: (aBoardGame findInWhichPositionIs: jorge) equals: 1.
+	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 3.
+	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 1.
 	aBoardGame nextTurn.
-	self assert: (aBoardGame findInWhichPositionIs: paula) equals: 3.
-	self assert: (aBoardGame findInWhichPositionIs: jorge) equals: 5.
+	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 3.
+	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 5.
 	aBoardGame nextTurn.
-	self assert: (aBoardGame findInWhichPositionIs: paula) equals: 10.
-	self assert: (aBoardGame findInWhichPositionIs: jorge) equals: 5.
+	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 10.
+	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 5.
 	aBoardGame nextTurn.
-	self assert: (aBoardGame findInWhichPositionIs: paula) equals: 10.
-	self assert: (aBoardGame findInWhichPositionIs: jorge) equals: 8.
+	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 10.
+	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 8.
 	aBoardGame nextTurn.
-	self assert: (aBoardGame findInWhichPositionIs: paula) equals: 11.
-	self assert: (aBoardGame findInWhichPositionIs: jorge) equals: 8.
-	self assert: aBoardGame winner equals: paula
+	self assert: aBoardGame winner equals: pau
 ]
 
 { #category : #validationTests }
@@ -163,7 +190,7 @@ BoardGameTest >> testABoardGameHasOnePlayer [
 	self assert: (aBoardGame numberOfPlayers) identicalTo: 1.
 ]
 
-{ #category : #positionTest }
+{ #category : #positionTests }
 BoardGameTest >> testABoardGameHasThreePlayersThatChangePositionOvertime [
 	| aBoardGame |
 	aBoardGame := self creationOfBoardGameWithThreePlayers.
@@ -177,7 +204,21 @@ BoardGameTest >> testABoardGameHasThreePlayersThatChangePositionOvertime [
 					'3) Belu, round: 1 field: 14'})
 ]
 
-{ #category : #positionTest }
+{ #category : #positionTests }
+BoardGameTest >> testABoardGameHasThreePlayersThatChangeRoundNumberOvertime [
+	| aBoardGame |
+	aBoardGame := self creationOfBoardGameWithThreePlayers.
+	1 to: 25 do: [ :n | aBoardGame nextTurn ].
+	self
+		assert: aBoardGame ranking
+		equals:
+			(OrderedCollection
+				newFrom:
+					{'1) Pau, round: 3 field: 11' . '2) Belu, round: 3 field: 5'.
+					'3) Male, round: 2 field: 39'})
+]
+
+{ #category : #positionTests }
 BoardGameTest >> testABoardGameHasThreePlayersWithAnInitialPosition [
 	| aBoardGame |
 	aBoardGame := self creationOfBoardGameWithThreePlayers.
@@ -196,29 +237,13 @@ BoardGameTest >> testABoardGameIsInProcess [
 	self deny: (aBoardGame isFinished).
 ]
 
-{ #category : #circularBoardTest }
-BoardGameTest >> testABoardGameKnowsInWhichSpinItIs [
-	| aPlayer aDice aGroupOfPlayers aGroupOfDices aNumberOfFields aDiceCup aBoardGame aSpinNumber |
-	aPlayer := Player called: 'Pau'.
-	aDice := DeterministicDice with: #(2 4 7 3).
-	aGroupOfPlayers := {aPlayer}.
-	aGroupOfDices := {aDice}.
-	aNumberOfFields := 20.
-	aDiceCup := DiceCup containing: aGroupOfDices.
-	aSpinNumber:=1.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields winnedWhenReach: aSpinNumber.
-	self assert: (aBoardGame knowsInWhichSpinIs: aPlayer) identicalTo: 1.
-	1 to: 6 do: [ :n | aBoardGame nextTurn ].
-	self assert: (aBoardGame knowsInWhichSpinIs: aPlayer) identicalTo: 2.	
-]
-
 { #category : #accessingTests }
-BoardGameTest >> testABoardGameKnowsThePlayersPosition [
+BoardGameTest >> testABoardGameKnowsThePlayersInitialPosition [
  		
 	| aBoardGame |
 	aBoardGame := self newBoardGameWithASinglePlayer.
 	
-	self assert: (aBoardGame findPlayersRanking) equals: (OrderedCollection newFrom: #('1) Pau: 1')).
+	self assert: (aBoardGame ranking) equals: (OrderedCollection newFrom: #('1) Pau, round: 1 field: 1')).
 ]
 
 { #category : #playingTests }
@@ -228,14 +253,14 @@ BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowADiceAndMoveOnThe
 	aBoardGame := self newBoardGameWithASinglePlayer.
 	aBoardGame nextTurn.
 	
-	self assert: (aBoardGame findPlayersRanking) equals: (OrderedCollection newFrom: #('1) Pau: 3')).
+	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: #('1) Pau, round: 1 field: 3')).
 ]
 
 { #category : #playingTests }
 BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowThreeDicesSimultaneously [
  		
 	| aPlayer aBoardGame aGroupOfPlayers aGroupOfDices firstDice secondDice thirdDice aNumberOfFields aDiceCup aSpinNumber |
-	aPlayer:= Player called: 'Pau'.
+	aPlayer:= 'Pau'.
 	firstDice:= DeterministicDice with:#(2 4 7 2).
 	secondDice:= DeterministicDice with:#(8 5 4 7 2).
 	thirdDice:= DeterministicDice with:#(4 1 2 7 2).
@@ -247,8 +272,8 @@ BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowThreeDicesSimulta
 	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields winnedWhenReach: aSpinNumber.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
-	
-	self assert: (aBoardGame findPlayersRanking) equals: (OrderedCollection newFrom: #('1) Pau: 25'))..
+	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: #('1) Pau, round: 1 field: 25')).
+
 ]
 
 { #category : #validationTests }
@@ -268,34 +293,46 @@ BoardGameTest >> testABoardGameNeedsAtLeastOnePlayer [
 		withExceptionDo: [:error | self assert: error messageText equals: 'The board game must have at leaste ONE player'].
 ]
 
-{ #category : #circularBoardTest }
-BoardGameTest >> testAPlayerMustGoThreeTimesAroundTheBoardToWin [
-	| aPlayer aDice aGroupOfPlayers aGroupOfDices aNumberOfFields aDiceCup aBoardGame aSpinNumber |
-	aPlayer := Player called: 'Pau'.
-	aDice := DeterministicDice with: #(2 4 7 3).
-	aGroupOfPlayers := {aPlayer}.
-	aGroupOfDices := {aDice}.
-	aNumberOfFields := 20.
-	aSpinNumber := 3.
-	aDiceCup := DiceCup containing: aGroupOfDices.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields winnedWhenReach: aSpinNumber.
-	1 to: 6 do: [ :n | aBoardGame nextTurn ].
-	self assert: aBoardGame findPlayersRanking equals: (OrderedCollection newFrom: {'1) Pau: 20'}).	
+{ #category : #fieldsEffectTests }
+BoardGameTest >> testAFieldHasNoEffect [
+	| aBoardGame |
+	aBoardGame := self creationOfBoardGameWithThreePlayers.
+	1 to: 5 do: [ :n | aBoardGame nextTurn ].
+	self
+		assert: aBoardGame ranking
+		equals:
+			(OrderedCollection
+				newFrom:
+					{'1) Pau, round: 1 field: 31' . '2) Male, round: 1 field: 17'.
+					'3) Belu, round: 1 field: 14'})
 ]
 
-{ #category : #accessingTests }
-BoardGameTest >> testTheBoardGameHas20Fields [
- 			
+{ #category : #fieldsEffectTests }
+BoardGameTest >> testAFieldHasWormHoleEffect [
+	| aBoardGame |
+	aBoardGame := self creationOfBoardGameWithThreePlayers.
+	1 to: 5 do: [ :n | aBoardGame nextTurn ].
+	self
+		assert: aBoardGame ranking
+		equals:
+			(OrderedCollection
+				newFrom:
+					{'1) Pau, round: 1 field: 31' . '2) Male, round: 1 field: 13'.
+					'3) Belu, round: 1 field: 14'})
+]
+
+{ #category : #circularBoardTests }
+BoardGameTest >> testAPlayerMustGoThreeTimesAroundTheBoardToWin [
 	| aBoardGame |
 	aBoardGame := self newBoardGameWithASinglePlayer.
-	
-	self assert: (aBoardGame numberOfFields) equals: 20.
+	1 to: 6 do: [ :n | aBoardGame nextTurn ].
+	self assert: aBoardGame winner equals: 'Pau'.	
 ]
 
-{ #category : #circularBoardTest }
+{ #category : #circularBoardTests }
 BoardGameTest >> testTheBoardIsCircular [
 	| aBoardGame |
 	aBoardGame := self newBoardGameWithASinglePlayer.
 	1 to: 6 do: [ :n | aBoardGame nextTurn ].
-	self assert: aBoardGame findPlayersRanking equals: (OrderedCollection newFrom: {'1) Pau: 3'}).
+	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {'1) Pau, round: 2 field: 3'}).
 ]
