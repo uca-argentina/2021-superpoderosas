@@ -145,7 +145,7 @@ BoardGameTest >> testABoardGameHasFinishedAndHasAWinner [
 	aDice := DeterministicDice with: #(2 4 7 3).
 	aGroupOfPlayers := {pau. jorge}.
 	aGroupOfDices := {aDice}.
-	aNumberOfFields := 11.
+	aNumberOfFields := 20.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aSpinNumber:=1.
 	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields winnedWhenReach: aSpinNumber.
@@ -294,17 +294,56 @@ BoardGameTest >> testABoardGameNeedsAtLeastOnePlayer [
 ]
 
 { #category : #fieldsEffectTests }
-BoardGameTest >> testAFieldHasNoEffect [
+BoardGameTest >> testAFieldHasASpeedUpEffect [
 	| aBoardGame |
 	aBoardGame := self creationOfBoardGameWithThreePlayers.
-	1 to: 5 do: [ :n | aBoardGame nextTurn ].
+	1 to: 6 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
 		equals:
 			(OrderedCollection
 				newFrom:
-					{'1) Pau, round: 1 field: 31' . '2) Male, round: 1 field: 17'.
-					'3) Belu, round: 1 field: 14'})
+					{'1) Belu, round: 1 field: 34'.'2) Pau, round: 1 field: 31' . '3) Male, round: 1 field: 13'})
+]
+
+{ #category : #fieldsEffectTests }
+BoardGameTest >> testAFieldHasAtomicBombEffect [
+	| aBoardGame |
+	aBoardGame := self creationOfBoardGameWithThreePlayers.
+	1 to: 7 do: [ :n | aBoardGame nextTurn ].
+	self
+		assert: aBoardGame ranking
+		equals:
+			(OrderedCollection
+				newFrom:
+					{'1) Pau, round: 1 field: 1'.'2) Male, round: 1 field: 1' . '3) Belu, round: 1 field: 1'})
+]
+
+{ #category : #fieldsEffectTests }
+BoardGameTest >> testAFieldHasMoonWalkEffect [
+	| aBoardGame |
+	aBoardGame := self creationOfBoardGameWithThreePlayers.
+	1 to: 15 do: [ :n | aBoardGame nextTurn ].
+	self
+		assert: aBoardGame ranking
+		equals:
+			(OrderedCollection
+				newFrom:
+					{ '1) Belu, round: 1 field: 32' .'2) Male, round: 1 field: 30' . '3) Pau, round: 1 field: 1'})
+]
+
+{ #category : #fieldsEffectTests }
+BoardGameTest >> testAFieldHasNoEffect [
+	| aBoardGame |
+	aBoardGame := self creationOfBoardGameWithThreePlayers.
+	1 to: 4 do: [ :n | aBoardGame nextTurn ].
+	self
+		assert: aBoardGame ranking
+		equals:
+			(OrderedCollection
+				newFrom:
+					{'1) Pau, round: 1 field: 31' .'2) Belu, round: 1 field: 14'. '3) Male, round: 1 field: 11'}).
+
 ]
 
 { #category : #fieldsEffectTests }
@@ -317,8 +356,7 @@ BoardGameTest >> testAFieldHasWormHoleEffect [
 		equals:
 			(OrderedCollection
 				newFrom:
-					{'1) Pau, round: 1 field: 31' . '2) Male, round: 1 field: 13'.
-					'3) Belu, round: 1 field: 14'})
+					{'1) Pau, round: 1 field: 31' . '2) Belu, round: 1 field: 14'. '3) Male, round: 1 field: 13'})
 ]
 
 { #category : #circularBoardTests }
@@ -327,6 +365,34 @@ BoardGameTest >> testAPlayerMustGoThreeTimesAroundTheBoardToWin [
 	aBoardGame := self newBoardGameWithASinglePlayer.
 	1 to: 6 do: [ :n | aBoardGame nextTurn ].
 	self assert: aBoardGame winner equals: 'Pau'.	
+]
+
+{ #category : #fieldsEffectTests }
+BoardGameTest >> testAnotherFieldHasWormHoleEffect [
+		| firstDice secondDice thirdDice aGroupOfPlayers aGroupOfDices aDiceCup aNumberOfFields aSpinNumber aBoardGame |
+	firstDice := DeterministicDice with: #(6 14 7 2).
+	secondDice := DeterministicDice with: #(1 8 5 11 8).
+	thirdDice := DeterministicDice with: #(9 4 2 17 12).
+	aGroupOfPlayers := {'Pau' . 'Male' . 'Belu'}.
+	aGroupOfDices := {firstDice.
+	secondDice.
+	thirdDice}.
+	aDiceCup := DiceCup containing: aGroupOfDices.
+	aNumberOfFields := 50.
+	aSpinNumber := 3.
+	aBoardGame := BoardGame
+		playedBy: aGroupOfPlayers
+		using: aDiceCup
+		onABoardOf: aNumberOfFields
+		winnedWhenReach: aSpinNumber.
+		
+	1 to: 5 do: [ :n | aBoardGame nextTurn ].
+	self
+		assert: aBoardGame ranking
+		equals:
+			(OrderedCollection
+				newFrom:
+					{'1) Pau, round: 1 field: 31' . '2) Belu, round: 1 field: 14'. '3) Male, round: 1 field: 13'})
 ]
 
 { #category : #circularBoardTests }

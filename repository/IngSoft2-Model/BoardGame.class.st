@@ -92,13 +92,14 @@ BoardGame >> isFinished [
 
 { #category : #actions }
 BoardGame >> move: aPlayer over: aNumberOfFields from: oldPosition [
-	| newPosition newFieldNumber newRoundNumber totalFields |
+	| newPosition newFieldNumber newRoundNumber totalFields  |
 	totalFields:=(oldPosition field  + aNumberOfFields ).
 	newFieldNumber:= totalFields % numberOfFields .
 	newRoundNumber := oldPosition round + (totalFields // numberOfFields).
 	newPosition:= Position determinedMainlyBy: newRoundNumber andSecondlyBy: newFieldNumber has: aPlayer.
 	playersPosition remove: oldPosition.
 	playersPosition add: newPosition.
+	board applyTheEffectOn: playersPosition determinedBy: newPosition onABoardWith: numberOfFields. 
 	playersPosition sort: [ :positionOne :positionTwo | self comparePositions: positionOne with: positionTwo].
 	
 ]
