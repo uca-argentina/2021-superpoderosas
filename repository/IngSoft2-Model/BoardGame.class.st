@@ -31,10 +31,8 @@ BoardGame >> changeCurrentStateToFinished [
 	isFinished := true.
 ]
 
-{ #category : #actions }
+{ #category : #private }
 BoardGame >> comparePositions: positionOne with: positionTwo [
-	| digits |
-	digits:= numberOfFields asString size.
 	^ (self idOf: positionOne )> (self idOf: positionTwo).
 ]
 
@@ -48,6 +46,14 @@ BoardGame >> createCollectionWithInitialPositions [
 BoardGame >> detectPositionOf: player [
  ^playersPosition detect: [ :aPosition | aPosition player= player ].
 	
+]
+
+{ #category : #private }
+BoardGame >> endGameTheWinnerIs: player [
+	| newPosition |
+	newPosition := self detectPositionOf: player.
+	newPosition round > spinsNeededToWin
+		ifTrue: [ self changeCurrentStateToFinished ]
 ]
 
 { #category : #'error messages' }
@@ -65,7 +71,7 @@ BoardGame >> errorMessageTheGameHasFinished [
 	^ 'The board game has already finished, contestants can not play anymore.'.
 ]
 
-{ #category : #actions }
+{ #category : #private }
 BoardGame >> idOf: aPosition [ 
 	| digits |
 	digits:= numberOfFields asString size.
@@ -90,32 +96,42 @@ BoardGame >> isFinished [
 	^ isFinished.
 ]
 
+{ #category : #private }
+BoardGame >> lookForPlayerWhoseTurnItIs [
+	^ players at: playersTurnIdentificator
+]
+
+{ #category : #private }
+BoardGame >> move: player along: result [
+	| newPosition oldPosition |
+	oldPosition := self detectPositionOf: player.
+	newPosition := self move: player over: result from: oldPosition.
+	^ newPosition
+]
+
 { #category : #actions }
 BoardGame >> move: aPlayer over: aNumberOfFields from: oldPosition [
-	| newPosition newFieldNumber newRoundNumber totalFields  |
-	totalFields:=(oldPosition field  + aNumberOfFields ).
-	newFieldNumber:= totalFields % numberOfFields .
-	newRoundNumber := oldPosition round + (totalFields // numberOfFields).
-	newPosition:= Position determinedMainlyBy: newRoundNumber andSecondlyBy: newFieldNumber has: aPlayer.
-	playersPosition remove: oldPosition.
-	playersPosition add: newPosition.
-	board applyTheEffectOn: playersPosition determinedBy: newPosition onABoardWith: numberOfFields. 
-	playersPosition sort: [ :positionOne :positionTwo | self comparePositions: positionOne with: positionTwo].
+	| newPosition newFieldNumber newRoundNumber totalFields |
+	totalFields := oldPosition field + aNumberOfFields.
+	newFieldNumber := totalFields % numberOfFields.
+	newRoundNumber := oldPosition round + (self roundsNeedesToBeAddedBasingOn: totalFields).
+	newPosition := Position determinedMainlyBy: newRoundNumber andSecondlyBy: newFieldNumber has: aPlayer.
 	
+	self replace: oldPosition with: newPosition.
+	
+	board applyTheEffectOn: playersPosition determinedBy: newPosition onABoardWith: numberOfFields.
+	playersPosition sort: [ :positionOne :positionTwo | self comparePositions: positionOne with: positionTwo ]
 ]
 
 { #category : #actions }
 BoardGame >> nextTurn [
-	| player oldPosition newPosition result|
+	| player result |
 	self verifyIfTheGameHasFinished.
-	player:= players at: playersTurnIdentificator.
+	player := self lookForPlayerWhoseTurnItIs.
 	result := diceCup throw.
-	oldPosition:= self detectPositionOf: player.
-	newPosition := self move: player over: result from: oldPosition.
-	newPosition :=self detectPositionOf: player.
-	(newPosition round > spinsNeededToWin) ifTrue: [self changeCurrentStateToFinished ].
-	self updatePlayersTurnIdentificator. 
-	
+	self move: player along: result.
+	self endGameTheWinnerIs: player.
+	self updatePlayersTurnIdentificator
 ]
 
 { #category : #actions }
@@ -131,6 +147,17 @@ BoardGame >> originalPlayersTurnIdentificator [
 { #category : #accessing }
 BoardGame >> ranking [
 	^ playersPosition withIndexCollect: [:aPosition :index | index asString, ') ',aPosition description].
+]
+
+{ #category : #private }
+BoardGame >> replace: oldPosition with: newPosition [
+	playersPosition remove: oldPosition.
+	playersPosition add: newPosition
+]
+
+{ #category : #private }
+BoardGame >> roundsNeedesToBeAddedBasingOn: totalFields [
+	^ totalFields // numberOfFields
 ]
 
 { #category : #private }
@@ -159,8 +186,8 @@ BoardGame >> verifyIfTheGameHasFinished [
 
 { #category : #validations }
 BoardGame >> verifyIfTheGameIsInProcess [
-	(isFinished not) 
-		ifTrue: [ Error signal: self errorMessageDoesNotHaveAWinnerYet ] .
+	isFinished
+		ifFalse: [ Error signal: self errorMessageDoesNotHaveAWinnerYet ]
 ]
 
 { #category : #actions }

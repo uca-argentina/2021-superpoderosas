@@ -13,23 +13,11 @@ Board class >> size: aNumberOfFields [
 ]
 
 { #category : #initialize }
-Board >> applyEffectOn: playersPosition determinedBy: aPosition [ 
-	(fields at: (aPosition field)) applyTheEffectOn: playersPosition determinedBy: aPosition .
-	
-	
-	
-
-	
-]
-
-{ #category : #initialize }
-Board >> applyTheEffectOn: playersPosition determinedBy: aPosition onABoardWith: aNumberOfFields [ 
-	(fields at: (aPosition field)) applyTheEffectOn: playersPosition determinedBy: aPosition onABoardWith: aNumberOfFields .
-	
-	
-	
-
-	
+Board >> applyTheEffectOn: playersPosition determinedBy: aPosition onABoardWith: aNumberOfFields [
+	(self lookUpFieldFor: aPosition)
+		applyTheEffectOn: playersPosition
+		determinedBy: aPosition
+		onABoardWith: aNumberOfFields
 ]
 
 { #category : #initialize }
@@ -44,4 +32,9 @@ Board >> initializeSize: aNumberOfFields [
 	
 
 	
+]
+
+{ #category : #initialize }
+Board >> lookUpFieldFor: aPosition [
+	^ fields at: aPosition field
 ]

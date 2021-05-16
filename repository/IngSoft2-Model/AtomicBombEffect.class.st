@@ -5,6 +5,28 @@ Class {
 }
 
 { #category : #actions }
-AtomicBombEffect >> applyTheEffectOn: playersPosition determinedBy: aPosition onABoardWith: aNumberOfFields [ 
-	(1 to:(playersPosition  size)) with: playersPosition do: [:index :position| playersPosition at: index put: (Position determinedMainlyBy: position round andSecondlyBy: 1 has: position player)].
+AtomicBombEffect >> applyTheEffectOn: playersPosition determinedBy: aPosition onABoardWith: aNumberOfFields [
+	(self determineRangeFromOneToSizeOf: playersPosition)
+		with: playersPosition
+		do: [ :index :position | 
+			self
+				at: playersPosition
+				replaceWhereIndexIs: index
+				withNewPositionBasedOn: position ]
+]
+
+{ #category : #private }
+AtomicBombEffect >> at: playersPosition replaceWhereIndexIs: index withNewPositionBasedOn: position [
+	^ playersPosition
+		at: index
+		put:
+			(Position
+				determinedMainlyBy: position round
+				andSecondlyBy: 1
+				has: position player)
+]
+
+{ #category : #private }
+AtomicBombEffect >> determineRangeFromOneToSizeOf: playersPosition [
+	^ 1 to: playersPosition size
 ]
