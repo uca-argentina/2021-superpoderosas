@@ -112,14 +112,22 @@ BoardGame >> move: player along: result [
 BoardGame >> move: aPlayer over: aNumberOfFields from: oldPosition [
 	| newPosition newFieldNumber newRoundNumber totalFields |
 	totalFields := oldPosition field + aNumberOfFields.
-	newFieldNumber := totalFields % numberOfFields.
+	newFieldNumber := totalFields = numberOfFields
+		ifTrue: [ numberOfFields ]
+		ifFalse: [ totalFields % numberOfFields ].
 	newRoundNumber := oldPosition round + (self roundsNeedesToBeAddedBasingOn: totalFields).
-	newPosition := Position determinedMainlyBy: newRoundNumber andSecondlyBy: newFieldNumber has: aPlayer.
-	
+	newPosition := Position
+		determinedMainlyBy: newRoundNumber
+		andSecondlyBy: newFieldNumber
+		has: aPlayer.
 	self replace: oldPosition with: newPosition.
-	
-	board applyTheEffectOn: playersPosition determinedBy: newPosition onABoardWith: numberOfFields.
-	playersPosition sort: [ :positionOne :positionTwo | self comparePositions: positionOne with: positionTwo ]
+	board
+		applyTheEffectOn: playersPosition
+		determinedBy: newPosition
+		onABoardWith: numberOfFields.
+	playersPosition
+		sort:
+			[ :positionOne :positionTwo | self comparePositions: positionOne with: positionTwo ]
 ]
 
 { #category : #actions }
@@ -156,7 +164,7 @@ BoardGame >> replace: oldPosition with: newPosition [
 
 { #category : #private }
 BoardGame >> roundsNeedesToBeAddedBasingOn: totalFields [
-	^ totalFields // numberOfFields
+	^ (totalFields-1) // numberOfFields
 ]
 
 { #category : #private }
