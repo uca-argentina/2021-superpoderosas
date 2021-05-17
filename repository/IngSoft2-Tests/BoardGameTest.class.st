@@ -96,13 +96,6 @@ BoardGameTest >> testABoardGameCanDistinguishBetweenWhoseTurnIsIt [
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: #('1) Pau, round: 1 field: 21'  '2) Belu, round: 1 field: 14'  '3) Juli, round: 1 field: 13'  '4) Male, round: 1 field: 11')).
 ]
 
-{ #category : #accessingTests }
-BoardGameTest >> testABoardGameCanHaveFourPlayers [
-	| aBoardGame |
-	aBoardGame := self newBoardGameWithMultiplePlayers.
-	self assert: aBoardGame numberOfPlayers identicalTo: 4
-]
-
 { #category : #validationTests }
 BoardGameTest >> testABoardGameDoesntHaveAWinnerYet [
  		
@@ -270,15 +263,6 @@ BoardGameTest >> testABoardGameHasFinishedAndPlayersMustBeHalted [
 		should:[aBoardGame nextTurn] 
 		raise: Error 
 		withExceptionDo: [:error | self assert: error messageText equals: 'The board game has already finished, contestants can not play anymore.' ].
-]
-
-{ #category : #accessingTests }
-BoardGameTest >> testABoardGameHasOnePlayer [
- 		
-	| aBoardGame |
-	aBoardGame := self newBoardGameWithASinglePlayer.
-	
-	self assert: (aBoardGame numberOfPlayers) identicalTo: 1.
 ]
 
 { #category : #positionTests }

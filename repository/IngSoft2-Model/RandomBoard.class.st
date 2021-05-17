@@ -8,6 +8,15 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
+{ #category : #initialize }
+RandomBoard >> add: effect aCertain: numberOfTimes from: fieldsToBeSelected onABoardWith: aNumberOfFields [
+	| effectAmountOfFields effectFields |
+	effectFields := OrderedCollection new.
+	effectAmountOfFields := (aNumberOfFields * numberOfTimes) asInteger.
+	1 to: effectAmountOfFields do: [ :field | self addRandomFieldTo: effectFields from: fieldsToBeSelected ].
+	^ effectFields do: [ :fieldNumber | fields at: fieldNumber put: effect ]
+]
+
 { #category : #acccessing }
 RandomBoard >> addRandomFieldTo: aCollection from: anotherCollection [ 
 	| aRandomField |
@@ -22,37 +31,22 @@ RandomBoard >> amountOfFieldsWith: aClass [
 ]
 
 { #category : #initialize }
-RandomBoard >> initializeSize: aNumberOfFields [ 
-	| wormHoleEffectFields speedUpEffectFields moonWalkEffectFields atomicBombEffectFields wormHoleEffectAmountOfFields speedUpEffectAmountOfFields atomicBombEffectAmountOfFields moonWalkEffectAmountOfFields fieldsToBeSelected |
-	numberOfFields := aNumberOfFields .
-	fields := OrderedCollection new: aNumberOfFields withAll: NoEffect new.
-	
-	fieldsToBeSelected:= OrderedCollection new.
-	1 to: numberOfFields do:[:field | fieldsToBeSelected add: field].
-	
-	wormHoleEffectFields:= OrderedCollection new.
-	speedUpEffectFields:= OrderedCollection new.
-	atomicBombEffectFields:= OrderedCollection new.
-	moonWalkEffectFields:= OrderedCollection new.
-	
-	wormHoleEffectAmountOfFields:= ((aNumberOfFields) * 0.2) asInteger .
-	speedUpEffectAmountOfFields:= ((aNumberOfFields) * 0.2) asInteger.
-	atomicBombEffectAmountOfFields:= ((aNumberOfFields) * 0.02) asInteger.
-	moonWalkEffectAmountOfFields:= ((aNumberOfFields) * 0.1) asInteger.
-	
-	1 to: wormHoleEffectAmountOfFields do:[:field | self addRandomFieldTo: wormHoleEffectFields from: fieldsToBeSelected ].
-	1 to: speedUpEffectAmountOfFields do:[:field | self addRandomFieldTo: speedUpEffectFields from: fieldsToBeSelected].
-	1 to: atomicBombEffectAmountOfFields do:[:field | self addRandomFieldTo: atomicBombEffectFields from: fieldsToBeSelected].
-	1 to: moonWalkEffectAmountOfFields do:[:field | self addRandomFieldTo: moonWalkEffectFields from: fieldsToBeSelected].
-		
-	wormHoleEffectFields do: [ :fieldNumber | fields at:fieldNumber put: WormHoleEffect new ].
-	speedUpEffectFields do: [ :fieldNumber | fields at:fieldNumber put: SpeedUpEffect new ].
-	atomicBombEffectFields do: [ :fieldNumber | fields at:fieldNumber put: AtomicBombEffect new ].
-	moonWalkEffectFields do: [ :fieldNumber | fields at:fieldNumber put: (MoonWalkEffect newAt: fieldNumber) ].
-	
-	
-
-	
+RandomBoard >> initializeSize: aNumberOfFields [
+	| fieldsToBeSelected effectDistributionProportion effectToDistrubute |
+	numberOfFields := aNumberOfFields.
+	fields := OrderedCollection
+		new: aNumberOfFields
+		withAll: NoEffect new.
+	fieldsToBeSelected := OrderedCollection new.
+	1 to: numberOfFields do: [ :field | fieldsToBeSelected add: field ].
+	effectToDistrubute := {WormHoleEffect new.
+	SpeedUpEffect new.
+	AtomicBombEffect new.
+	MoonWalkEffect new}.
+	effectDistributionProportion := {0.2 . 0.2 . 0.02 . 0.1}.
+	effectToDistrubute
+		with: effectDistributionProportion
+		do: [ :effect :numberOfTimes | self add: effect aCertain: numberOfTimes from: fieldsToBeSelected onABoardWith: aNumberOfFields ]
 ]
 
 { #category : #initialize }

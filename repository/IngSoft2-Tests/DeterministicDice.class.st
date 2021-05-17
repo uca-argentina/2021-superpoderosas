@@ -16,36 +16,13 @@ DeterministicDice class >> with: aPattern [.
 { #category : #initialize }
 DeterministicDice >> initializeWith: aPattern [ 
 	pattern := aPattern.
-	patternIndex := 0.
-]
-
-{ #category : #private }
-DeterministicDice >> nextPatternIndex [
-	(self verifyIfThePatternIndexHasToBeTheOriginal) 
-		ifTrue:[^self originalPatternIndex]
-		ifFalse:[^ (self updatePatternIndex)].
-]
-
-{ #category : #private }
-DeterministicDice >> originalPatternIndex [
-	^ 1.
+	patternIndex := SequenceSimulator newFrom: (aPattern size).
 ]
 
 { #category : #actions }
 DeterministicDice >> throw [
-	patternIndex:= self nextPatternIndex.
-	^ pattern at: patternIndex.
+	^ pattern at: (patternIndex nextIndex).
 	
 	
 	
-]
-
-{ #category : #private }
-DeterministicDice >> updatePatternIndex [
-	^ patternIndex + 1.
-]
-
-{ #category : #private }
-DeterministicDice >> verifyIfThePatternIndexHasToBeTheOriginal [
-	^ patternIndex == (pattern size)
 ]

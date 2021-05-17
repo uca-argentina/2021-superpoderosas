@@ -22,7 +22,7 @@ DeterministicBoard >> initializeSize: aNumberOfFields [
 	wormHoleEffectFields do: [ :fieldNumber | fields at:fieldNumber put: WormHoleEffect new ].
 	speedUpEffectFields do: [ :fieldNumber | fields at:fieldNumber put: SpeedUpEffect new ].
 	atomicBombEffectFields do: [ :fieldNumber | fields at:fieldNumber put: AtomicBombEffect new ].
-	moonWalkEffectFields do: [ :fieldNumber | fields at:fieldNumber put: (MoonWalkEffect newAt: fieldNumber) ].
+	moonWalkEffectFields do: [ :fieldNumber | fields at:fieldNumber put: (MoonWalkEffect new) ].
 	
 
 	

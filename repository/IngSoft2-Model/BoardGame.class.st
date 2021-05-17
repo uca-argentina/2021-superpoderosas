@@ -27,11 +27,6 @@ BoardGame >> addOneIfThePlayerHasEnteredTheNextRound: totalFields [
 ]
 
 { #category : #private }
-BoardGame >> addOneToPlayersTurnIdentificator [
-	playersTurnIdentificator := playersTurnIdentificator +1.
-]
-
-{ #category : #private }
 BoardGame >> changeCurrentStateToFinished [
 	isFinished := true.
 ]
@@ -89,8 +84,8 @@ BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup on: aBoard winn
 	diceCup := aDiceCup.
 	board:= aBoard.
 	players := aGroupOfPlayers.
+	playersTurnIdentificator := SequenceSimulator newFrom: (aGroupOfPlayers size).
 	isFinished := false.
-	playersTurnIdentificator := 1.
 	spinsNeededToWin := aSpinNumber.
 	numberOfFields := aBoard numberOfFields.
 	playersPosition:= OrderedCollection newFrom: (self createCollectionWithInitialPositions).
@@ -103,7 +98,7 @@ BoardGame >> isFinished [
 
 { #category : #private }
 BoardGame >> lookForPlayerWhoseTurnItIs [
-	^ players at: playersTurnIdentificator
+	^ players at: (playersTurnIdentificator nextIndex).
 ]
 
 { #category : #private }
@@ -143,17 +138,6 @@ BoardGame >> nextTurn [
 	result := diceCup throw.
 	self move: player along: result.
 	self endGameIfTheWinnerIs: player.
-	self updatePlayersTurnIdentificator
-]
-
-{ #category : #actions }
-BoardGame >> numberOfPlayers [
-	^ players size.
-]
-
-{ #category : #private }
-BoardGame >> originalPlayersTurnIdentificator [
-	playersTurnIdentificator:= 1.
 ]
 
 { #category : #accessing }
@@ -165,18 +149,6 @@ BoardGame >> ranking [
 BoardGame >> replace: oldPosition with: newPosition [
 	playersPosition remove: oldPosition.
 	playersPosition add: newPosition
-]
-
-{ #category : #private }
-BoardGame >> updatePlayersTurnIdentificator [
-	(self validateIfPlayersTurnIdentificatorHasToBeTheOriginal)
-        ifTrue: [ self originalPlayersTurnIdentificator]
-        ifFalse: [ self addOneToPlayersTurnIdentificator].
-]
-
-{ #category : #private }
-BoardGame >> validateIfPlayersTurnIdentificatorHasToBeTheOriginal [
-	^ playersTurnIdentificator= self numberOfPlayers .
 ]
 
 { #category : #validations }
