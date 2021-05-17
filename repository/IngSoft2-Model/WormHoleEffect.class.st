@@ -16,7 +16,5 @@ WormHoleEffect >> applyTheEffectOn: playersPosition determinedBy: aPosition onAB
 			((aPosition round ~= 1 & (auxiliarFieldNumber <= 0)) ifTrue: [ aNumberOfFields + (auxiliarFieldNumber) ] ifFalse:[(1 max: auxiliarFieldNumber)])
 		has: 
 			(aPosition player).
-	"replace refactor"
-	playersPosition remove: aPosition.
-	playersPosition add: newPosition.
+	self at: playersPosition replace: aPosition with: newPosition.
 ]

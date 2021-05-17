@@ -22,6 +22,11 @@ BoardGame class >> playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWh
 ]
 
 { #category : #private }
+BoardGame >> addOneIfThePlayerHasEnteredTheNextRound: totalFields [
+	^ (totalFields-1) // numberOfFields
+]
+
+{ #category : #private }
 BoardGame >> addOneToPlayersTurnIdentificator [
 	playersTurnIdentificator := playersTurnIdentificator +1.
 ]
@@ -102,6 +107,13 @@ BoardGame >> lookForPlayerWhoseTurnItIs [
 ]
 
 { #category : #private }
+BoardGame >> lookUpResultingFieldNumberBasingOn: totalFields [
+	^ totalFields = numberOfFields
+		ifTrue: [ numberOfFields ]
+		ifFalse: [ totalFields % numberOfFields ]
+]
+
+{ #category : #private }
 BoardGame >> move: player along: result [
 	| oldPosition |
 	oldPosition := self detectPositionOf: player.
@@ -112,22 +124,15 @@ BoardGame >> move: player along: result [
 BoardGame >> move: aPlayer over: aNumberOfFields from: oldPosition [
 	| newPosition newFieldNumber newRoundNumber totalFields |
 	totalFields := oldPosition field + aNumberOfFields.
-	newFieldNumber := totalFields = numberOfFields
-		ifTrue: [ numberOfFields ]
-		ifFalse: [ totalFields % numberOfFields ].
-	newRoundNumber := oldPosition round + (self roundsNeedesToBeAddedBasingOn: totalFields).
-	newPosition := Position
-		determinedMainlyBy: newRoundNumber
-		andSecondlyBy: newFieldNumber
-		has: aPlayer.
+	newFieldNumber := self lookUpResultingFieldNumberBasingOn: totalFields.
+	newRoundNumber := oldPosition round + (self addOneIfThePlayerHasEnteredTheNextRound: totalFields).
+	
+	newPosition := Position determinedMainlyBy: newRoundNumber andSecondlyBy: newFieldNumber has: aPlayer.
+	
 	self replace: oldPosition with: newPosition.
-	board
-		applyTheEffectOn: playersPosition
-		determinedBy: newPosition
-		onABoardWith: numberOfFields.
-	playersPosition
-		sort:
-			[ :positionOne :positionTwo | self comparePositions: positionOne with: positionTwo ]
+	
+	board applyTheEffectOn: playersPosition determinedBy: newPosition onABoardWith: numberOfFields.
+	playersPosition sort:	[ :positionOne :positionTwo | self comparePositions: positionOne with: positionTwo ]
 ]
 
 { #category : #actions }
@@ -160,11 +165,6 @@ BoardGame >> ranking [
 BoardGame >> replace: oldPosition with: newPosition [
 	playersPosition remove: oldPosition.
 	playersPosition add: newPosition
-]
-
-{ #category : #private }
-BoardGame >> roundsNeedesToBeAddedBasingOn: totalFields [
-	^ (totalFields-1) // numberOfFields
 ]
 
 { #category : #private }

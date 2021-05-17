@@ -8,6 +8,14 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
+{ #category : #acccessing }
+RandomBoard >> addRandomFieldTo: aCollection from: anotherCollection [ 
+	| aRandomField |
+	aRandomField:= anotherCollection atRandom . 
+	aCollection add: aRandomField. 
+	anotherCollection remove: aRandomField
+]
+
 { #category : #accessing }
 RandomBoard >> amountOfFieldsWith: aClass [ 
 	^(fields select:[:field | field class == aClass ]) size .
@@ -15,28 +23,27 @@ RandomBoard >> amountOfFieldsWith: aClass [
 
 { #category : #initialize }
 RandomBoard >> initializeSize: aNumberOfFields [ 
-	| wormHoleEffectFields speedUpEffectFields moonWalkEffectFields atomicBombEffectFields wormHoleEffectAmountOfFields speedUpEffectAmountOfFields atomicBombEffectAmountOfFields moonWalkEffectAmountOfFields fieldsToBeSelected aRandomField |
+	| wormHoleEffectFields speedUpEffectFields moonWalkEffectFields atomicBombEffectFields wormHoleEffectAmountOfFields speedUpEffectAmountOfFields atomicBombEffectAmountOfFields moonWalkEffectAmountOfFields fieldsToBeSelected |
 	numberOfFields := aNumberOfFields .
 	fields := OrderedCollection new: aNumberOfFields withAll: NoEffect new.
+	
+	fieldsToBeSelected:= OrderedCollection new.
+	1 to: numberOfFields do:[:field | fieldsToBeSelected add: field].
 	
 	wormHoleEffectFields:= OrderedCollection new.
 	speedUpEffectFields:= OrderedCollection new.
 	atomicBombEffectFields:= OrderedCollection new.
 	moonWalkEffectFields:= OrderedCollection new.
 	
-	fieldsToBeSelected:= OrderedCollection new.
-	1 to: numberOfFields do:[:field | fieldsToBeSelected add: field].
-	
 	wormHoleEffectAmountOfFields:= ((aNumberOfFields) * 0.2) asInteger .
 	speedUpEffectAmountOfFields:= ((aNumberOfFields) * 0.2) asInteger.
 	atomicBombEffectAmountOfFields:= ((aNumberOfFields) * 0.02) asInteger.
 	moonWalkEffectAmountOfFields:= ((aNumberOfFields) * 0.1) asInteger.
 	
-	"refactor con un extract mthod"
-	1 to: wormHoleEffectAmountOfFields do:[:field | aRandomField:= fieldsToBeSelected atRandom . wormHoleEffectFields add: aRandomField. fieldsToBeSelected remove: aRandomField].
-	1 to: speedUpEffectAmountOfFields do:[:field | aRandomField:= fieldsToBeSelected atRandom . speedUpEffectFields add: aRandomField. fieldsToBeSelected remove: aRandomField].
-	1 to: atomicBombEffectAmountOfFields do:[:field | aRandomField:= fieldsToBeSelected atRandom . atomicBombEffectFields add: aRandomField. fieldsToBeSelected remove: aRandomField].
-	1 to: moonWalkEffectAmountOfFields do:[:field | aRandomField:= fieldsToBeSelected atRandom . moonWalkEffectFields add: aRandomField. fieldsToBeSelected remove: aRandomField].
+	1 to: wormHoleEffectAmountOfFields do:[:field | self addRandomFieldTo: wormHoleEffectFields from: fieldsToBeSelected ].
+	1 to: speedUpEffectAmountOfFields do:[:field | self addRandomFieldTo: speedUpEffectFields from: fieldsToBeSelected].
+	1 to: atomicBombEffectAmountOfFields do:[:field | self addRandomFieldTo: atomicBombEffectFields from: fieldsToBeSelected].
+	1 to: moonWalkEffectAmountOfFields do:[:field | self addRandomFieldTo: moonWalkEffectFields from: fieldsToBeSelected].
 		
 	wormHoleEffectFields do: [ :fieldNumber | fields at:fieldNumber put: WormHoleEffect new ].
 	speedUpEffectFields do: [ :fieldNumber | fields at:fieldNumber put: SpeedUpEffect new ].

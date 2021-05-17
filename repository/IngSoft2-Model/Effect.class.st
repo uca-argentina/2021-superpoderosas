@@ -8,3 +8,9 @@ Class {
 Effect >> applyTheEffectOn: playersPosition determinedBy: aPosition onABoardWith: aNumberOfFields [ 
 	self subclassResponsibility.
 ]
+
+{ #category : #private }
+Effect >> at: playersPosition replace: oldPosition with: newPosition [
+	playersPosition remove: oldPosition.
+	playersPosition add: newPosition
+]

@@ -12,12 +12,6 @@ SpeedUpEffect >> applyTheEffectOn: playersPosition determinedBy: aPosition onABo
 ]
 
 { #category : #private }
-SpeedUpEffect >> at: playersPosition replace: oldPosition with: newPosition [
-	playersPosition remove: oldPosition.
-	playersPosition add: newPosition
-]
-
-{ #category : #private }
 SpeedUpEffect >> findNewFieldNumberBasedOn: aPosition and: aNumberOfFields [
 	^ (aPosition field + 4) % aNumberOfFields
 ]
