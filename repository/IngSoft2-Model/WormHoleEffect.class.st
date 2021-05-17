@@ -7,15 +7,16 @@ Class {
 { #category : #actions }
 WormHoleEffect >> applyTheEffectOn: playersPosition determinedBy: aPosition onABoardWith: aNumberOfFields [ 
 	| newPosition auxiliarFieldNumber |
-	"newPosition:= Position determinedMainlyBy: (aPosition round + ((aPosition field - 4) // aNumberOfFields)) andSecondlyBy: ((aPosition field + 4) % aNumberOfFields) has: (aPosition player)."
-	auxiliarFieldNumber := aPosition  field - 4.
+	auxiliarFieldNumber := (aPosition  field asInteger) - 4.
+	"hacer extract method"
 	newPosition:= Position 
 		determinedMainlyBy: 
-			(1 max: ((aPosition round)-((1 max: auxiliarFieldNumber) // aNumberOfFields))) 
+			((aPosition round ~= 1 & (auxiliarFieldNumber <= 0)) ifTrue: [ (aPosition round asInteger) - 1  ] ifFalse:[aPosition round])
 		andSecondlyBy:
-			( aPosition round ~= 1 & (auxiliarFieldNumber <= 0) ifTrue: [ ^(aNumberOfFields - (aPosition - 4)) ] ifFalse:[(1 max: auxiliarFieldNumber)])
+			((aPosition round ~= 1 & (auxiliarFieldNumber <= 0)) ifTrue: [ aNumberOfFields + (auxiliarFieldNumber) ] ifFalse:[(1 max: auxiliarFieldNumber)])
 		has: 
 			(aPosition player).
+	"replace refactor"
 	playersPosition remove: aPosition.
 	playersPosition add: newPosition.
 ]

@@ -12,8 +12,8 @@ SpeedUpEffect >> applyTheEffectOn: playersPosition determinedBy: aPosition onABo
 ]
 
 { #category : #private }
-SpeedUpEffect >> at: playersPosition replace: aPosition with: newPosition [
-	playersPosition remove: aPosition.
+SpeedUpEffect >> at: playersPosition replace: oldPosition with: newPosition [
+	playersPosition remove: oldPosition.
 	playersPosition add: newPosition
 ]
 
@@ -27,7 +27,7 @@ SpeedUpEffect >> findNewPositionBasedOn: aPosition onABoardWith: aNumberOfFields
 	^ Position
 		determinedMainlyBy: aPosition round + (self roundNeededToBeAddedBasedOn: aPosition and: aNumberOfFields)
 		andSecondlyBy: (self findNewFieldNumberBasedOn: aPosition and: aNumberOfFields)
-		has: aPosition player
+		has: aPosition player.
 ]
 
 { #category : #private }

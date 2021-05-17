@@ -17,8 +17,8 @@ Class {
 }
 
 { #category : #initialization }
-BoardGame class >> playedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields winnedWhenReach: aSpinNumber [
-		^ self new initializePlayedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields winnedWhenReach: aSpinNumber.
+BoardGame class >> playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber [
+		^ self new initializePlayedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
 ]
 
 { #category : #private }
@@ -49,7 +49,7 @@ BoardGame >> detectPositionOf: player [
 ]
 
 { #category : #private }
-BoardGame >> endGameTheWinnerIs: player [
+BoardGame >> endGameIfTheWinnerIs: player [
 	| newPosition |
 	newPosition := self detectPositionOf: player.
 	newPosition round > spinsNeededToWin
@@ -79,15 +79,15 @@ BoardGame >> idOf: aPosition [
 ]
 
 { #category : #initialize }
-BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup onABoardOf: aNumberOfFields winnedWhenReach: aSpinNumber [
+BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber [
 	self verifyIfItIsNotEmpty: aGroupOfPlayers .
 	diceCup := aDiceCup.
-	board:= Board size: aNumberOfFields.
+	board:= aBoard.
 	players := aGroupOfPlayers.
 	isFinished := false.
 	playersTurnIdentificator := 1.
 	spinsNeededToWin := aSpinNumber.
-	numberOfFields := aNumberOfFields.
+	numberOfFields := aBoard numberOfFields.
 	playersPosition:= OrderedCollection newFrom: (self createCollectionWithInitialPositions).
 ]
 
@@ -103,10 +103,9 @@ BoardGame >> lookForPlayerWhoseTurnItIs [
 
 { #category : #private }
 BoardGame >> move: player along: result [
-	| newPosition oldPosition |
+	| oldPosition |
 	oldPosition := self detectPositionOf: player.
-	newPosition := self move: player over: result from: oldPosition.
-	^ newPosition
+	self move: player over: result from: oldPosition.
 ]
 
 { #category : #actions }
@@ -130,7 +129,7 @@ BoardGame >> nextTurn [
 	player := self lookForPlayerWhoseTurnItIs.
 	result := diceCup throw.
 	self move: player along: result.
-	self endGameTheWinnerIs: player.
+	self endGameIfTheWinnerIs: player.
 	self updatePlayersTurnIdentificator
 ]
 

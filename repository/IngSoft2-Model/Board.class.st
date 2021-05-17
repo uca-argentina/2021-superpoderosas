@@ -1,9 +1,6 @@
 Class {
 	#name : #Board,
 	#superclass : #Object,
-	#instVars : [
-		'fields'
-	],
 	#category : #'IngSoft2-Model'
 }
 
@@ -21,20 +18,11 @@ Board >> applyTheEffectOn: playersPosition determinedBy: aPosition onABoardWith:
 ]
 
 { #category : #initialize }
-Board >> initializeSize: aNumberOfFields [ 
-	fields := OrderedCollection new: aNumberOfFields withAll: NoEffect new.
-	fields at: 3 put: WormHoleEffect new.
-	fields at: 17 put: WormHoleEffect new.
-	fields at: 30 put: SpeedUpEffect new.
-	fields at: 44 put: AtomicBombEffect new.
-	fields at: 32 put: (MoonWalkEffect newAt: 32).
-	
-	
-
-	
+Board >> lookUpFieldFor: aPosition [
+	self subclassResponsibility.
 ]
 
 { #category : #initialize }
-Board >> lookUpFieldFor: aPosition [
-	^ fields at: aPosition field
+Board >> numberOfFields [
+	self subclassResponsibility.
 ]
