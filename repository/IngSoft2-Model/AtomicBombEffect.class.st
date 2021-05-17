@@ -25,8 +25,3 @@ AtomicBombEffect >> at: playersPosition replaceWhereIndexIs: index withNewPositi
 				andSecondlyBy: 1
 				has: position player)
 ]
-
-{ #category : #private }
-AtomicBombEffect >> determineRangeFromOneToSizeOf: playersPosition [
-	^ 1 to: playersPosition size
-]

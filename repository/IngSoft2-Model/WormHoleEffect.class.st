@@ -6,32 +6,24 @@ Class {
 
 { #category : #actions }
 WormHoleEffect >> applyTheEffectOn: playersPosition determinedBy: aPosition onABoardWith: aNumberOfFields [
-	| newPosition auxiliarFieldNumber auxiliarRoundNumber |
-	auxiliarFieldNumber := aPosition field asInteger - 4.
+	| newPosition |
+	newPosition := self findNewPositionBasedOn: aPosition onABoardWith: aNumberOfFields.
+
+	self at: playersPosition replace: aPosition with: newPosition.
+]
+
+{ #category : #actions }
+WormHoleEffect >> findNewFieldNumberBasedOn: aPosition and: aNumberOfFields [
+	^ aPosition field asInteger - 4.
+]
+
+{ #category : #actions }
+WormHoleEffect >> findNewPositionBasedOn: aPosition onABoardWith: aNumberOfFields [
+	| auxiliarRoundNumber auxiliarFieldNumber |
+	auxiliarFieldNumber := self findNewFieldNumberBasedOn: aPosition and: aNumberOfFields.
 	auxiliarRoundNumber := aPosition round.
-	"hacer extract method"
-	newPosition := Position
+	^ Position
 		determinedMainlyBy: (self determineNewRoundBasingMainlyOn: auxiliarRoundNumber andSecondlyOn: auxiliarFieldNumber)
 		andSecondlyBy: (self determineNewFieldBasingMainlyOn: auxiliarRoundNumber andSecondlyOn:auxiliarFieldNumber onABoardWith: aNumberOfFields )
 		has: aPosition player.
-	self at: playersPosition replace: aPosition with: newPosition
-]
-
-{ #category : #actions }
-WormHoleEffect >> determineNewFieldBasingMainlyOn: auxiliarRoundNumber andSecondlyOn:auxiliarFieldNumber onABoardWith: aNumberOfFields [ 
-	((self verifyIf: auxiliarRoundNumber needsToBeChangedBasingOn: auxiliarFieldNumber)
-				ifTrue: [ ^(aNumberOfFields + auxiliarFieldNumber) ]
-				ifFalse: [ ^(1 max: auxiliarFieldNumber) ])
-]
-
-{ #category : #actions }
-WormHoleEffect >> determineNewRoundBasingMainlyOn: auxiliarRoundNumber andSecondlyOn:auxiliarFieldNumber [
-	((self verifyIf: auxiliarRoundNumber needsToBeChangedBasingOn: auxiliarFieldNumber)
-			ifTrue: [ ^ (auxiliarRoundNumber asInteger - 1) ]
-			ifFalse: [ ^ auxiliarRoundNumber ])
-]
-
-{ #category : #actions }
-WormHoleEffect >> verifyIf: auxiliarRoundNumber needsToBeChangedBasingOn: auxiliarFieldNumber [
-	^ auxiliarRoundNumber ~= 1 & (auxiliarFieldNumber <= 0)
 ]

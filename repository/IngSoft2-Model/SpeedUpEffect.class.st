@@ -7,13 +7,13 @@ Class {
 { #category : #actions }
 SpeedUpEffect >> applyTheEffectOn: playersPosition determinedBy: aPosition onABoardWith: aNumberOfFields [
 	| newPosition |
-	newPosition := self findNewPositionBasedOn: aPosition onABoardWith: aNumberOfFields .
-	self at: playersPosition replace: aPosition with: newPosition
+	newPosition := self findNewPositionBasedOn:  aPosition onABoardWith: aNumberOfFields.
+	self at: playersPosition replace: aPosition with: newPosition.
 ]
 
 { #category : #private }
 SpeedUpEffect >> findNewFieldNumberBasedOn: aPosition and: aNumberOfFields [
-	^ (aPosition field + 4) % aNumberOfFields
+	^ (aPosition field + 4) % aNumberOfFields.
 ]
 
 { #category : #private }
@@ -26,5 +26,5 @@ SpeedUpEffect >> findNewPositionBasedOn: aPosition onABoardWith: aNumberOfFields
 
 { #category : #private }
 SpeedUpEffect >> roundNeededToBeAddedBasedOn: aPosition and: aNumberOfFields [
-	^ (aPosition field + 4) // aNumberOfFields
+	^ (aPosition field + 4) // aNumberOfFields.
 ]

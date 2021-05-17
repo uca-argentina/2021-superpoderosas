@@ -49,12 +49,12 @@ RandomBoard >> initializeSize: aNumberOfFields [
 		do: [ :effect :numberOfTimes | self add: effect aCertain: numberOfTimes from: fieldsToBeSelected onABoardWith: aNumberOfFields ]
 ]
 
-{ #category : #initialize }
-RandomBoard >> lookUpFieldFor: aPosition [
-	^ fields at: aPosition field
-]
-
 { #category : #acccessing }
 RandomBoard >> numberOfFields [
 	 ^numberOfFields.
+]
+
+{ #category : #initialize }
+RandomBoard >> searchFieldFor: aPosition [
+	^ fields at: aPosition field
 ]

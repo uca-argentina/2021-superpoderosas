@@ -11,18 +11,18 @@ Board class >> size: aNumberOfFields [
 
 { #category : #initialize }
 Board >> applyTheEffectOn: playersPosition determinedBy: aPosition onABoardWith: aNumberOfFields [
-	(self lookUpFieldFor: aPosition)
+	(self searchFieldFor: aPosition)
 		applyTheEffectOn: playersPosition
 		determinedBy: aPosition
 		onABoardWith: aNumberOfFields
 ]
 
 { #category : #initialize }
-Board >> lookUpFieldFor: aPosition [
+Board >> numberOfFields [
 	self subclassResponsibility.
 ]
 
 { #category : #initialize }
-Board >> numberOfFields [
+Board >> searchFieldFor: aPosition [
 	self subclassResponsibility.
 ]

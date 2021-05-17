@@ -9,31 +9,37 @@ Class {
 }
 
 { #category : #initialize }
-DeterministicBoard >> initializeSize: aNumberOfFields [ 
-	| wormHoleEffectFields speedUpEffectFields moonWalkEffectFields atomicBombEffectFields |
-	numberOfFields := aNumberOfFields .
-	fields := OrderedCollection new: aNumberOfFields withAll: NoEffect new.
-	
-	wormHoleEffectFields:= {3 . 17}.
-	speedUpEffectFields:= { 30 . 48 }.
-	atomicBombEffectFields:= { 44 }.
-	moonWalkEffectFields:= { 32 . 23 }.
-	
-	wormHoleEffectFields do: [ :fieldNumber | fields at:fieldNumber put: WormHoleEffect new ].
-	speedUpEffectFields do: [ :fieldNumber | fields at:fieldNumber put: SpeedUpEffect new ].
-	atomicBombEffectFields do: [ :fieldNumber | fields at:fieldNumber put: AtomicBombEffect new ].
-	moonWalkEffectFields do: [ :fieldNumber | fields at:fieldNumber put: (MoonWalkEffect new) ].
-	
-
-	
+DeterministicBoard >> establish: effect on: effectFields [
+	^ effectFields do: [ :fieldNumber | fields at: fieldNumber put: effect ].
 ]
 
 { #category : #initialize }
-DeterministicBoard >> lookUpFieldFor: aPosition [
-	^ fields at: aPosition field
+DeterministicBoard >> initializeSize: aNumberOfFields [
+	| effectToDistrubute effectDistributionFields |
+	numberOfFields := aNumberOfFields.
+	fields := OrderedCollection
+		new: aNumberOfFields
+		withAll: NoEffect new.
+	effectToDistrubute := {WormHoleEffect new.
+	SpeedUpEffect new.
+	AtomicBombEffect new.
+	MoonWalkEffect new}.
+	effectDistributionFields := {{3 . 17}.
+	{30 . 48}.
+	{44}.
+	{32 . 23}}.
+	effectToDistrubute
+		with: effectDistributionFields
+		do:
+			[ :effect :effectFields | self establish: effect on: effectFields ]
 ]
 
 { #category : #acccessing }
 DeterministicBoard >> numberOfFields [
 	 ^numberOfFields.
+]
+
+{ #category : #initialize }
+DeterministicBoard >> searchFieldFor: aPosition [
+	^ fields at: aPosition field.
 ]

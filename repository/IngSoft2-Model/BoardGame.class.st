@@ -103,7 +103,7 @@ BoardGame >> lookForPlayerWhoseTurnItIs [
 
 { #category : #private }
 BoardGame >> lookUpResultingFieldNumberBasingOn: totalFields [
-	^ totalFields = numberOfFields
+	^ (totalFields = numberOfFields)
 		ifTrue: [ numberOfFields ]
 		ifFalse: [ totalFields % numberOfFields ]
 ]

@@ -6,22 +6,19 @@ Class {
 
 { #category : #actions }
 MoonWalkEffect >> applyTheEffectOn: playersPosition determinedBy: aPosition onABoardWith: aNumberOfFields [ 
-	| auxiliarFieldNumber n|
+	| auxiliarFieldNumber n auxiliarRoundNumber |
 	n := (aPosition field) // 2.
-	(1 to: playersPosition size)
-		with: playersPosition
-		do: [ :index :position | 
-			position ~= aPosition
+	(self determineRangeFromOneToSizeOf: playersPosition) with: playersPosition
+		do: [ :index :position | (position ~= aPosition)
 				ifTrue: [ 
-					auxiliarFieldNumber := (position  field asInteger) - n.
+					auxiliarFieldNumber := (position field asInteger) - n.
+					auxiliarRoundNumber := (position round).
 					playersPosition
 						at: index
-						put:
-							(Position 
-								determinedMainlyBy: 
-											((position round ~= 1 & (auxiliarFieldNumber <= 0)) ifTrue: [ (position round asInteger) - 1  ] ifFalse:[position round])
-								andSecondlyBy:
-											((position round ~= 1 & (auxiliarFieldNumber <= 0)) ifTrue: [ aNumberOfFields + (auxiliarFieldNumber) ] ifFalse:[(1 max: auxiliarFieldNumber)])
-								has: (position player) )] ].
+						put: (Position
+						determinedMainlyBy: (self determineNewRoundBasingMainlyOn: auxiliarRoundNumber andSecondlyOn: auxiliarFieldNumber)
+						andSecondlyBy: (self determineNewFieldBasingMainlyOn: auxiliarRoundNumber andSecondlyOn:auxiliarFieldNumber onABoardWith: aNumberOfFields )
+						has: (position player) )] 
+				].
 					
 ]
