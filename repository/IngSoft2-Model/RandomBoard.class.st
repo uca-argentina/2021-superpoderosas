@@ -31,7 +31,7 @@ RandomBoard >> amountOfFieldsWith: aClass [
 ]
 
 { #category : #initialize }
-RandomBoard >> initializeSize: aNumberOfFields [
+RandomBoard >> initializeOf: aNumberOfFields [
 	| fieldsToBeSelected effectDistributionProportion effectToDistrubute |
 	numberOfFields := aNumberOfFields.
 	fields := OrderedCollection
@@ -39,10 +39,10 @@ RandomBoard >> initializeSize: aNumberOfFields [
 		withAll: NoEffect new.
 	fieldsToBeSelected := OrderedCollection new.
 	1 to: numberOfFields do: [ :field | fieldsToBeSelected add: field ].
-	effectToDistrubute := {WormHoleEffect new.
-	SpeedUpEffect new.
-	AtomicBombEffect new.
-	MoonWalkEffect new}.
+	effectToDistrubute := {WormHole new.
+	SpeedUp new.
+	AtomicBomb new.
+	MoonWalk new}.
 	effectDistributionProportion := {0.2 . 0.2 . 0.02 . 0.1}.
 	effectToDistrubute
 		with: effectDistributionProportion

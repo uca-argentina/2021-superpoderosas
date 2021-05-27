@@ -6,9 +6,8 @@ Class {
 
 { #category : #tests }
 PositionTest >> testAPositionHasAFieldNumberAndRoundNumber [
- 	
-	|aPosition |
-	aPosition:= Position 	determinedMainlyBy: 2 andSecondlyBy: 12 has: 'Pau'. 
-	self assert: (aPosition round) identicalTo: 2.
-	self assert: (aPosition field) identicalTo: 12.
+	| aPosition |
+	aPosition := Position of: 'Pau' standingOn: 12 after: 2.
+	self assert: aPosition round identicalTo: 2.
+	self assert: aPosition field identicalTo: 12
 ]

@@ -14,16 +14,16 @@ DeterministicBoard >> establish: effect on: effectFields [
 ]
 
 { #category : #initialize }
-DeterministicBoard >> initializeSize: aNumberOfFields [
+DeterministicBoard >> initializeOf: aNumberOfFields [
 	| effectToDistrubute effectDistributionFields |
 	numberOfFields := aNumberOfFields.
 	fields := OrderedCollection
 		new: aNumberOfFields
 		withAll: NoEffect new.
-	effectToDistrubute := {WormHoleEffect new.
-	SpeedUpEffect new.
-	AtomicBombEffect new.
-	MoonWalkEffect new}.
+	effectToDistrubute := {WormHole new.
+	SpeedUp new.
+	AtomicBomb new.
+	MoonWalk new}.
 	effectDistributionFields := {{3 . 17}.
 	{30 . 48}.
 	{44}.

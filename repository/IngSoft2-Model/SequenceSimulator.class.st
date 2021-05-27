@@ -14,29 +14,29 @@ SequenceSimulator class >> newFrom: aMaximun [
 	
 ]
 
+{ #category : #accessing }
+SequenceSimulator >> findNextIndex [
+	| oldIndex |
+	oldIndex:= index.
+	(self verifyIfThePatternIndexHasToBeTheOriginal) 
+		ifTrue:[self replaceIndexWithTheOriginalOne]
+		ifFalse:[self updateIndex].
+	^oldIndex.
+]
+
 { #category : #initialize }
 SequenceSimulator >> initializeNewFrom: aMaximun [
 	max := aMaximun .
 	index := 1.
 ]
 
-{ #category : #accessing }
-SequenceSimulator >> nextIndex [
-	| oldIndex |
-	oldIndex:= index.
-	(self verifyIfThePatternIndexHasToBeTheOriginal) 
-		ifTrue:[self originalPatternIndex]
-		ifFalse:[self updatePatternIndex].
-	^oldIndex.
-]
-
 { #category : #private }
-SequenceSimulator >> originalPatternIndex [
+SequenceSimulator >> replaceIndexWithTheOriginalOne [
 	index := 1.
 ]
 
 { #category : #private }
-SequenceSimulator >> updatePatternIndex [
+SequenceSimulator >> updateIndex [
 	index := index + 1.
 ]
 

@@ -21,7 +21,7 @@ DeterministicDice >> initializeWith: aPattern [
 
 { #category : #actions }
 DeterministicDice >> throw [
-	^ pattern at: (patternIndex nextIndex).
+	^ pattern at: (patternIndex findNextIndex).
 	
 	
 	

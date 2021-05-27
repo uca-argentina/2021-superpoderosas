@@ -6,9 +6,7 @@ Class {
 		'isFinished',
 		'playersTurnIdentificator',
 		'diceCup',
-		'actualPosition',
 		'spinsNeededToWin',
-		'winner',
 		'playersPosition',
 		'numberOfFields',
 		'board'
@@ -29,17 +27,6 @@ BoardGame >> addOneIfThePlayerHasEnteredTheNextRound: totalFields [
 { #category : #private }
 BoardGame >> changeCurrentStateToFinished [
 	isFinished := true.
-]
-
-{ #category : #private }
-BoardGame >> comparePositions: positionOne with: positionTwo [
-	^ (self idOf: positionOne )> (self idOf: positionTwo).
-]
-
-{ #category : #initialize }
-BoardGame >> createCollectionWithInitialPositions [
-	^ players collect: [ :aPlayer | Position determinedMainlyBy: 1 andSecondlyBy: 1 has: aPlayer].
-	
 ]
 
 { #category : #actions }
@@ -71,11 +58,19 @@ BoardGame >> errorMessageTheGameHasFinished [
 	^ 'The board game has already finished, contestants can not play anymore.'.
 ]
 
-{ #category : #private }
-BoardGame >> idOf: aPosition [ 
-	| digits |
-	digits:= numberOfFields asString size.
-	^((aPosition round*(10**digits))+ aPosition field )
+{ #category : #actions }
+BoardGame >> findNewPositionWhen: aPlayer hasMoved: aNumberOfFields From: oldPosition [
+	| totalFields newPosition newRoundNumber newFieldNumber |
+	totalFields := oldPosition field + aNumberOfFields.
+	newFieldNumber := self
+		lookUpResultingFieldNumberBasingOn: totalFields.
+	newRoundNumber := oldPosition round
+		+ (self addOneIfThePlayerHasEnteredTheNextRound: totalFields).
+	newPosition := Position
+		of: aPlayer
+		standingOn: newFieldNumber
+		after: newRoundNumber.
+	^ newPosition
 ]
 
 { #category : #initialize }
@@ -88,7 +83,7 @@ BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup on: aBoard winn
 	isFinished := false.
 	spinsNeededToWin := aSpinNumber.
 	numberOfFields := aBoard numberOfFields.
-	playersPosition:= OrderedCollection newFrom: (self createCollectionWithInitialPositions).
+	playersPosition:= OrderedCollection newFrom: (self placePlayersAtTheInitialPosition).
 ]
 
 { #category : #accessing }
@@ -98,7 +93,7 @@ BoardGame >> isFinished [
 
 { #category : #private }
 BoardGame >> lookForPlayerWhoseTurnItIs [
-	^ players at: (playersTurnIdentificator nextIndex).
+	^ players at: (playersTurnIdentificator findNextIndex).
 ]
 
 { #category : #private }
@@ -117,31 +112,40 @@ BoardGame >> move: player along: result [
 
 { #category : #actions }
 BoardGame >> move: aPlayer over: aNumberOfFields from: oldPosition [
-	| newPosition newFieldNumber newRoundNumber totalFields |
-	totalFields := oldPosition field + aNumberOfFields.
-	newFieldNumber := self lookUpResultingFieldNumberBasingOn: totalFields.
-	newRoundNumber := oldPosition round + (self addOneIfThePlayerHasEnteredTheNextRound: totalFields).
-	
-	newPosition := Position determinedMainlyBy: newRoundNumber andSecondlyBy: newFieldNumber has: aPlayer.
-	
+	| newPosition |
+	newPosition := self findNewPositionWhen: aPlayer hasMoved: aNumberOfFields From: oldPosition.
 	self replace: oldPosition with: newPosition.
-	
 	board applyTheEffectOn: playersPosition determinedBy: newPosition onABoardWith: numberOfFields.
-	playersPosition sort:	[ :positionOne :positionTwo | self comparePositions: positionOne with: positionTwo ]
+
+		
 ]
 
 { #category : #actions }
 BoardGame >> nextTurn [
-	| player result |
+	| player sumOfAllDices |
 	self verifyIfTheGameHasFinished.
 	player := self lookForPlayerWhoseTurnItIs.
-	result := diceCup throw.
-	self move: player along: result.
+	sumOfAllDices := diceCup throw.
+	self move: player along: sumOfAllDices.
 	self endGameIfTheWinnerIs: player.
+	self orderPlayersPosition.
+]
+
+{ #category : #actions }
+BoardGame >> orderPlayersPosition [
+	playersPosition
+		sort: [ :aPosition :anotherPosition | aPosition >= anotherPosition ]
+]
+
+{ #category : #initialize }
+BoardGame >> placePlayersAtTheInitialPosition [
+	^ players
+		collect: [ :aPlayer | Position of: aPlayer standingOn: 1 after: 1 ]
 ]
 
 { #category : #accessing }
 BoardGame >> ranking [
+"yo creo que directamente retornaria playersPosition total ya esta ordenado"
 	^ playersPosition withIndexCollect: [:aPosition :index | index asString, ') ',aPosition description].
 ]
 

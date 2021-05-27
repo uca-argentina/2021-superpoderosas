@@ -10,8 +10,22 @@ Class {
 }
 
 { #category : #initialization }
-Position class >> determinedMainlyBy: aRound andSecondlyBy: aField has: aPlayer [
-	^ self new initializeDeterminedMainlyBy: aRound andSecondlyBy: aField has: aPlayer.
+Position class >> of: aPlayer standingOn: aField after: aNumberOfRound [
+	^ self new
+		initializeOf: aPlayer
+		standingOn: aField
+		after: aNumberOfRound
+]
+
+{ #category : #comparing }
+Position >> >= aPosition [ 
+	(aPosition round < self round) 
+	ifTrue: [ ^ true ]  
+	ifFalse: [ (aPosition round > self round) 
+								ifTrue: [ ^ false ]
+								ifFalse:[(aPosition field < self field) 
+															ifTrue:[^ true ]
+															ifFalse: [ ^ false ]]].
 ]
 
 { #category : #accesing }
@@ -25,7 +39,7 @@ Position >> field [
 ]
 
 { #category : #initialize }
-Position >> initializeDeterminedMainlyBy: aRound andSecondlyBy: aField has: aPlayer [
+Position >> initializeOf: aPlayer standingOn: aField after: aRound [
 	round:= aRound.
 	field:= aField.
 	player:= aPlayer.

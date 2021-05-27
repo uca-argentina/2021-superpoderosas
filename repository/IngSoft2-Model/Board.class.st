@@ -5,8 +5,8 @@ Class {
 }
 
 { #category : #initialization }
-Board class >> size: aNumberOfFields [ 
-	^ self new initializeSize: aNumberOfFields .
+Board class >> of: aNumberOfFields [ 
+	^ self new initializeOf: aNumberOfFields .
 ]
 
 { #category : #initialize }
