@@ -15,6 +15,12 @@ AtomicBomb >> applyTheEffectOn: playersPosition determinedBy: aPosition onABoard
 				withNewPositionBasedOn: position ]
 ]
 
+{ #category : #actions }
+AtomicBomb >> applyTheEffectOn: aPosition of: aBoardGame [
+
+	aBoardGame moveAllPlayersTo: 1.
+]
+
 { #category : #private }
 AtomicBomb >> at: playersPosition replaceWhereIndexIs: index withNewPositionBasedOn: position [
 	^ playersPosition

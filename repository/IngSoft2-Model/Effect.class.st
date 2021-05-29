@@ -9,6 +9,11 @@ Effect >> applyTheEffectOn: playersPosition determinedBy: aPosition onABoardWith
 	self subclassResponsibility.
 ]
 
+{ #category : #actions }
+Effect >> applyTheEffectOn: aPosition of: aBoardGame [ 
+	self subclassResponsibility.
+]
+
 { #category : #private }
 Effect >> at: playersPosition replace: oldPosition with: newPosition [
 	playersPosition remove: oldPosition.

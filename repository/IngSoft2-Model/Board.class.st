@@ -11,10 +11,7 @@ Board class >> of: aNumberOfFields [
 
 { #category : #initialize }
 Board >> applyTheEffectOn: playersPosition determinedBy: aPosition onABoardWith: aNumberOfFields [
-	(self searchFieldFor: aPosition)
-		applyTheEffectOn: playersPosition
-		determinedBy: aPosition
-		onABoardWith: aNumberOfFields
+	(self searchFieldFor: aPosition) applyTheEffectOn: aPosition of: self. 
 ]
 
 { #category : #initialize }

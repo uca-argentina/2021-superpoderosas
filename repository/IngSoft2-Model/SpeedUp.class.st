@@ -11,6 +11,12 @@ SpeedUp >> applyTheEffectOn: playersPosition determinedBy: aPosition onABoardWit
 	self at: playersPosition replace: aPosition with: newPosition.
 ]
 
+{ #category : #actions }
+SpeedUp >> applyTheEffectOn: aPosition of: aBoardGame [
+
+	aBoardGame move: 4 thePlayerOf: aPosition.
+]
+
 { #category : #private }
 SpeedUp >> findNewFieldNumberBasedOn: aPosition and: aNumberOfFields [
 	^ (aPosition field + 4) % aNumberOfFields.

@@ -7,3 +7,8 @@ Class {
 { #category : #actions }
 NoEffect >> applyTheEffectOn: playersPosition determinedBy: aPosition onABoardWith: aNumberOfFields [ 
 ]
+
+{ #category : #actions }
+NoEffect >> applyTheEffectOn: aPosition of: aBoard [
+
+]

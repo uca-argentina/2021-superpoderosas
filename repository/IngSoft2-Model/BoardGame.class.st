@@ -20,8 +20,9 @@ BoardGame class >> playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWh
 ]
 
 { #category : #private }
-BoardGame >> addOneIfThePlayerHasEnteredTheNextRound: totalFields [
-	^ (totalFields-1) // numberOfFields
+BoardGame >> addOrSubstractOneIfThePlayerHasChangedRound: totalFields [
+	^ (totalFields-1) // numberOfFields.
+
 ]
 
 { #category : #private }
@@ -59,13 +60,13 @@ BoardGame >> errorMessageTheGameHasFinished [
 ]
 
 { #category : #actions }
-BoardGame >> findNewPositionWhen: aPlayer hasMoved: aNumberOfFields From: oldPosition [
+BoardGame >> findNewPositionWhen: aPlayer hasMoved: aNumberOfFields from: oldPosition [
 	| totalFields newPosition newRoundNumber newFieldNumber |
 	totalFields := oldPosition field + aNumberOfFields.
 	newFieldNumber := self
 		lookUpResultingFieldNumberBasingOn: totalFields.
 	newRoundNumber := oldPosition round
-		+ (self addOneIfThePlayerHasEnteredTheNextRound: totalFields).
+		+ (self addOrSubstractOneIfThePlayerHasChangedRound: totalFields).
 	newPosition := Position
 		of: aPlayer
 		standingOn: newFieldNumber
@@ -100,24 +101,35 @@ BoardGame >> lookForPlayerWhoseTurnItIs [
 BoardGame >> lookUpResultingFieldNumberBasingOn: totalFields [
 	^ (totalFields = numberOfFields)
 		ifTrue: [ numberOfFields ]
-		ifFalse: [ totalFields % numberOfFields ]
+		ifFalse: [ (totalFields <= 0) ifTrue: [totalFields % numberOfFields ] ifFalse:[numberOfFields + totalFields]].
 ]
 
 { #category : #private }
 BoardGame >> move: player along: result [
 	| oldPosition |
 	oldPosition := self detectPositionOf: player.
-	self move: player over: result from: oldPosition.
+	self move: player over: result consideringAnEffectFrom: oldPosition.
+]
+
+{ #category : #actions }
+BoardGame >> move: aPlayer over: aNumberOfFields consideringAnEffectFrom: oldPosition [
+	| newPosition field |
+	newPosition := self move: aPlayer over: aNumberOfFields from: oldPosition.
+	field := board searchFieldFor: newPosition.
+	field applyTheEffectOn: newPosition of: self
 ]
 
 { #category : #actions }
 BoardGame >> move: aPlayer over: aNumberOfFields from: oldPosition [
 	| newPosition |
-	newPosition := self findNewPositionWhen: aPlayer hasMoved: aNumberOfFields From: oldPosition.
+	newPosition := self findNewPositionWhen: aPlayer hasMoved: aNumberOfFields from: oldPosition.
 	self replace: oldPosition with: newPosition.
-	board applyTheEffectOn: playersPosition determinedBy: newPosition onABoardWith: numberOfFields.
+	^ newPosition
+]
 
-		
+{ #category : #actions }
+BoardGame >> move: aNumberOfFields thePlayerOf: oldPosition [
+	self move: (oldPosition player) over: aNumberOfFields from: oldPosition.
 ]
 
 { #category : #actions }

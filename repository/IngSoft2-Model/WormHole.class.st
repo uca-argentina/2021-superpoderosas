@@ -13,6 +13,12 @@ WormHole >> applyTheEffectOn: playersPosition determinedBy: aPosition onABoardWi
 ]
 
 { #category : #actions }
+WormHole >> applyTheEffectOn: aPosition of: aBoardGame [
+
+	aBoardGame move: -4 thePlayerOf: aPosition.
+]
+
+{ #category : #actions }
 WormHole >> findNewFieldNumberBasedOn: aPosition and: aNumberOfFields [
 	^ aPosition field asInteger - 4.
 ]

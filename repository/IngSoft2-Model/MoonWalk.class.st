@@ -29,3 +29,10 @@ MoonWalk >> applyTheEffectOn: playersPosition determinedBy: aPosition onABoardWi
 										determineNewRoundBasingMainlyOn: auxiliarRoundNumber
 										andSecondlyOn: auxiliarFieldNumber)) ] ]
 ]
+
+{ #category : #actions }
+MoonWalk >> applyTheEffectOn: aPosition of: aBoardGame [
+	| n |
+	n := (aPosition field) //2.
+	aBoardGame moveAllPlayers: (n negated) exceptThePlayerOf: aPosition.
+]
