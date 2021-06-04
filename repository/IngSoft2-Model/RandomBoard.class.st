@@ -17,7 +17,7 @@ RandomBoard >> add: effect aCertain: numberOfTimes from: fieldsToBeSelected onAB
 	^ effectFields do: [ :fieldNumber | fields at: fieldNumber put: effect ]
 ]
 
-{ #category : #acccessing }
+{ #category : #accessing }
 RandomBoard >> addRandomFieldTo: aCollection from: anotherCollection [ 
 	| aRandomField |
 	aRandomField:= anotherCollection atRandom . 
@@ -49,7 +49,7 @@ RandomBoard >> initializeOf: aNumberOfFields [
 		do: [ :effect :numberOfTimes | self add: effect aCertain: numberOfTimes from: fieldsToBeSelected onABoardWith: aNumberOfFields ]
 ]
 
-{ #category : #acccessing }
+{ #category : #accessing }
 RandomBoard >> numberOfFields [
 	 ^numberOfFields.
 ]

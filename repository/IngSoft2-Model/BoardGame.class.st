@@ -59,18 +59,14 @@ BoardGame >> errorMessageTheGameHasFinished [
 	^ 'The board game has already finished, contestants can not play anymore.'.
 ]
 
-{ #category : #actions }
+{ #category : #private }
 BoardGame >> findNewPositionWhen: aPlayer hasMoved: aNumberOfFields from: oldPosition [
 	| totalFields newPosition newRoundNumber newFieldNumber |
 	totalFields := oldPosition field + aNumberOfFields.
-	newFieldNumber := self
-		lookUpResultingFieldNumberBasingOn: totalFields.
-	newRoundNumber := oldPosition round
-		+ (self addOrSubstractOneIfThePlayerHasChangedRound: totalFields).
-	newPosition := Position
-		of: aPlayer
-		standingOn: newFieldNumber
-		after: newRoundNumber.
+	newFieldNumber := self lookUpResultingFieldNumberBasingOn: totalFields.
+	newRoundNumber :=  oldPosition round + (self addOrSubstractOneIfThePlayerHasChangedRound: totalFields).
+	newPosition := Position of: aPlayer standingOn: newFieldNumber after: newRoundNumber.
+	newPosition := self validate: newPosition.
 	^ newPosition
 ]
 
@@ -99,9 +95,11 @@ BoardGame >> lookForPlayerWhoseTurnItIs [
 
 { #category : #private }
 BoardGame >> lookUpResultingFieldNumberBasingOn: totalFields [
-	^ (totalFields = numberOfFields)
+	^ totalFields = numberOfFields
 		ifTrue: [ numberOfFields ]
-		ifFalse: [ (totalFields <= 0) ifTrue: [totalFields % numberOfFields ] ifFalse:[numberOfFields + totalFields]].
+		ifFalse: [ totalFields > 0
+				ifTrue: [ totalFields % numberOfFields ]
+				ifFalse: [numberOfFields + totalFields] ]
 ]
 
 { #category : #private }
@@ -124,6 +122,7 @@ BoardGame >> move: aPlayer over: aNumberOfFields from: oldPosition [
 	| newPosition |
 	newPosition := self findNewPositionWhen: aPlayer hasMoved: aNumberOfFields from: oldPosition.
 	self replace: oldPosition with: newPosition.
+	self endGameIfTheWinnerIs: aPlayer.
 	^ newPosition
 ]
 
@@ -139,7 +138,7 @@ BoardGame >> nextTurn [
 	player := self lookForPlayerWhoseTurnItIs.
 	sumOfAllDices := diceCup throw.
 	self move: player along: sumOfAllDices.
-	self endGameIfTheWinnerIs: player.
+	"self endGameIfTheWinnerIs: player."
 	self orderPlayersPosition.
 ]
 
@@ -157,14 +156,18 @@ BoardGame >> placePlayersAtTheInitialPosition [
 
 { #category : #accessing }
 BoardGame >> ranking [
-"yo creo que directamente retornaria playersPosition total ya esta ordenado"
-	^ playersPosition withIndexCollect: [:aPosition :index | index asString, ') ',aPosition description].
+	^ playersPosition.
 ]
 
 { #category : #private }
 BoardGame >> replace: oldPosition with: newPosition [
 	playersPosition remove: oldPosition.
 	playersPosition add: newPosition
+]
+
+{ #category : #private }
+BoardGame >> validate: aPosition [
+ (aPosition round <= 0) ifTrue: [^( Position of: (aPosition player) standingOn: 1 after: 1)] ifFalse:[^aPosition].
 ]
 
 { #category : #validations }

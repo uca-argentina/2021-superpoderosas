@@ -48,7 +48,7 @@ BoardGameTest >> creationOfBoardGameWithThreePlayers [
 ]
 
 { #category : #accessingTests }
-BoardGameTest >> newBoardGameWithASinglePlayer [
+BoardGameTest >> newBoardGameWithASinglePlayerAndASingleRound [
 	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard |
 	aPlayer := 'Pau'.
 	aDice := DeterministicDice with: #(2 4 7 3).
@@ -90,17 +90,21 @@ BoardGameTest >> newBoardGameWithMultiplePlayers [
 { #category : #playingTests }
 BoardGameTest >> testABoardGameCanDistinguishBetweenWhoseTurnIsIt [
  		
-	| aBoardGame |
+	| aBoardGame pauPosition beluPosition juliPosition malePosition |
 	aBoardGame := self newBoardGameWithMultiplePlayers.
+	pauPosition := Position of: 'Pau' standingOn: 21 after: 1.
+	beluPosition := Position of: 'Belu' standingOn: 14 after: 1.
+	juliPosition := Position of: 'Juli' standingOn: 13 after: 1.
+	malePosition := Position of: 'Male' standingOn: 11 after: 1.
 	1 to: 5 do: [ :n | aBoardGame nextTurn ].
-	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: #('1) Pau, round: 1 field: 21'  '2) Belu, round: 1 field: 14'  '3) Juli, round: 1 field: 13'  '4) Male, round: 1 field: 11')).
+	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition . juliPosition . malePosition }).
 ]
 
 { #category : #validationTests }
 BoardGameTest >> testABoardGameDoesntHaveAWinnerYet [
  		
 	| aBoardGame |
-	aBoardGame := self newBoardGameWithASinglePlayer.
+	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
 	aBoardGame nextTurn.
 	
 	self 
@@ -111,23 +115,27 @@ BoardGameTest >> testABoardGameDoesntHaveAWinnerYet [
 
 { #category : #positionTests }
 BoardGameTest >> testABoardGameHasAFinalRanking [
-	| aBoardGame |
+	| aBoardGame pauPosition beluPosition malePosition |
 	aBoardGame := self creationOfBoardGameWithThreePlayers.
 	1 to: 34 do: [ :n | aBoardGame nextTurn ].
+	pauPosition := Position of: 'Pau' standingOn: 46 after: 1.
+	beluPosition := Position of: 'Belu' standingOn: 13 after: 1.
+	malePosition := Position of: 'Male' standingOn: 21 after: 1.
 	self
 		assert: aBoardGame ranking
 		equals:
 			(OrderedCollection
 				newFrom:
-					{'1) Pau, round: 1 field: 46' . '2) Male, round: 1 field: 21' . '3) Belu, round: 1 field: 13'})
+					{pauPosition . beluPosition . malePosition })
 ]
 
 { #category : #accessingTests }
 BoardGameTest >> testABoardGameHasARanking [
-	| aBoardGame |
-	aBoardGame := self newBoardGameWithASinglePlayer.
+	| aBoardGame pauPosition |
+	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
+	pauPosition := Position of: 'Pau' standingOn: 2 after: 2.
 	1 to: 18 do: [ :n | aBoardGame nextTurn ].
-	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {'1) Pau, round: 1 field: 61'}).
+	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition}).
 ]
 
 { #category : #positionTests }
@@ -155,8 +163,8 @@ BoardGameTest >> testABoardGameHasAlreayFinishedSoNoOneCanContinuePlaying [
 BoardGameTest >> testABoardGameHasFinished [
  		
 	| aBoardGame |
-	aBoardGame := self newBoardGameWithASinglePlayer.
-	1 to: 19 do: [ :n | aBoardGame nextTurn ].
+	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
+	1 to: 18 do: [ :n | aBoardGame nextTurn ].
 	
 	self assert: (aBoardGame isFinished).
 ]
@@ -256,8 +264,8 @@ BoardGameTest >> testABoardGameHasFinishedAndHasAWinner [
 BoardGameTest >> testABoardGameHasFinishedAndPlayersMustBeHalted [
  		
 	| aBoardGame |
-	aBoardGame := self newBoardGameWithASinglePlayer.
-	1 to: 19 do: [ :n | aBoardGame nextTurn ].
+	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
+	1 to: 18 do: [ :n | aBoardGame nextTurn ].
 	
 	self 
 		should:[aBoardGame nextTurn] 
@@ -267,36 +275,45 @@ BoardGameTest >> testABoardGameHasFinishedAndPlayersMustBeHalted [
 
 { #category : #positionTests }
 BoardGameTest >> testABoardGameHasThreePlayersThatChangePositionOvertime [
-	| aBoardGame |
+	| aBoardGame pauPosition beluPosition malePosition |
 	aBoardGame := self creationOfBoardGameWithThreePlayers.
+	pauPosition := Position of: 'Pau' standingOn: 31 after: 1.
+	beluPosition := Position of: 'Belu' standingOn: 14 after: 1.
+	malePosition := Position of: 'Male' standingOn: 13 after: 1.
 	1 to: 5 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
 		equals:
 			(OrderedCollection
 				newFrom:
-					({'1) Pau, round: 1 field: 31' . '2) Belu, round: 1 field: 14'. '3) Male, round: 1 field: 13'})).
+					({pauPosition . beluPosition . malePosition})).
 ]
 
 { #category : #positionTests }
 BoardGameTest >> testABoardGameHasThreePlayersThatChangeRoundNumberOvertime [
-	| aBoardGame |
+	| aBoardGame pauPosition beluPosition malePosition |
 	aBoardGame := self creationOfAnotherBoardGameWithThreePlayers.
+	pauPosition := Position of: 'Pau' standingOn: 33 after: 2.
+	beluPosition := Position of: 'Belu' standingOn: 10 after: 2.
+	malePosition := Position of: 'Male' standingOn: 43 after: 1.
 	1 to: 7 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
 		equals:
 			(OrderedCollection
 				newFrom:
-					{'1) Pau, round: 2 field: 33' . '2) Belu, round: 2 field: 10' . '3) Male, round: 1 field: 43'})
+					{pauPosition . beluPosition . malePosition })
 ]
 
 { #category : #positionTests }
 BoardGameTest >> testABoardGameHasThreePlayersWithAnInitialPosition [
-	| aBoardGame |
+	| aBoardGame pauPosition beluPosition malePosition |
 	aBoardGame := self creationOfBoardGameWithThreePlayers.
+	pauPosition := Position of: 'Pau' standingOn: 1 after: 1.
+	beluPosition := Position of: 'Belu' standingOn: 1 after: 1.
+	malePosition := Position of: 'Male' standingOn: 1 after: 1.
 
-	self assert: (aBoardGame ranking) equals: (OrderedCollection newFrom: { '1) Pau, round: 1 field: 1'. '2) Male, round: 1 field: 1'. '3) Belu, round: 1 field: 1'}).
+	self assert: (aBoardGame ranking) equals: (OrderedCollection newFrom: {pauPosition . malePosition . beluPosition }).
 
 	
 ]
@@ -305,7 +322,7 @@ BoardGameTest >> testABoardGameHasThreePlayersWithAnInitialPosition [
 BoardGameTest >> testABoardGameIsInProcess [
  		
 	| aBoardGame |
-	aBoardGame := self newBoardGameWithASinglePlayer.
+	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
 	
 	self deny: (aBoardGame isFinished).
 ]
@@ -313,28 +330,31 @@ BoardGameTest >> testABoardGameIsInProcess [
 { #category : #accessingTests }
 BoardGameTest >> testABoardGameKnowsThePlayersInitialPosition [
  		
-	| aBoardGame |
-	aBoardGame := self newBoardGameWithASinglePlayer.
+	| aBoardGame pauPosition |
+	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
+	pauPosition := Position of: 'Pau' standingOn: 1 after: 1.
 	
-	self assert: (aBoardGame ranking) equals: (OrderedCollection newFrom: #('1) Pau, round: 1 field: 1')).
+	self assert: (aBoardGame ranking) equals: (OrderedCollection newFrom: {pauPosition}).
 ]
 
 { #category : #playingTests }
 BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowADiceAndMoveOnTheBoard [
  		
-	| aBoardGame |
-	aBoardGame := self newBoardGameWithASinglePlayer.
+	| aBoardGame pauPosition |
+	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
+	pauPosition := Position of: 'Pau' standingOn: 5 after: 1.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 		
-	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: #('1) Pau, round: 1 field: 5')).
+	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition}).
 ]
 
 { #category : #playingTests }
 BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowThreeDicesSimultaneously [
  		
-	| aPlayer aBoardGame aGroupOfPlayers aGroupOfDices firstDice secondDice thirdDice aNumberOfFields aDiceCup aSpinNumber aBoard |
+	| aPlayer aBoardGame aGroupOfPlayers aGroupOfDices firstDice secondDice thirdDice aNumberOfFields aDiceCup aSpinNumber aBoard pauPosition |
 	aPlayer:= 'Pau'.
+	pauPosition := Position of: 'Pau' standingOn: 25 after: 1.
 	firstDice:= DeterministicDice with:#(2 4 7 2).
 	secondDice:= DeterministicDice with:#(8 5 4 7 2).
 	thirdDice:= DeterministicDice with:#(4 1 2 7 2).
@@ -351,7 +371,7 @@ BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowThreeDicesSimulta
 		winnedWhenReach: aSpinNumber.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
-	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: #('1) Pau, round: 1 field: 25')).
+	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition}).
 
 ]
 
@@ -375,22 +395,25 @@ BoardGameTest >> testABoardGameNeedsAtLeastOnePlayer [
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> testAFieldHasNoEffect [
-	| aBoardGame |
+	| aBoardGame pauPosition beluPosition malePosition |
 	aBoardGame := self creationOfBoardGameWithThreePlayers.
+	pauPosition := Position of: 'Pau' standingOn: 31 after: 1.
+	beluPosition := Position of: 'Belu' standingOn: 14 after: 1.
+	malePosition := Position of: 'Male' standingOn: 11 after: 1.
 	1 to: 4 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
 		equals:
 			(OrderedCollection
 				newFrom:
-					{'1) Pau, round: 1 field: 31' .'2) Belu, round: 1 field: 14'. '3) Male, round: 1 field: 11'}).
+					{pauPosition . beluPosition . malePosition}).
 
 ]
 
 { #category : #circularBoardTests }
 BoardGameTest >> testAPlayerMustGoThreeTimesAroundTheBoardToWin [
 	| aBoardGame |
-	aBoardGame := self newBoardGameWithASinglePlayer.
+	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
 	1 to: 19 do: [ :n | aBoardGame nextTurn ].
 	self assert: aBoardGame winner equals: 'Pau'.	
 ]
@@ -431,32 +454,39 @@ BoardGameTest >> testEffectsDistribution [
 
 { #category : #circularBoardTests }
 BoardGameTest >> testTheBoardIsCircular [
-	| aBoardGame |
-	aBoardGame := self newBoardGameWithASinglePlayer.
+	| aBoardGame pauPosition |
+	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
+	pauPosition := Position of: 'Pau' standingOn: 17 after: 2.
 	1 to: 19 do: [ :n | aBoardGame nextTurn ].
-	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {'1) Pau, round: 2 field: 7'}).
+	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition}).
 ]
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> testWhenAPlayerFellsOnAMoonWalkFieldTheRestOfThePlayersMustGoBackwardsNFields [
-	| aBoardGame |
+	| aBoardGame pauPosition beluPosition malePosition |
 	aBoardGame := self creationOfBoardGameWithThreePlayers.
+	pauPosition := Position of: 'Pau' standingOn: 1 after: 1.
+	beluPosition := Position of: 'Belu' standingOn: 32 after: 1.
+	malePosition := Position of: 'Male' standingOn: 30 after: 1.
 	1 to: 15 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
 		equals:
 			(OrderedCollection
 				newFrom:
-					{ '1) Belu, round: 1 field: 32' .'2) Male, round: 1 field: 30' . '3) Pau, round: 1 field: 1'})
+					{beluPosition . malePosition . pauPosition })
 ]
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> testWhenAPlayerFellsOnAMoonWalkFieldTheRestOfThePlayersMustGoBackwardsNFieldsAndTheRoundChangesWhenMoveingBackwards [
-		| firstDice secondDice thirdDice aBoardGame |
+		| firstDice secondDice thirdDice aBoardGame pauPosition beluPosition malePosition |
 	firstDice := DeterministicDice with: #(10 14 13 1).
 	secondDice := DeterministicDice with: #(14 8 6 2 1).
 	thirdDice := DeterministicDice with: #(9 8 2 6 3 4).
 	aBoardGame := self creationOfBoardGameWithThatUsesA: firstDice a: secondDice andA: thirdDice.
+	pauPosition := Position of: 'Pau' standingOn: 23 after: 2.
+	beluPosition := Position of: 'Belu' standingOn: 43 after: 1.
+	malePosition := Position of: 'Male' standingOn: 34 after: 1.
 		
 	1 to: 7 do: [ :n | aBoardGame nextTurn ].
 	self
@@ -464,58 +494,70 @@ BoardGameTest >> testWhenAPlayerFellsOnAMoonWalkFieldTheRestOfThePlayersMustGoBa
 		equals:
 			(OrderedCollection
 				newFrom:
-					{'1) Pau, round: 2 field: 23' . '2) Belu, round: 1 field: 43' . '3) Male, round: 1 field: 34'}).
+					{ pauPosition . beluPosition . malePosition }).
 ]
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> testWhenAPlayerFellsOnASpeedUpFieldHeAdvancesFourMoreFields [
-	| aBoardGame |
+	| aBoardGame pauPosition beluPosition malePosition |
 	aBoardGame := self creationOfBoardGameWithThreePlayers.
+	pauPosition := Position of: 'Pau' standingOn: 31 after: 1.
+	beluPosition := Position of: 'Belu' standingOn: 34 after: 1.
+	malePosition := Position of: 'Male' standingOn: 13 after: 1.
 	1 to: 6 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
 		equals:
 			(OrderedCollection
 				newFrom:
-					{'1) Belu, round: 1 field: 34'.'2) Pau, round: 1 field: 31' . '3) Male, round: 1 field: 13'})
+					{beluPosition . pauPosition . malePosition })
 ]
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> testWhenAPlayerFellsOnASpeedUpFieldHeAdvancesFourMoreFieldsAndTheRoundChangesWhenMoveingForward [
-		| firstDice secondDice thirdDice aBoardGame |
+		| firstDice secondDice thirdDice aBoardGame pauPosition beluPosition malePosition |
 	firstDice := DeterministicDice with: #(6 14 7 2).
 	secondDice := DeterministicDice with: #(1 8 5 11 8).
 	thirdDice := DeterministicDice with: #(9 4 2 17 12).
 	aBoardGame := self creationOfBoardGameWithThatUsesA: firstDice a: secondDice andA: thirdDice.
+	pauPosition := Position of: 'Pau' standingOn: 2 after: 3.
+	beluPosition := Position of: 'Belu' standingOn: 37 after: 2.
+	malePosition := Position of: 'Male' standingOn: 14 after: 2.
 	1 to: 13 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
 		equals:
 			(OrderedCollection
 				newFrom:
-					{'1) Pau, round: 3 field: 2' . '2) Belu, round: 2 field: 37' . '3) Male, round: 2 field: 14'})
+					{pauPosition . beluPosition . malePosition })
 ]
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> testWhenAPlayerFellsOnAWormHoleFieldHeMovesBackwardsFourFields [
-	| aBoardGame |
+	| aBoardGame pauPosition beluPosition malePosition |
 	aBoardGame := self creationOfBoardGameWithThreePlayers.
+	pauPosition := Position of: 'Pau' standingOn: 31 after: 1.
+	beluPosition := Position of: 'Belu' standingOn: 14 after: 1.
+	malePosition := Position of: 'Male' standingOn: 13 after: 1.
 	1 to: 5 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
 		equals:
 			(OrderedCollection
 				newFrom:
-					{'1) Pau, round: 1 field: 31' . '2) Belu, round: 1 field: 14'. '3) Male, round: 1 field: 13'})
+					{pauPosition . beluPosition . malePosition})
 ]
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> testWhenAPlayerFellsOnAWormHoleFieldHeMovesBackwardsFourFieldsAndTheRoundChangesWhenMoveingBackwards [
-		| firstDice secondDice thirdDice aBoardGame |
+		| firstDice secondDice thirdDice aBoardGame pauPosition beluPosition malePosition |
 	firstDice := DeterministicDice with: #(6 14 7 2).
 	secondDice := DeterministicDice with: #(1 8 5 11 8).
 	thirdDice := DeterministicDice with: #(9 4 2 17 12).
 	aBoardGame := self creationOfBoardGameWithThatUsesA: firstDice a: secondDice andA: thirdDice.
+	pauPosition := Position of: 'Pau' standingOn: 43 after: 1.
+	beluPosition := Position of: 'Belu' standingOn: 15 after: 1.
+	malePosition := Position of: 'Male' standingOn: 49 after: 1.
 		
 	1 to: 5 do: [ :n | aBoardGame nextTurn ].
 	self
@@ -523,18 +565,21 @@ BoardGameTest >> testWhenAPlayerFellsOnAWormHoleFieldHeMovesBackwardsFourFieldsA
 		equals:
 			(OrderedCollection
 				newFrom:
-					{'1) Male, round: 1 field: 49' . '2) Pau, round: 1 field: 43' .'3) Belu, round: 1 field: 15'}).
+					{malePosition . pauPosition . beluPosition }).
 ]
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> testWhenAPlayerFellsOnAnAtomicBombAllPlayersMoveToFieldOne [
-	| aBoardGame |
+	| aBoardGame pauPosition beluPosition malePosition |
 	aBoardGame := self creationOfBoardGameWithThreePlayers.
+	pauPosition := Position of: 'Pau' standingOn: 1 after: 1.
+	beluPosition := Position of: 'Belu' standingOn: 1 after: 1.
+	malePosition := Position of: 'Male' standingOn: 1 after: 1.
 	1 to: 7 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
 		equals:
 			(OrderedCollection
 				newFrom:
-					{'1) Pau, round: 1 field: 1'.'2) Male, round: 1 field: 1' . '3) Belu, round: 1 field: 1'})
+					{pauPosition . malePosition . beluPosition })
 ]
