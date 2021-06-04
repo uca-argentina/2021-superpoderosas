@@ -122,7 +122,6 @@ BoardGame >> move: aPlayer over: aNumberOfFields from: oldPosition [
 	| newPosition |
 	newPosition := self findNewPositionWhen: aPlayer hasMoved: aNumberOfFields from: oldPosition.
 	self replace: oldPosition with: newPosition.
-	self endGameIfTheWinnerIs: aPlayer.
 	^ newPosition
 ]
 
@@ -138,7 +137,7 @@ BoardGame >> nextTurn [
 	player := self lookForPlayerWhoseTurnItIs.
 	sumOfAllDices := diceCup throw.
 	self move: player along: sumOfAllDices.
-	"self endGameIfTheWinnerIs: player."
+	self endGameIfTheWinnerIs: player.
 	self orderPlayersPosition.
 ]
 
