@@ -126,14 +126,14 @@ BoardGameTest >> testABoardGameHasAFinalRanking [
 		equals:
 			(OrderedCollection
 				newFrom:
-					{pauPosition . beluPosition . malePosition })
+					{pauPosition . malePosition . beluPosition})
 ]
 
 { #category : #accessingTests }
 BoardGameTest >> testABoardGameHasARanking [
 	| aBoardGame pauPosition |
 	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
-	pauPosition := Position of: 'Pau' standingOn: 2 after: 2.
+	pauPosition := Position of: 'Pau' standingOn: 61 after: 1.
 	1 to: 18 do: [ :n | aBoardGame nextTurn ].
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition}).
 ]
@@ -164,7 +164,7 @@ BoardGameTest >> testABoardGameHasFinished [
  		
 	| aBoardGame |
 	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
-	1 to: 18 do: [ :n | aBoardGame nextTurn ].
+	1 to: 19 do: [ :n | aBoardGame nextTurn ].
 	
 	self assert: (aBoardGame isFinished).
 ]
@@ -265,7 +265,7 @@ BoardGameTest >> testABoardGameHasFinishedAndPlayersMustBeHalted [
  		
 	| aBoardGame |
 	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
-	1 to: 18 do: [ :n | aBoardGame nextTurn ].
+	1 to: 19 do: [ :n | aBoardGame nextTurn ].
 	
 	self 
 		should:[aBoardGame nextTurn] 
@@ -456,7 +456,7 @@ BoardGameTest >> testEffectsDistribution [
 BoardGameTest >> testTheBoardIsCircular [
 	| aBoardGame pauPosition |
 	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
-	pauPosition := Position of: 'Pau' standingOn: 17 after: 2.
+	pauPosition := Position of: 'Pau' standingOn: 7 after: 2.
 	1 to: 19 do: [ :n | aBoardGame nextTurn ].
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition}).
 ]

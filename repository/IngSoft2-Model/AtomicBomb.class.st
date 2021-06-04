@@ -5,25 +5,7 @@ Class {
 }
 
 { #category : #actions }
-AtomicBomb >> applyTheEffectOn: playersPosition determinedBy: aPosition onABoardWith: aNumberOfFields [
-	(self determineRangeFromOneToSizeOf: playersPosition)
-		with: playersPosition
-		do: [ :index :position | 
-			self
-				at: playersPosition
-				replaceWhereIndexIs: index
-				withNewPositionBasedOn: position ]
-]
-
-{ #category : #actions }
 AtomicBomb >> applyTheEffectOn: aPosition of: aBoardGame [
 
 	aBoardGame moveAllPlayersTo: 1.
-]
-
-{ #category : #private }
-AtomicBomb >> at: playersPosition replaceWhereIndexIs: index withNewPositionBasedOn: position [
-	^ playersPosition
-		at: index
-		put: (Position of: position player standingOn: 1 after: position round)
 ]

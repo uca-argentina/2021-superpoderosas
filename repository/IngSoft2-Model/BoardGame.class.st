@@ -130,6 +130,17 @@ BoardGame >> move: aNumberOfFields thePlayerOf: oldPosition [
 	self move: (oldPosition player) over: aNumberOfFields from: oldPosition.
 ]
 
+{ #category : #'error messages' }
+BoardGame >> moveAllPlayers: aNumberOfFields exceptThePlayerOf: aPosition [
+	playersPosition  := playersPosition reject: [ :position | position=aPosition ] thenCollect: [ :position | self findNewPositionWhen: (position player) hasMoved: aNumberOfFields from: position].
+	playersPosition add: aPosition .
+]
+
+{ #category : #accessing }
+BoardGame >> moveAllPlayersTo: aField [
+	playersPosition := playersPosition collect: [ :position | Position of: (position player) standingOn: 1 after: (position round) ]
+]
+
 { #category : #actions }
 BoardGame >> nextTurn [
 	| player sumOfAllDices |
