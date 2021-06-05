@@ -1,8 +1,16 @@
 Class {
 	#name : #Board,
 	#superclass : #Object,
+	#instVars : [
+		'fields'
+	],
 	#category : #'IngSoft2-Model'
 }
+
+{ #category : #initialization }
+Board class >> has: fields [ 
+	^self new initializeHaving: fields.
+]
 
 { #category : #initialization }
 Board class >> of: aNumberOfFields [ 
@@ -15,11 +23,16 @@ Board >> applyTheEffectOn: playersPosition determinedBy: aPosition onABoardWith:
 ]
 
 { #category : #initialize }
+Board >> initializeHaving: someFields [ 
+	fields := someFields .
+]
+
+{ #category : #accessing }
 Board >> numberOfFields [
-	self subclassResponsibility.
+	 ^ fields size.
 ]
 
 { #category : #initialize }
 Board >> searchFieldFor: aPosition [
-	self subclassResponsibility.
+	^ fields at: aPosition field
 ]

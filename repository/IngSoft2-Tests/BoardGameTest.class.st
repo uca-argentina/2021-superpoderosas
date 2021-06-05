@@ -1,8 +1,18 @@
 Class {
 	#name : #BoardGameTest,
 	#superclass : #TestCase,
+	#instVars : [
+		'events',
+		'eventsDistribution'
+	],
 	#category : #'IngSoft2-Tests'
 }
+
+{ #category : #asserting }
+BoardGameTest >> assert: groupOfEvents areDistributedBasedOn: distributionOfEvents withTolerance: tolerance [
+	| val |
+	distributionOfEvents do:[ :probabilityEvent | val:=(self relativeEventOcurrenceOf: probabilityEvent in:groupOfEvents).self assert: val < tolerance] 
+]
 
 { #category : #positionTests }
 BoardGameTest >> creationOfAnotherBoardGameWithThreePlayers [
@@ -18,7 +28,7 @@ BoardGameTest >> creationOfAnotherBoardGameWithThreePlayers [
 
 { #category : #positionTests }
 BoardGameTest >> creationOfBoardGameWithThatUsesA: firstDice a: secondDice andA: thirdDice [
-	| aGroupOfDices aDiceCup aSpinNumber aNumberOfFields aBoard aBoardGame aGroupOfPlayers |
+	| aGroupOfDices aDiceCup aSpinNumber aNumberOfFields aBoard aBoardGame aGroupOfPlayers fields |
 	aGroupOfPlayers := {'Pau' . 'Male' . 'Belu'}.
 	aGroupOfDices := {firstDice.
 	secondDice.
@@ -26,7 +36,8 @@ BoardGameTest >> creationOfBoardGameWithThatUsesA: firstDice a: secondDice andA:
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aNumberOfFields := 50.
 	aSpinNumber := 3.
-	aBoard := DeterministicBoard of: aNumberOfFields.
+	fields:= self generateManually: aNumberOfFields.
+	aBoard := Board has:fields.
 	aBoardGame := BoardGame
 		playedBy: aGroupOfPlayers
 		using: aDiceCup
@@ -47,9 +58,21 @@ BoardGameTest >> creationOfBoardGameWithThreePlayers [
 		andA: thirdDice
 ]
 
+{ #category : #fieldsEffectTests }
+BoardGameTest >> generateManually: aNumberOfFields [ 
+	|  fields effectToDistrubute effectDistributionFields |
+	fields:= OrderedCollection new: aNumberOfFields withAll: NoEffect new.
+	effectToDistrubute := {WormHole new. SpeedUp new.AtomicBomb new.MoonWalk new}.
+	effectDistributionFields := {{3 . 17}.{30 . 48}.{44}.{32 . 23}}.
+	effectToDistrubute with: effectDistributionFields do:[ :effect :effectFields | 
+						effectFields do: 
+								[ :fieldNumber | fields at: fieldNumber put: effect ]].
+	^fields.
+]
+
 { #category : #accessingTests }
 BoardGameTest >> newBoardGameWithASinglePlayerAndASingleRound [
-	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard |
+	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields |
 	aPlayer := 'Pau'.
 	aDice := DeterministicDice with: #(2 4 7 3).
 	aGroupOfPlayers := {aPlayer}.
@@ -57,7 +80,8 @@ BoardGameTest >> newBoardGameWithASinglePlayerAndASingleRound [
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aSpinNumber:=1.
-	aBoard:= DeterministicBoard of: aNumberOfFields.
+	fields:= self generateManually: aNumberOfFields.
+	aBoard:= Board has: fields.
 	aBoardGame := BoardGame
 		playedBy: aGroupOfPlayers
 		using: aDiceCup
@@ -68,7 +92,7 @@ BoardGameTest >> newBoardGameWithASinglePlayerAndASingleRound [
 
 { #category : #accessingTests }
 BoardGameTest >> newBoardGameWithMultiplePlayers [
-	| aBoardGame secondDice aGroupOfPlayers aGroupOfDices firstDice aNumberOfFields thirdDice aDiceCup aSpinNumber aBoard |
+	| aBoardGame secondDice aGroupOfPlayers aGroupOfDices firstDice aNumberOfFields thirdDice aDiceCup aSpinNumber aBoard fields |
 	firstDice := DeterministicDice with: #(2 4 7 2).
 	secondDice := DeterministicDice with: #(8 5 4 7 2).
 	thirdDice := DeterministicDice with: #(4 1 2 7 2).
@@ -77,7 +101,8 @@ BoardGameTest >> newBoardGameWithMultiplePlayers [
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aNumberOfFields := 50.
 	aSpinNumber:=1.
-	aBoard:= DeterministicBoard of: aNumberOfFields.
+	fields:= self generateManually: aNumberOfFields.
+	aBoard:= Board has: fields.
 	aBoardGame := BoardGame
 		playedBy: aGroupOfPlayers
 		using: aDiceCup
@@ -85,6 +110,15 @@ BoardGameTest >> newBoardGameWithMultiplePlayers [
 		winnedWhenReach: aSpinNumber.
 		
 	^ aBoardGame
+]
+
+{ #category : #asserting }
+BoardGameTest >> relativeEventOcurrenceOf: aProbabilityEvent in: groupOfEvents [ 
+	| numberOfOcurrences percentageOfOcurrences relativePercentageOfOCurrences |
+	numberOfOcurrences:= groupOfEvents count: [ :event | event = (aProbabilityEvent event)].
+	percentageOfOcurrences := numberOfOcurrences / (groupOfEvents size).
+	relativePercentageOfOCurrences := (percentageOfOcurrences - (aProbabilityEvent probability ))abs.
+	^relativePercentageOfOCurrences*100.
 ]
 
 { #category : #playingTests }
@@ -171,7 +205,7 @@ BoardGameTest >> testABoardGameHasFinished [
 
 { #category : #statusTests }
 BoardGameTest >> testABoardGameHasFinishedAndHasAWinner [
-	| pau aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup jorge aSpinNumber aBoard |
+	| pau aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup jorge aSpinNumber aBoard fields |
 	pau := 'Pau'.
 	jorge := 'Jorge'.
 	aDice := DeterministicDice with: #(20 15 26 37).
@@ -180,7 +214,8 @@ BoardGameTest >> testABoardGameHasFinishedAndHasAWinner [
 	aNumberOfFields := 54.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aSpinNumber:=3.
-	aBoard:= DeterministicBoard of: aNumberOfFields.
+	fields:= self generateManually: aNumberOfFields.
+	aBoard:= Board has: fields.
 	aBoardGame := BoardGame
 		playedBy: aGroupOfPlayers
 		using: aDiceCup
@@ -352,7 +387,7 @@ BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowADiceAndMoveOnThe
 { #category : #playingTests }
 BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowThreeDicesSimultaneously [
  		
-	| aPlayer aBoardGame aGroupOfPlayers aGroupOfDices firstDice secondDice thirdDice aNumberOfFields aDiceCup aSpinNumber aBoard pauPosition |
+	| aPlayer aBoardGame aGroupOfPlayers aGroupOfDices firstDice secondDice thirdDice aNumberOfFields aDiceCup aSpinNumber aBoard pauPosition fields |
 	aPlayer:= 'Pau'.
 	pauPosition := Position of: 'Pau' standingOn: 25 after: 1.
 	firstDice:= DeterministicDice with:#(2 4 7 2).
@@ -363,7 +398,8 @@ BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowThreeDicesSimulta
 	aNumberOfFields:= 50.
 	aDiceCup:= DiceCup containing: aGroupOfDices.
 	aSpinNumber:=1.
-	aBoard:= DeterministicBoard of: aNumberOfFields.
+	fields:= self generateManually: aNumberOfFields.
+	aBoard:= Board has: fields.
 	aBoardGame := BoardGame
 		playedBy: aGroupOfPlayers
 		using: aDiceCup
@@ -378,14 +414,15 @@ BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowThreeDicesSimulta
 { #category : #validationTests }
 BoardGameTest >> testABoardGameNeedsAtLeastOnePlayer [
  		
-	|aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup aSpinNumber aBoard |
+	|aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup aSpinNumber aBoard fields |
 	aDice:= DeterministicDice with:#(2 4 7 3).
 	aGroupOfPlayers:= {}.
 	aGroupOfDices := { aDice }.
 	aNumberOfFields:= 49.
 	aDiceCup:= DiceCup containing: aGroupOfDices.
 	aSpinNumber:=1.
-	aBoard:= DeterministicBoard of: aNumberOfFields.
+	fields:= self generateManually: aNumberOfFields.
+	aBoard:= Board has: fields.
 
 	self 
 		should:[BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.] 
@@ -420,36 +457,18 @@ BoardGameTest >> testAPlayerMustGoThreeTimesAroundTheBoardToWin [
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> testEffectsDistribution [
-		| firstDice secondDice thirdDice aGroupOfPlayers aGroupOfDices aDiceCup aNumberOfFields aSpinNumber aBoardGame aBoard |
-	firstDice := DeterministicDice with: #(6 14 7 2).
-	secondDice := DeterministicDice with: #(1 8 5 11 8).
-	thirdDice := DeterministicDice with: #(9 4 2 17 12).
-	aGroupOfPlayers := {'Pau' . 'Male' . 'Belu'}.
-	aGroupOfDices := {firstDice.
-	secondDice.
-	thirdDice}.
-	aDiceCup := DiceCup containing: aGroupOfDices.
-	aNumberOfFields := 50.
-	aSpinNumber := 3.
-	aBoard:= RandomBoard of: aNumberOfFields.
-	aBoardGame := BoardGame
-		playedBy: aGroupOfPlayers
-		using: aDiceCup
-		on: aBoard
-		winnedWhenReach: aSpinNumber.
-	1 to: 5 do: [ :n | aBoardGame nextTurn ].
-	self
-		assert: ((aBoard) amountOfFieldsWith: AtomicBomb)
-		equals: ((aNumberOfFields *0.02) asInteger ).
-	self
-		assert: ((aBoard) amountOfFieldsWith: WormHole )
-		equals: ((aNumberOfFields *0.2) asInteger ).
-	self
-		assert: ((aBoard) amountOfFieldsWith: SpeedUp)
-		equals: ((aNumberOfFields *0.2) asInteger ).
-	self
-		assert: ((aBoard) amountOfFieldsWith: MoonWalk)
-		equals: ((aNumberOfFields *0.1) asInteger ).
+	| aBoard atomicBombEffect speedUpEffect wormHoleEffect moonWalkEffect nullEffect effectsDistribution effectManagerDistribution fields |
+	atomicBombEffect:= ProbabilityEvent with: 0.02 of: (AtomicBomb new). 
+	speedUpEffect:= ProbabilityEvent with: 0.2 of: (SpeedUp new). 
+	wormHoleEffect:= ProbabilityEvent with: 0.2 of: (WormHole new). 
+	moonWalkEffect:=ProbabilityEvent with: 0.1 of: (MoonWalk new).
+	nullEffect:= ProbabilityEvent with: 0.48 of: (NoEffect new).
+	effectsDistribution:=OrderedCollection newFrom: {atomicBombEffect . speedUpEffect . wormHoleEffect . moonWalkEffect . nullEffect  }.
+	effectManagerDistribution:= RandomProbabilityEventManager basedOn: effectsDistribution.
+	fields:= effectManagerDistribution generate: 1100.
+	
+	aBoard := Board has: fields.
+	self assert: fields areDistributedBasedOn: effectsDistribution  withTolerance: 5.
 ]
 
 { #category : #circularBoardTests }
