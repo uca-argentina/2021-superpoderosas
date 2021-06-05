@@ -90,7 +90,7 @@ RandomEventManagerTest >> testTheAdditionOfTheProbabilityOfAllProbabiliyEventsEq
 	eventsDistribution  := self groupProbabilityEventsOfCowsWith: 0.25 piggsWith: 0.05 horsesWith:0.3 andDucksWith: 0.4.
 	eventManager := RandomProbabilityEventManager basedOn: eventsDistribution.
 
-	self assert: (eventManager sumUpEventProbabilitiesOf: eventsDistribution ) identicalTo: 1.0.
+	self assert: (eventManager sumUpEventProbabilitiesOf: eventsDistribution ) = 1.0.
 ]
 
 { #category : #tests }

@@ -70,6 +70,18 @@ BoardGameTest >> generateManually: aNumberOfFields [
 	^fields.
 ]
 
+{ #category : #playingWithCardsTests }
+BoardGameTest >> generateManuallyIncludingCards: aNumberOfFields [ 
+	|  fields effectToDistrubute effectDistributionFields |
+	fields:= OrderedCollection new: aNumberOfFields withAll: NoEffect new.
+	effectToDistrubute := {WormHole new. SpeedUp new.AtomicBomb new.MoonWalk new. CardDealer new}.
+	effectDistributionFields := {{3 . 17}.{30 . 48}.{44}.{32 . 23} . {10}}.
+	effectToDistrubute with: effectDistributionFields do:[ :effect :effectFields | 
+						effectFields do: 
+								[ :fieldNumber | fields at: fieldNumber put: effect ]].
+	^fields.
+]
+
 { #category : #accessingTests }
 BoardGameTest >> newBoardGameWithASinglePlayerAndASingleRound [
 	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields |
@@ -400,11 +412,7 @@ BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowThreeDicesSimulta
 	aSpinNumber:=1.
 	fields:= self generateManually: aNumberOfFields.
 	aBoard:= Board has: fields.
-	aBoardGame := BoardGame
-		playedBy: aGroupOfPlayers
-		using: aDiceCup
-		on: aBoard
-		winnedWhenReach: aSpinNumber.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition}).
@@ -447,12 +455,70 @@ BoardGameTest >> testAFieldHasNoEffect [
 
 ]
 
+{ #category : #playingWithCardsTests }
+BoardGameTest >> testAPlayerHas2CardsAtTheBegginingOfTheGame [
+	| aPlayer cards |
+	cards:={'card1' . 'card2'}.
+	aPlayer := Player named: 'Pau' with: cards.
+		
+	self assert: aPlayer cards size equals: 2.
+]
+
+{ #category : #playingWithCardsTests }
+BoardGameTest >> testAPlayerHasThreeCardsAfterLandingOnAFieldWithACardDealerEffect [
+	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards |
+	cards:=OrderedCollection newFrom:{'card1' . 'card2'}.
+	aPlayer := Player named: 'Pau' with: cards.
+	aDice := DeterministicDice with: #(9 10 7 3).
+	aGroupOfPlayers := {aPlayer}.
+	aGroupOfDices := {aDice}.
+	aNumberOfFields := 61.
+	aDiceCup := DiceCup containing: aGroupOfDices.
+	aSpinNumber:=1.
+	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	aBoard:= Board has: fields.
+	aBoardGame := BoardGame
+		playedBy: aGroupOfPlayers
+		using: aDiceCup
+		on: aBoard
+		winnedWhenReach: aSpinNumber.
+	aBoardGame nextTurn.
+	self assert: aPlayer cards size equals: 3.
+]
+
 { #category : #circularBoardTests }
 BoardGameTest >> testAPlayerMustGoThreeTimesAroundTheBoardToWin [
 	| aBoardGame |
 	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
 	1 to: 19 do: [ :n | aBoardGame nextTurn ].
 	self assert: aBoardGame winner equals: 'Pau'.	
+]
+
+{ #category : #playingWithCardsTests }
+BoardGameTest >> testAPlayerUsesAOverloadCard [
+	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards anOverloadCard anotherPlayer pauPosition beluPosition |
+	anOverloadCard := Overload new.
+	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
+	aPlayer := Player named: 'Pau' with: cards.
+	anotherPlayer := Player named: 'Belu' with: cards.
+	aDice := DeterministicDice with: #(9 10 7 3).
+	aGroupOfPlayers := {aPlayer . anotherPlayer}.
+	aGroupOfDices := {aDice}.
+	aNumberOfFields := 61.
+	aDiceCup := DiceCup containing: aGroupOfDices.
+	aSpinNumber:=5.
+	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	aBoard:= Board has: fields.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
+	pauPosition := Position of: 'Pau' standingOn: 29 after: 1.
+	beluPosition := Position of: 'Belu' standingOn: 25 after: 1.
+		
+	1 to: 6 do: [ :n | aBoardGame nextTurn ].
+	aBoardGame nextTurnThrowing: anOverloadCard to: anotherPlayer.
+	aBoardGame nextTurn.
+	
+	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
+	
 ]
 
 { #category : #fieldsEffectTests }
@@ -464,6 +530,23 @@ BoardGameTest >> testEffectsDistribution [
 	moonWalkEffect:=ProbabilityEvent with: 0.1 of: (MoonWalk new).
 	nullEffect:= ProbabilityEvent with: 0.48 of: (NoEffect new).
 	effectsDistribution:=OrderedCollection newFrom: {atomicBombEffect . speedUpEffect . wormHoleEffect . moonWalkEffect . nullEffect  }.
+	effectManagerDistribution:= RandomProbabilityEventManager basedOn: effectsDistribution.
+	fields:= effectManagerDistribution generate: 1100.
+	
+	aBoard := Board has: fields.
+	self assert: fields areDistributedBasedOn: effectsDistribution  withTolerance: 5.
+]
+
+{ #category : #playingWithCardsTests }
+BoardGameTest >> testEffectsDistributionWithCardDealerEffect [
+	| aBoard atomicBombEffect speedUpEffect wormHoleEffect moonWalkEffect nullEffect effectsDistribution effectManagerDistribution fields cardDealerEffect |
+	atomicBombEffect:= ProbabilityEvent with: 0.02 of: (AtomicBomb new). 
+	speedUpEffect:= ProbabilityEvent with: 0.2 of: (SpeedUp new). 
+	cardDealerEffect:= ProbabilityEvent with: 0.1 of: (CardDealer new). 
+	wormHoleEffect:= ProbabilityEvent with: 0.2 of: (WormHole new). 
+	moonWalkEffect:=ProbabilityEvent with: 0.1 of: (MoonWalk new).
+	nullEffect:= ProbabilityEvent with: 0.38 of: (NoEffect new).
+	effectsDistribution:=OrderedCollection newFrom: {atomicBombEffect . speedUpEffect . wormHoleEffect . moonWalkEffect . nullEffect . cardDealerEffect }.
 	effectManagerDistribution:= RandomProbabilityEventManager basedOn: effectsDistribution.
 	fields:= effectManagerDistribution generate: 1100.
 	

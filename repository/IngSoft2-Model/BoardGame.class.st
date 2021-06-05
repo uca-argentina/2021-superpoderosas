@@ -25,9 +25,22 @@ BoardGame >> addOrSubstractOneIfThePlayerHasChangedRound: totalFields [
 
 ]
 
+{ #category : #'as yet unclassified' }
+BoardGame >> applyInfluentialCardsOn: sumOfAllDices of: player [
+	| result |
+	result:= sumOfAllDices.
+	(player influentialCards) do: [ :aCard | result :=(result + aCard action) ].
+	^ result.
+]
+
 { #category : #private }
 BoardGame >> changeCurrentStateToFinished [
 	isFinished := true.
+]
+
+{ #category : #actions }
+BoardGame >> deal: aCard toPlayerOf: aPosition [ 
+	aPosition player pickUp: aCard.
 ]
 
 { #category : #actions }
@@ -147,9 +160,20 @@ BoardGame >> nextTurn [
 	self verifyIfTheGameHasFinished.
 	player := self lookForPlayerWhoseTurnItIs.
 	sumOfAllDices := diceCup throw.
+	sumOfAllDices := self applyInfluentialCardsOn: sumOfAllDices of: player.
 	self move: player along: sumOfAllDices.
 	self endGameIfTheWinnerIs: player.
 	self orderPlayersPosition.
+
+]
+
+{ #category : #actions }
+BoardGame >> nextTurnThrowing: aCard to: aPlayer [
+	| currentPlayer |
+	self nextTurn.
+	currentPlayer := self lookForPlayerWhoseTurnItIs.
+	currentPlayer lays: aCard.
+	aPlayer isInfluencedBy: aCard.
 ]
 
 { #category : #actions }
