@@ -2,14 +2,14 @@ Class {
 	#name : #RandomProbabilityEventManager,
 	#superclass : #Object,
 	#instVars : [
-		'events'
+		'poolOfEvents'
 	],
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #initialization }
-RandomProbabilityEventManager class >> basedOn: events [ 
-	^self new initializeBasedOn: events.
+RandomProbabilityEventManager class >> basedOn: eventsDistribution [ 
+	^self new initializeBasedOn: eventsDistribution.
 ]
 
 { #category : #'error messages' }
@@ -26,13 +26,18 @@ RandomProbabilityEventManager >> evaluateIfValid: aGroupOfEvents [
 
 { #category : #actions }
 RandomProbabilityEventManager >> generate: size [ 
-	^ OrderedCollection new: size withAll:((events first) event).
+	| events |
+	events := OrderedCollection new.
+	size timesRepeat: [ events add: (poolOfEvents atRandom: (Random new))].
+	 ^events.
 ]
 
 { #category : #initialize }
-RandomProbabilityEventManager >> initializeBasedOn: aGroupOfEvents [
-	self evaluateIfValid: aGroupOfEvents.
-	events:= aGroupOfEvents.
+RandomProbabilityEventManager >> initializeBasedOn: eventDistribution [
+	self evaluateIfValid: eventDistribution.
+	poolOfEvents := OrderedCollection new.
+	eventDistribution do: [:event | poolOfEvents add: (event event) withOccurrences: (event probability * 100) asInteger].
+
 ]
 
 { #category : #actions }

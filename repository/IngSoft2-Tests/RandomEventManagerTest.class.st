@@ -5,13 +5,15 @@ Class {
 }
 
 { #category : #tests }
-RandomEventManagerTest >> testAFarmHasAllCows [
-	|eventVaca events eventManager farm |
-	eventVaca := ProbabilityEvent with: 1.0 of: #Vaca.
-	events:= OrderedCollection newFrom: { eventVaca}.
-	eventManager:= RandomProbabilityEventManager basedOn: events.
-	farm:= eventManager generate: 100.
-	self assert: farm equals: (OrderedCollection new:100 withAll: #Vaca).
+RandomEventManagerTest >> testAFarmHasAllPiggs [
+	| eventManager farm eventChanchito eventsDistribution |
+	eventChanchito := ProbabilityEvent with: 1.0 of: #Chanchito.
+	eventsDistribution := OrderedCollection newFrom: {eventChanchito}.
+	eventManager := RandomProbabilityEventManager basedOn: eventsDistribution.
+	farm := eventManager generate: 100.
+	self
+		assert: farm
+		equals: (OrderedCollection new: 100 withAll: #Chanchito)
 ]
 
 { #category : #tests }
@@ -46,27 +48,31 @@ RandomEventManagerTest >> testProbabilityIsGreaterThanZero [
 
 { #category : #tests }
 RandomEventManagerTest >> testTheAdditionOfTheProbabilityOfAllProbabiliyEventsCannotBeOtherThanOne [
-	|eventVaca events eventChanchito eventCaballo eventPato |
+	|eventVaca eventsDistribution eventChanchito eventCaballo eventPato |
 	eventVaca := ProbabilityEvent with: 0.20 of: #Vaca.
 	eventChanchito := ProbabilityEvent with: 0.05 of: #Chanchito.
 	eventCaballo := ProbabilityEvent with: 0.30 of: #Caballo.
 	eventPato := ProbabilityEvent with: 0.40 of: #Pato.
-	events:= OrderedCollection newFrom: { eventVaca. eventChanchito. eventCaballo.eventPato }.
+	eventsDistribution:= OrderedCollection newFrom: { eventVaca. eventChanchito. eventCaballo.eventPato }.
 	self 
-		should:[RandomProbabilityEventManager basedOn: events] 
+		should:[RandomProbabilityEventManager basedOn: eventsDistribution] 
 		raise: Error 
 		withExceptionDo: [:error | self assert: error messageText equals: 'The addition of the probabilities of the events must be one' ].
 ]
 
 { #category : #tests }
 RandomEventManagerTest >> testTheAdditionOfTheProbabilityOfAllProbabiliyEventsEqualsOne [
-	|eventVaca events eventManager eventChanchito eventCaballo eventPato |
+	|eventVaca eventsDistribution eventManager eventChanchito eventCaballo eventPato |
 	eventVaca := ProbabilityEvent with: 0.25 of: #Vaca.
 	eventChanchito := ProbabilityEvent with: 0.05 of: #Chanchito.
 	eventCaballo := ProbabilityEvent with: 0.30 of: #Caballo.
 	eventPato := ProbabilityEvent with: 0.40 of: #Pato.
-	events:= OrderedCollection newFrom: { eventVaca. eventChanchito. eventCaballo.eventPato }.
-	eventManager:= RandomProbabilityEventManager basedOn: events.
+	eventsDistribution:= OrderedCollection newFrom: { eventVaca. eventChanchito. eventCaballo.eventPato }.
+	eventManager:= RandomProbabilityEventManager basedOn: eventsDistribution.
 
-	self assert: (eventManager sumUpEventProbabilitiesOf: events ) identicalTo: 1.0.
+	self assert: (eventManager sumUpEventProbabilitiesOf: eventsDistribution ) identicalTo: 1.0.
+]
+
+{ #category : #tests }
+RandomEventManagerTest >> testearLaDISTRIBUCIONUNIFORME [
 ]
