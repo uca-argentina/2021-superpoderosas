@@ -6,8 +6,7 @@ Class {
 
 { #category : #assertions }
 RandomEventManagerTest >> assert: events areDistributedBasedOn: eventsDistribution withTolerance: tolerance [
-	| val |
-	eventsDistribution do:[ :probabilityEvent | val:=(self relativeEventOcurrenceOf: probabilityEvent in:events).self assert: val < tolerance] 
+	eventsDistribution do:[ :probabilityEvent | self assert: (self relativeEventOcurrenceOf: probabilityEvent in:events) < tolerance] 
 	
 ]
 
@@ -29,6 +28,8 @@ RandomEventManagerTest >> relativeEventOcurrenceOf: aProbabilityEvent in: events
 	percentageOfOcurrences := numberOfOcurrences / (events size).
 	relativePercentageOfOCurrences := (percentageOfOcurrences - (aProbabilityEvent probability ))abs.
 	^relativePercentageOfOCurrences*100.
+
+
 ]
 
 { #category : #tests }
