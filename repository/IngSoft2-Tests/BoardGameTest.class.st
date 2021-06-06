@@ -28,21 +28,20 @@ BoardGameTest >> creationOfAnotherBoardGameWithThreePlayers [
 
 { #category : #positionTests }
 BoardGameTest >> creationOfBoardGameWithThatUsesA: firstDice a: secondDice andA: thirdDice [
-	| aGroupOfDices aDiceCup aSpinNumber aNumberOfFields aBoard aBoardGame aGroupOfPlayers fields |
-	aGroupOfPlayers := {'Pau' . 'Male' . 'Belu'}.
-	aGroupOfDices := {firstDice.
-	secondDice.
-	thirdDice}.
+	| aGroupOfDices aDiceCup aSpinNumber aNumberOfFields aBoard aBoardGame aGroupOfPlayers fields cards pau belu male anOverloadCard |
+	anOverloadCard := Overload new.
+	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
+	pau := Player named: 'Pau' with: cards.
+	belu:= Player named: 'Belu' with: cards.
+	male:= Player named: 'Male' with: cards.
+	aGroupOfPlayers := {pau . male . belu}.
+	aGroupOfDices := {firstDice. secondDice. thirdDice}.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aNumberOfFields := 50.
 	aSpinNumber := 3.
 	fields:= self generateManually: aNumberOfFields.
 	aBoard := Board has:fields.
-	aBoardGame := BoardGame
-		playedBy: aGroupOfPlayers
-		using: aDiceCup
-		on: aBoard
-		winnedWhenReach: aSpinNumber.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
 	^ aBoardGame
 ]
 
@@ -84,8 +83,10 @@ BoardGameTest >> generateManuallyIncludingCards: aNumberOfFields [
 
 { #category : #accessingTests }
 BoardGameTest >> newBoardGameWithASinglePlayerAndASingleRound [
-	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields |
-	aPlayer := 'Pau'.
+	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields anOverloadCard cards |
+	anOverloadCard := Overload new.
+	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
+	aPlayer := Player named: 'Pau' with: cards.
 	aDice := DeterministicDice with: #(2 4 7 3).
 	aGroupOfPlayers := {aPlayer}.
 	aGroupOfDices := {aDice}.
@@ -104,11 +105,17 @@ BoardGameTest >> newBoardGameWithASinglePlayerAndASingleRound [
 
 { #category : #accessingTests }
 BoardGameTest >> newBoardGameWithMultiplePlayers [
-	| aBoardGame secondDice aGroupOfPlayers aGroupOfDices firstDice aNumberOfFields thirdDice aDiceCup aSpinNumber aBoard fields |
+	| aBoardGame secondDice aGroupOfPlayers aGroupOfDices firstDice aNumberOfFields thirdDice aDiceCup aSpinNumber aBoard fields anOverloadCard cards pau belu male juli |
 	firstDice := DeterministicDice with: #(2 4 7 2).
 	secondDice := DeterministicDice with: #(8 5 4 7 2).
 	thirdDice := DeterministicDice with: #(4 1 2 7 2).
-	aGroupOfPlayers := {'Pau' . 'Male' . 'Belu' . 'Juli'}.
+	anOverloadCard := Overload new.
+	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
+	pau := Player named: 'Pau' with: cards.
+	belu:= Player named: 'Belu' with: cards.
+	male:= Player named: 'Male' with: cards.
+	juli:= Player named: 'Juli' with: cards.
+	aGroupOfPlayers := {pau . male . belu . juli}.
 	aGroupOfDices := {firstDice. secondDice. thirdDice}.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aNumberOfFields := 50.
@@ -136,12 +143,18 @@ BoardGameTest >> relativeEventOcurrenceOf: aProbabilityEvent in: groupOfEvents [
 { #category : #playingTests }
 BoardGameTest >> testABoardGameCanDistinguishBetweenWhoseTurnIsIt [
  		
-	| aBoardGame pauPosition beluPosition juliPosition malePosition |
+	| aBoardGame pauPosition beluPosition juliPosition malePosition cards pau belu male juli anOverloadCard |
 	aBoardGame := self newBoardGameWithMultiplePlayers.
-	pauPosition := Position of: 'Pau' standingOn: 21 after: 1.
-	beluPosition := Position of: 'Belu' standingOn: 14 after: 1.
-	juliPosition := Position of: 'Juli' standingOn: 13 after: 1.
-	malePosition := Position of: 'Male' standingOn: 11 after: 1.
+	anOverloadCard := Overload new.
+	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
+	pau := Player named: 'Pau' with: cards.
+	belu:= Player named: 'Belu' with: cards.
+	male:= Player named: 'Male' with: cards.
+	juli:= Player named: 'Juli' with: cards.
+	pauPosition := Position of: pau standingOn: 21 after: 1.
+	beluPosition := Position of: belu standingOn: 14 after: 1.
+	juliPosition := Position of: juli standingOn: 13 after: 1.
+	malePosition := Position of: male standingOn: 11 after: 1.
 	1 to: 5 do: [ :n | aBoardGame nextTurn ].
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition . juliPosition . malePosition }).
 ]
@@ -161,12 +174,17 @@ BoardGameTest >> testABoardGameDoesntHaveAWinnerYet [
 
 { #category : #positionTests }
 BoardGameTest >> testABoardGameHasAFinalRanking [
-	| aBoardGame pauPosition beluPosition malePosition |
+	| aBoardGame pauPosition beluPosition malePosition anOverloadCard cards pau belu male |
 	aBoardGame := self creationOfBoardGameWithThreePlayers.
 	1 to: 34 do: [ :n | aBoardGame nextTurn ].
-	pauPosition := Position of: 'Pau' standingOn: 46 after: 1.
-	beluPosition := Position of: 'Belu' standingOn: 13 after: 1.
-	malePosition := Position of: 'Male' standingOn: 21 after: 1.
+	anOverloadCard := Overload new.
+	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
+	pau := Player named: 'Pau' with: cards.
+	belu:= Player named: 'Belu' with: cards.
+	male:= Player named: 'Male' with: cards.
+	pauPosition := Position of: pau standingOn: 46 after: 1.
+	beluPosition := Position of: belu standingOn: 13 after: 1.
+	malePosition := Position of: male standingOn: 21 after: 1.
 	self
 		assert: aBoardGame ranking
 		equals:
@@ -177,21 +195,27 @@ BoardGameTest >> testABoardGameHasAFinalRanking [
 
 { #category : #accessingTests }
 BoardGameTest >> testABoardGameHasARanking [
-	| aBoardGame pauPosition |
+	| aBoardGame pauPosition anOverloadCard cards pau |
 	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
-	pauPosition := Position of: 'Pau' standingOn: 61 after: 1.
+	anOverloadCard := Overload new.
+	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
+	pau := Player named: 'Pau' with: cards.
+	pauPosition := Position of: pau standingOn: 61 after: 1.
 	1 to: 18 do: [ :n | aBoardGame nextTurn ].
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition}).
 ]
 
 { #category : #positionTests }
 BoardGameTest >> testABoardGameHasAWinner [
-	| aBoardGame |
+	| aBoardGame anOverloadCard cards pau |
+	anOverloadCard := Overload new.
+	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
+	pau := Player named: 'Pau' with: cards.
 	aBoardGame := self creationOfAnotherBoardGameWithThreePlayers.
 	1 to: 16 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame winner 
-		equals: 'Pau'.
+		equals: pau.
 ]
 
 { #category : #positionTests }
@@ -217,9 +241,11 @@ BoardGameTest >> testABoardGameHasFinished [
 
 { #category : #statusTests }
 BoardGameTest >> testABoardGameHasFinishedAndHasAWinner [
-	| pau aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup jorge aSpinNumber aBoard fields |
-	pau := 'Pau'.
-	jorge := 'Jorge'.
+	| pau aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup jorge aSpinNumber aBoard fields anOverloadCard cards |
+	anOverloadCard := Overload new.
+	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
+	pau := Player named: 'Pau' with: cards.
+	jorge:= Player named: 'Jorge' with: cards.
 	aDice := DeterministicDice with: #(20 15 26 37).
 	aGroupOfPlayers := {pau. jorge}.
 	aGroupOfDices := {aDice}.
@@ -322,11 +348,16 @@ BoardGameTest >> testABoardGameHasFinishedAndPlayersMustBeHalted [
 
 { #category : #positionTests }
 BoardGameTest >> testABoardGameHasThreePlayersThatChangePositionOvertime [
-	| aBoardGame pauPosition beluPosition malePosition |
+	| aBoardGame pauPosition beluPosition malePosition anOverloadCard cards pau belu male |
 	aBoardGame := self creationOfBoardGameWithThreePlayers.
-	pauPosition := Position of: 'Pau' standingOn: 31 after: 1.
-	beluPosition := Position of: 'Belu' standingOn: 14 after: 1.
-	malePosition := Position of: 'Male' standingOn: 13 after: 1.
+	anOverloadCard := Overload new.
+	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
+	pau := Player named: 'Pau' with: cards.
+	belu:= Player named: 'Belu' with: cards.
+	male:= Player named: 'Male' with: cards.
+	pauPosition := Position of: pau standingOn: 31 after: 1.
+	beluPosition := Position of: belu standingOn: 14 after: 1.
+	malePosition := Position of: male standingOn: 13 after: 1.
 	1 to: 5 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
@@ -338,11 +369,16 @@ BoardGameTest >> testABoardGameHasThreePlayersThatChangePositionOvertime [
 
 { #category : #positionTests }
 BoardGameTest >> testABoardGameHasThreePlayersThatChangeRoundNumberOvertime [
-	| aBoardGame pauPosition beluPosition malePosition |
+	| aBoardGame pauPosition beluPosition malePosition anOverloadCard cards pau belu male |
 	aBoardGame := self creationOfAnotherBoardGameWithThreePlayers.
-	pauPosition := Position of: 'Pau' standingOn: 33 after: 2.
-	beluPosition := Position of: 'Belu' standingOn: 10 after: 2.
-	malePosition := Position of: 'Male' standingOn: 43 after: 1.
+	anOverloadCard := Overload new.
+	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
+	pau := Player named: 'Pau' with: cards.
+	belu:= Player named: 'Belu' with: cards.
+	male:= Player named: 'Male' with: cards.
+	pauPosition := Position of: pau standingOn: 33 after: 2.
+	beluPosition := Position of: belu standingOn: 10 after: 2.
+	malePosition := Position of: male standingOn: 43 after: 1.
 	1 to: 7 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
@@ -354,11 +390,16 @@ BoardGameTest >> testABoardGameHasThreePlayersThatChangeRoundNumberOvertime [
 
 { #category : #positionTests }
 BoardGameTest >> testABoardGameHasThreePlayersWithAnInitialPosition [
-	| aBoardGame pauPosition beluPosition malePosition |
+	| aBoardGame pauPosition beluPosition malePosition anOverloadCard cards pau belu male |
 	aBoardGame := self creationOfBoardGameWithThreePlayers.
-	pauPosition := Position of: 'Pau' standingOn: 1 after: 1.
-	beluPosition := Position of: 'Belu' standingOn: 1 after: 1.
-	malePosition := Position of: 'Male' standingOn: 1 after: 1.
+	anOverloadCard := Overload new.
+	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
+	pau := Player named: 'Pau' with: cards.
+	belu:= Player named: 'Belu' with: cards.
+	male:= Player named: 'Male' with: cards.
+	pauPosition := Position of: pau standingOn: 1 after: 1.
+	beluPosition := Position of: belu standingOn: 1 after: 1.
+	malePosition := Position of: male standingOn: 1 after: 1.
 
 	self assert: (aBoardGame ranking) equals: (OrderedCollection newFrom: {pauPosition . malePosition . beluPosition }).
 
@@ -377,9 +418,12 @@ BoardGameTest >> testABoardGameIsInProcess [
 { #category : #accessingTests }
 BoardGameTest >> testABoardGameKnowsThePlayersInitialPosition [
  		
-	| aBoardGame pauPosition |
+	| aBoardGame pauPosition anOverloadCard cards pau |
 	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
-	pauPosition := Position of: 'Pau' standingOn: 1 after: 1.
+	anOverloadCard := Overload new.
+	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
+	pau := Player named: 'Pau' with: cards.
+	pauPosition := Position of: pau standingOn: 1 after: 1.
 	
 	self assert: (aBoardGame ranking) equals: (OrderedCollection newFrom: {pauPosition}).
 ]
@@ -387,9 +431,12 @@ BoardGameTest >> testABoardGameKnowsThePlayersInitialPosition [
 { #category : #playingTests }
 BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowADiceAndMoveOnTheBoard [
  		
-	| aBoardGame pauPosition |
+	| aBoardGame pauPosition anOverloadCard cards pau |
 	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
-	pauPosition := Position of: 'Pau' standingOn: 5 after: 1.
+	anOverloadCard := Overload new.
+	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
+	pau := Player named: 'Pau' with: cards.
+	pauPosition := Position of: pau standingOn: 5 after: 1.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 		
@@ -399,9 +446,11 @@ BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowADiceAndMoveOnThe
 { #category : #playingTests }
 BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowThreeDicesSimultaneously [
  		
-	| aPlayer aBoardGame aGroupOfPlayers aGroupOfDices firstDice secondDice thirdDice aNumberOfFields aDiceCup aSpinNumber aBoard pauPosition fields |
-	aPlayer:= 'Pau'.
-	pauPosition := Position of: 'Pau' standingOn: 25 after: 1.
+	| aPlayer aBoardGame aGroupOfPlayers aGroupOfDices firstDice secondDice thirdDice aNumberOfFields aDiceCup aSpinNumber aBoard pauPosition fields anOverloadCard cards |
+	anOverloadCard := Overload new.
+	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
+	aPlayer := Player named: 'Pau' with: cards.
+	pauPosition := Position of: aPlayer standingOn: 25 after: 1.
 	firstDice:= DeterministicDice with:#(2 4 7 2).
 	secondDice:= DeterministicDice with:#(8 5 4 7 2).
 	thirdDice:= DeterministicDice with:#(4 1 2 7 2).
@@ -440,11 +489,16 @@ BoardGameTest >> testABoardGameNeedsAtLeastOnePlayer [
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> testAFieldHasNoEffect [
-	| aBoardGame pauPosition beluPosition malePosition |
+	| aBoardGame pauPosition beluPosition malePosition anOverloadCard cards pau belu male |
 	aBoardGame := self creationOfBoardGameWithThreePlayers.
-	pauPosition := Position of: 'Pau' standingOn: 31 after: 1.
-	beluPosition := Position of: 'Belu' standingOn: 14 after: 1.
-	malePosition := Position of: 'Male' standingOn: 11 after: 1.
+	anOverloadCard := Overload new.
+	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
+	pau := Player named: 'Pau' with: cards.
+	belu:= Player named: 'Belu' with: cards.
+	male:= Player named: 'Male' with: cards.
+	pauPosition := Position of: pau standingOn: 31 after: 1.
+	beluPosition := Position of: belu standingOn: 14 after: 1.
+	malePosition := Position of: male standingOn: 11 after: 1.
 	1 to: 4 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
@@ -488,10 +542,13 @@ BoardGameTest >> testAPlayerHasThreeCardsAfterLandingOnAFieldWithACardDealerEffe
 
 { #category : #circularBoardTests }
 BoardGameTest >> testAPlayerMustGoThreeTimesAroundTheBoardToWin [
-	| aBoardGame |
+	| aBoardGame anOverloadCard cards pau |
+	anOverloadCard := Overload new.
+	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
+	pau := Player named: 'Pau' with: cards.
 	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
 	1 to: 19 do: [ :n | aBoardGame nextTurn ].
-	self assert: aBoardGame winner equals: 'Pau'.	
+	self assert: aBoardGame winner equals: pau.	
 ]
 
 { #category : #playingWithCardsTests }
@@ -510,8 +567,8 @@ BoardGameTest >> testAPlayerUsesAOverloadCard [
 	fields:= self generateManuallyIncludingCards: aNumberOfFields.
 	aBoard:= Board has: fields.
 	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
-	pauPosition := Position of: 'Pau' standingOn: 29 after: 1.
-	beluPosition := Position of: 'Belu' standingOn: 25 after: 1.
+	pauPosition := Position of: aPlayer standingOn: 29 after: 1.
+	beluPosition := Position of: anotherPlayer standingOn: 25 after: 1.
 		
 	1 to: 6 do: [ :n | aBoardGame nextTurn ].
 	aBoardGame nextTurnThrowing: anOverloadCard to: anotherPlayer.
@@ -556,20 +613,28 @@ BoardGameTest >> testEffectsDistributionWithCardDealerEffect [
 
 { #category : #circularBoardTests }
 BoardGameTest >> testTheBoardIsCircular [
-	| aBoardGame pauPosition |
+	| aBoardGame pauPosition anOverloadCard cards pau |
 	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
-	pauPosition := Position of: 'Pau' standingOn: 7 after: 2.
+	anOverloadCard := Overload new.
+	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
+	pau := Player named: 'Pau' with: cards.
+	pauPosition := Position of: pau standingOn: 7 after: 2.
 	1 to: 19 do: [ :n | aBoardGame nextTurn ].
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition}).
 ]
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> testWhenAPlayerFellsOnAMoonWalkFieldTheRestOfThePlayersMustGoBackwardsNFields [
-	| aBoardGame pauPosition beluPosition malePosition |
+	| aBoardGame pauPosition beluPosition malePosition anOverloadCard cards pau belu male |
 	aBoardGame := self creationOfBoardGameWithThreePlayers.
-	pauPosition := Position of: 'Pau' standingOn: 1 after: 1.
-	beluPosition := Position of: 'Belu' standingOn: 32 after: 1.
-	malePosition := Position of: 'Male' standingOn: 30 after: 1.
+	anOverloadCard := Overload new.
+	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
+	pau := Player named: 'Pau' with: cards.
+	belu:= Player named: 'Belu' with: cards.
+	male:= Player named: 'Male' with: cards.
+	pauPosition := Position of: pau standingOn: 1 after: 1.
+	beluPosition := Position of: belu standingOn: 32 after: 1.
+	malePosition := Position of: male standingOn: 30 after: 1.
 	1 to: 15 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
@@ -581,14 +646,19 @@ BoardGameTest >> testWhenAPlayerFellsOnAMoonWalkFieldTheRestOfThePlayersMustGoBa
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> testWhenAPlayerFellsOnAMoonWalkFieldTheRestOfThePlayersMustGoBackwardsNFieldsAndTheRoundChangesWhenMoveingBackwards [
-		| firstDice secondDice thirdDice aBoardGame pauPosition beluPosition malePosition |
+		| firstDice secondDice thirdDice aBoardGame pauPosition beluPosition malePosition anOverloadCard cards pau belu male |
 	firstDice := DeterministicDice with: #(10 14 13 1).
 	secondDice := DeterministicDice with: #(14 8 6 2 1).
 	thirdDice := DeterministicDice with: #(9 8 2 6 3 4).
 	aBoardGame := self creationOfBoardGameWithThatUsesA: firstDice a: secondDice andA: thirdDice.
-	pauPosition := Position of: 'Pau' standingOn: 23 after: 2.
-	beluPosition := Position of: 'Belu' standingOn: 43 after: 1.
-	malePosition := Position of: 'Male' standingOn: 34 after: 1.
+	anOverloadCard := Overload new.
+	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
+	pau := Player named: 'Pau' with: cards.
+	belu:= Player named: 'Belu' with: cards.
+	male:= Player named: 'Male' with: cards.
+	pauPosition := Position of: pau standingOn: 23 after: 2.
+	beluPosition := Position of: belu standingOn: 43 after: 1.
+	malePosition := Position of: male standingOn: 34 after: 1.
 		
 	1 to: 7 do: [ :n | aBoardGame nextTurn ].
 	self
@@ -601,11 +671,16 @@ BoardGameTest >> testWhenAPlayerFellsOnAMoonWalkFieldTheRestOfThePlayersMustGoBa
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> testWhenAPlayerFellsOnASpeedUpFieldHeAdvancesFourMoreFields [
-	| aBoardGame pauPosition beluPosition malePosition |
+	| aBoardGame pauPosition beluPosition malePosition anOverloadCard cards pau belu male |
 	aBoardGame := self creationOfBoardGameWithThreePlayers.
-	pauPosition := Position of: 'Pau' standingOn: 31 after: 1.
-	beluPosition := Position of: 'Belu' standingOn: 34 after: 1.
-	malePosition := Position of: 'Male' standingOn: 13 after: 1.
+	anOverloadCard := Overload new.
+	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
+	pau := Player named: 'Pau' with: cards.
+	belu:= Player named: 'Belu' with: cards.
+	male:= Player named: 'Male' with: cards.
+	pauPosition := Position of: pau standingOn: 31 after: 1.
+	beluPosition := Position of: belu standingOn: 34 after: 1.
+	malePosition := Position of: male standingOn: 13 after: 1.
 	1 to: 6 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
@@ -617,14 +692,19 @@ BoardGameTest >> testWhenAPlayerFellsOnASpeedUpFieldHeAdvancesFourMoreFields [
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> testWhenAPlayerFellsOnASpeedUpFieldHeAdvancesFourMoreFieldsAndTheRoundChangesWhenMoveingForward [
-		| firstDice secondDice thirdDice aBoardGame pauPosition beluPosition malePosition |
+		| firstDice secondDice thirdDice aBoardGame pauPosition beluPosition malePosition anOverloadCard cards pau belu male |
 	firstDice := DeterministicDice with: #(6 14 7 2).
 	secondDice := DeterministicDice with: #(1 8 5 11 8).
 	thirdDice := DeterministicDice with: #(9 4 2 17 12).
 	aBoardGame := self creationOfBoardGameWithThatUsesA: firstDice a: secondDice andA: thirdDice.
-	pauPosition := Position of: 'Pau' standingOn: 2 after: 3.
-	beluPosition := Position of: 'Belu' standingOn: 37 after: 2.
-	malePosition := Position of: 'Male' standingOn: 14 after: 2.
+	anOverloadCard := Overload new.
+	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
+	pau := Player named: 'Pau' with: cards.
+	belu:= Player named: 'Belu' with: cards.
+	male:= Player named: 'Male' with: cards.
+	pauPosition := Position of: pau standingOn: 2 after: 3.
+	beluPosition := Position of: belu standingOn: 37 after: 2.
+	malePosition := Position of: male standingOn: 14 after: 2.
 	1 to: 13 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
@@ -636,11 +716,16 @@ BoardGameTest >> testWhenAPlayerFellsOnASpeedUpFieldHeAdvancesFourMoreFieldsAndT
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> testWhenAPlayerFellsOnAWormHoleFieldHeMovesBackwardsFourFields [
-	| aBoardGame pauPosition beluPosition malePosition |
+	| aBoardGame pauPosition beluPosition malePosition anOverloadCard cards pau belu male |
 	aBoardGame := self creationOfBoardGameWithThreePlayers.
-	pauPosition := Position of: 'Pau' standingOn: 31 after: 1.
-	beluPosition := Position of: 'Belu' standingOn: 14 after: 1.
-	malePosition := Position of: 'Male' standingOn: 13 after: 1.
+	anOverloadCard := Overload new.
+	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
+	pau := Player named: 'Pau' with: cards.
+	belu:= Player named: 'Belu' with: cards.
+	male:= Player named: 'Male' with: cards.
+	pauPosition := Position of: pau standingOn: 31 after: 1.
+	beluPosition := Position of: belu standingOn: 14 after: 1.
+	malePosition := Position of: male standingOn: 13 after: 1.
 	1 to: 5 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
@@ -652,14 +737,19 @@ BoardGameTest >> testWhenAPlayerFellsOnAWormHoleFieldHeMovesBackwardsFourFields 
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> testWhenAPlayerFellsOnAWormHoleFieldHeMovesBackwardsFourFieldsAndTheRoundChangesWhenMoveingBackwards [
-		| firstDice secondDice thirdDice aBoardGame pauPosition beluPosition malePosition |
+		| firstDice secondDice thirdDice aBoardGame pauPosition beluPosition malePosition anOverloadCard cards pau belu male |
 	firstDice := DeterministicDice with: #(6 14 7 2).
 	secondDice := DeterministicDice with: #(1 8 5 11 8).
 	thirdDice := DeterministicDice with: #(9 4 2 17 12).
 	aBoardGame := self creationOfBoardGameWithThatUsesA: firstDice a: secondDice andA: thirdDice.
-	pauPosition := Position of: 'Pau' standingOn: 43 after: 1.
-	beluPosition := Position of: 'Belu' standingOn: 15 after: 1.
-	malePosition := Position of: 'Male' standingOn: 49 after: 1.
+	anOverloadCard := Overload new.
+	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
+	pau := Player named: 'Pau' with: cards.
+	belu:= Player named: 'Belu' with: cards.
+	male:= Player named: 'Male' with: cards.
+	pauPosition := Position of: pau standingOn: 43 after: 1.
+	beluPosition := Position of: belu standingOn: 15 after: 1.
+	malePosition := Position of: male standingOn: 49 after: 1.
 		
 	1 to: 5 do: [ :n | aBoardGame nextTurn ].
 	self
@@ -672,11 +762,16 @@ BoardGameTest >> testWhenAPlayerFellsOnAWormHoleFieldHeMovesBackwardsFourFieldsA
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> testWhenAPlayerFellsOnAnAtomicBombAllPlayersMoveToFieldOne [
-	| aBoardGame pauPosition beluPosition malePosition |
+	| aBoardGame pauPosition beluPosition malePosition anOverloadCard cards pau belu male |
 	aBoardGame := self creationOfBoardGameWithThreePlayers.
-	pauPosition := Position of: 'Pau' standingOn: 1 after: 1.
-	beluPosition := Position of: 'Belu' standingOn: 1 after: 1.
-	malePosition := Position of: 'Male' standingOn: 1 after: 1.
+	anOverloadCard := Overload new.
+	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
+	pau := Player named: 'Pau' with: cards.
+	belu:= Player named: 'Belu' with: cards.
+	male:= Player named: 'Male' with: cards.
+	pauPosition := Position of: pau standingOn: 1 after: 1.
+	beluPosition := Position of: belu standingOn: 1 after: 1.
+	malePosition := Position of: male standingOn: 1 after: 1.
 	1 to: 7 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking

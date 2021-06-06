@@ -16,6 +16,11 @@ Player class >> named: aName with: someCards [
 ]
 
 { #category : #accessing }
+Player >> = anotherPlayer [
+	^ (self name = anotherPlayer name).
+]
+
+{ #category : #accessing }
 Player >> cards [
 	^ cardsInHand.
 ]
@@ -41,6 +46,11 @@ Player >> isInfluencedBy: aCard [
 { #category : #actions }
 Player >> lays: aCard [
 	cardsInHand remove: aCard.
+]
+
+{ #category : #accesing }
+Player >> name [
+	^ name
 ]
 
 { #category : #actions }

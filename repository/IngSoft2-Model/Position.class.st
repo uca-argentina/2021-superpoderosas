@@ -19,9 +19,8 @@ Position class >> of: aPlayer standingOn: aField after: aNumberOfRound [
 
 { #category : #comparing }
 Position >> = aPosition [
-	((self round = aPosition round) & (self field = aPosition field ) & (self player = aPosition player))
-		ifTrue: [ ^ true ]
-		ifFalse: [ ^ false ]
+	^((self round = aPosition round) and: [(self field = aPosition field  )and:[self player = aPosition player]])
+
 ]
 
 { #category : #comparing }

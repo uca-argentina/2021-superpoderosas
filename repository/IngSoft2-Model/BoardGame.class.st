@@ -164,14 +164,14 @@ BoardGame >> nextTurn [
 	self move: player along: sumOfAllDices.
 	self endGameIfTheWinnerIs: player.
 	self orderPlayersPosition.
+	^ player.
 
 ]
 
 { #category : #actions }
 BoardGame >> nextTurnThrowing: aCard to: aPlayer [
 	| currentPlayer |
-	self nextTurn.
-	currentPlayer := self lookForPlayerWhoseTurnItIs.
+	currentPlayer := self nextTurn.
 	currentPlayer lays: aCard.
 	aPlayer isInfluencedBy: aCard.
 ]
