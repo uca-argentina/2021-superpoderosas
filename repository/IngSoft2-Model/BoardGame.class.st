@@ -25,12 +25,22 @@ BoardGame >> addOrSubstractOneIfThePlayerHasChangedRound: totalFields [
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #private }
+BoardGame >> apply: aCard on: aPlayer [
+		aPlayer isInfluencedBy: aCard.
+]
+
+{ #category : #actions }
 BoardGame >> applyInfluentialCardsOn: sumOfAllDices of: player [
 	| result |
 	result:= sumOfAllDices.
 	(player influentialCards) do: [ :aCard | result :=(result + aCard action) ].
 	^ result.
+]
+
+{ #category : #private }
+BoardGame >> applyToAllPlayers: aCard [
+	players do: [:player | player isInfluencedBy: aCard].
 ]
 
 { #category : #private }
@@ -169,11 +179,27 @@ BoardGame >> nextTurn [
 ]
 
 { #category : #actions }
+BoardGame >> nextTurnThrowing: aCard [
+	| currentPlayer |
+	currentPlayer := self nextTurn.
+	currentPlayer lays: aCard.
+	aCard actAt: self.
+]
+
+{ #category : #actions }
+BoardGame >> nextTurnThrowing: aCard of: anotherCard to: aPlayer [ 
+	| currentPlayer |
+	currentPlayer := self nextTurn.
+	currentPlayer lays: aCard.
+	aCard actAt: self on: aPlayer with: anotherCard .
+]
+
+{ #category : #actions }
 BoardGame >> nextTurnThrowing: aCard to: aPlayer [
 	| currentPlayer |
 	currentPlayer := self nextTurn.
 	currentPlayer lays: aCard.
-	aPlayer isInfluencedBy: aCard.
+	aCard actAt: self on: aPlayer.
 ]
 
 { #category : #actions }
@@ -191,6 +217,11 @@ BoardGame >> placePlayersAtTheInitialPosition [
 { #category : #accessing }
 BoardGame >> ranking [
 	^ playersPosition.
+]
+
+{ #category : #actions }
+BoardGame >> removes: aCard from: aPlayer [ 
+	aPlayer cancel: aCard.
 ]
 
 { #category : #private }

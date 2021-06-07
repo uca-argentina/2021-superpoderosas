@@ -1,15 +1,15 @@
 Class {
-	#name : #Overload,
+	#name : #Speed,
 	#superclass : #Card,
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #actions }
-Overload >> actAt: aBoardGame on: aPlayer [
+Speed >> actAt: aBoardGame on: aPlayer [
 	aBoardGame apply: self on: aPlayer.
 ]
 
 { #category : #actions }
-Overload >> action [
-	^ -2.
+Speed >> action [
+	^ 1.
 ]

@@ -20,9 +20,20 @@ Player >> = anotherPlayer [
 	^ (self name = anotherPlayer name).
 ]
 
+{ #category : #actions }
+Player >> cancel: aCard [
+	influentialCards remove: aCard
+		ifAbsent: [ Error signal: self errorMessageAPlayerMustHaveTheCardToBeRemoved ]
+]
+
 { #category : #accessing }
 Player >> cards [
 	^ cardsInHand.
+]
+
+{ #category : #'error messages' }
+Player >> errorMessageAPlayerMustHaveTheCardInHand [
+	^ 'A player must have a card in hand in order to use it'
 ]
 
 { #category : #accessing }
@@ -45,7 +56,8 @@ Player >> isInfluencedBy: aCard [
 
 { #category : #actions }
 Player >> lays: aCard [
-	cardsInHand remove: aCard.
+	cardsInHand remove: aCard
+		ifAbsent: [Error signal: self errorMessageAPlayerMustHaveTheCardInHand ].
 ]
 
 { #category : #accesing }
