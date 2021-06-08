@@ -187,6 +187,14 @@ BoardGame >> nextTurnThrowing: aCard [
 ]
 
 { #category : #actions }
+BoardGame >> nextTurnThrowing: aCard of: anotherCard [ 
+	| currentPlayer |
+	currentPlayer := self nextTurn.
+	currentPlayer lays: aCard.
+	aCard actAt: self with: anotherCard .
+]
+
+{ #category : #actions }
 BoardGame >> nextTurnThrowing: aCard of: anotherCard to: aPlayer [ 
 	| currentPlayer |
 	currentPlayer := self nextTurn.
@@ -222,6 +230,11 @@ BoardGame >> ranking [
 { #category : #actions }
 BoardGame >> removes: aCard from: aPlayer [ 
 	aPlayer cancel: aCard.
+]
+
+{ #category : #actions }
+BoardGame >> removesEveryPlayers: card [ 
+	players do: [:player| player cancel: card].
 ]
 
 { #category : #private }

@@ -59,11 +59,11 @@ BoardGameTest >> creationOfBoardGameWithThreePlayers [
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> generateManually: aNumberOfFields [ 
-	|  fields effectToDistrubute effectDistributionFields |
+	|  fields  effectDistributionFields effectToDistribute |
 	fields:= OrderedCollection new: aNumberOfFields withAll: NoEffect new.
-	effectToDistrubute := {WormHole new. SpeedUp new.AtomicBomb new.MoonWalk new}.
-	effectDistributionFields := {{3 . 17}.{30 . 48}.{44}.{32 . 23}}.
-	effectToDistrubute with: effectDistributionFields do:[ :effect :effectFields | 
+	effectToDistribute := {WormHole new. SpeedUp new.AtomicBomb new.MoonWalk with: 16. MoonWalk with: 11 }.
+	effectDistributionFields := {{3 . 17}.{30 . 48}.{44}.{32}.{23}}.
+	effectToDistribute with: effectDistributionFields do:[ :effect :effectFields | 
 						effectFields do: 
 								[ :fieldNumber | fields at: fieldNumber put: effect ]].
 	^fields.
@@ -71,11 +71,11 @@ BoardGameTest >> generateManually: aNumberOfFields [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> generateManuallyIncludingCards: aNumberOfFields [ 
-	|  fields effectToDistrubute effectDistributionFields |
+	|  fields effectDistributionFields effectToDistribute |
 	fields:= OrderedCollection new: aNumberOfFields withAll: NoEffect new.
-	effectToDistrubute := {WormHole new. SpeedUp new.AtomicBomb new.MoonWalk new. CardDealer new}.
-	effectDistributionFields := {{3 . 17}.{30 . 48}.{44}.{32 . 23} . {10}}.
-	effectToDistrubute with: effectDistributionFields do:[ :effect :effectFields | 
+	effectToDistribute := {WormHole new. SpeedUp new.AtomicBomb new.MoonWalk with: 16. MoonWalk with: 11. CardDealer new}.
+	effectDistributionFields := {{3 . 17}.{30 . 48}.{44}.{32}.{23}.{10}}.
+	effectToDistribute with: effectDistributionFields do:[ :effect :effectFields | 
 						effectFields do: 
 								[ :fieldNumber | fields at: fieldNumber put: effect ]].
 	^fields.
@@ -563,6 +563,28 @@ BoardGameTest >> testAPlayerHasThreeCardsAfterLandingOnAFieldWithACardDealerEffe
 	self assert: aPlayer cards size equals: 3.
 ]
 
+{ #category : #playingWithCardsTests }
+BoardGameTest >> testAPlayerHasTwoCardsAtTheBeginning [
+	|cards aCancellationCard anAccelerationCard anotherSetOfCards |
+	aCancellationCard:= Cancellation new.
+	anAccelerationCard:= Acceleration new.
+	cards:=OrderedCollection newFrom:{anAccelerationCard.aCancellationCard.anAccelerationCard}.
+	anotherSetOfCards:=OrderedCollection newFrom:{anAccelerationCard}.
+	self 
+		should:[Player named: 'Pau' with: cards.] 
+		raise: Error 
+		withExceptionDo: [:error | self assert: error messageText equals: 'A player must have two cards in hand at the beginning of the game' ].
+	self 
+		should:[Player named: 'Belu' with: anotherSetOfCards.] 
+		raise: Error 
+		withExceptionDo: [:error | self assert: error messageText equals: 'A player must have two cards in hand at the beginning of the game' ].
+	
+	
+
+	
+	
+]
+
 { #category : #circularBoardTests }
 BoardGameTest >> testAPlayerMustGoThreeTimesAroundTheBoardToWin [
 	| aBoardGame anOverloadCard cards pau |
@@ -575,12 +597,11 @@ BoardGameTest >> testAPlayerMustGoThreeTimesAroundTheBoardToWin [
 ]
 
 { #category : #playingWithCardsTests }
-BoardGameTest >> testAPlayerUsesACancellationCardAndRemovesASpeedCard [
-	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards anotherPlayer pauPosition beluPosition aSpeedCard anAccelerationCard aCancellationCard |
+BoardGameTest >> testAPlayerMustHaveASpeedCardInOrderToBeCancelled [
+	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards anotherPlayer aSpeedCard aCancellationCard |
 	aSpeedCard:= Speed new.
-	anAccelerationCard:= Acceleration new.
 	aCancellationCard:= Cancellation new.
-	cards:=OrderedCollection newFrom:{aSpeedCard.anAccelerationCard.aCancellationCard}.
+	cards:=OrderedCollection newFrom:{aSpeedCard.aCancellationCard}.
 	aPlayer := Player named: 'Pau' with: cards.
 	anotherPlayer := Player named: 'Belu' with: cards.
 	aDice := DeterministicDice with: #(9 10 7 3).
@@ -592,13 +613,60 @@ BoardGameTest >> testAPlayerUsesACancellationCardAndRemovesASpeedCard [
 	fields:= self generateManuallyIncludingCards: aNumberOfFields.
 	aBoard:= Board has: fields.
 	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
-	pauPosition := Position of: aPlayer standingOn: 18 after: 1.
-	beluPosition := Position of: anotherPlayer standingOn: 12 after: 1.
+	self 
+		should:[aBoardGame nextTurnThrowing: aCancellationCard of: aSpeedCard  to: anotherPlayer.] 
+		raise: Error 
+		withExceptionDo: [:error | self assert: error messageText equals: 'The player must have the influential card needed to be cancelled' ].
+	
+]
+
+{ #category : #playingWithCardsTests }
+BoardGameTest >> testAPlayerUsesACancellationCardAndRemovesASpeedCard [
+	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards anotherPlayer aSpeedCard aCancellationCard |
+	aSpeedCard:= Speed new.
+	aCancellationCard:= Cancellation new.
+	cards:=OrderedCollection newFrom:{aSpeedCard.aCancellationCard}.
+	aPlayer := Player named: 'Pau' with: cards.
+	anotherPlayer := Player named: 'Belu' with: cards.
+	aDice := DeterministicDice with: #(9 10 7 3).
+	aGroupOfPlayers := {aPlayer . anotherPlayer}.
+	aGroupOfDices := {aDice}.
+	aNumberOfFields := 61.
+	aDiceCup := DiceCup containing: aGroupOfDices.
+	aSpinNumber:=5.
+	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	aBoard:= Board has: fields.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
 	aBoardGame nextTurnThrowing: aSpeedCard to: anotherPlayer.
 	aBoardGame nextTurn.
 	aBoardGame nextTurnThrowing: aCancellationCard of: aSpeedCard  to: anotherPlayer.
 	
 	self assert: anotherPlayer influentialCards equals: (OrderedCollection new).
+	
+]
+
+{ #category : #playingWithCardsTests }
+BoardGameTest >> testAPlayerUsesACancellationCardAndRemovesAnAccelerationCard [
+	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards anotherPlayer aCancellationCard anAccelerationCard |
+	aCancellationCard:= Cancellation new.
+	anAccelerationCard:= Acceleration new.
+	cards:=OrderedCollection newFrom:{anAccelerationCard.aCancellationCard}.
+	aPlayer := Player named: 'Pau' with: cards.
+	anotherPlayer := Player named: 'Belu' with: cards.
+	aDice := DeterministicDice with: #(9 10 7 3).
+	aGroupOfPlayers := {aPlayer . anotherPlayer}.
+	aGroupOfDices := {aDice}.
+	aNumberOfFields := 61.
+	aDiceCup := DiceCup containing: aGroupOfDices.
+	aSpinNumber:=5.
+	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	aBoard:= Board has: fields.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
+	aBoardGame nextTurnThrowing: anAccelerationCard.
+	aBoardGame nextTurn.
+	aBoardGame nextTurnThrowing: aCancellationCard of: anAccelerationCard.
+	self assert: anotherPlayer influentialCards equals: (OrderedCollection new).
+	self assert: aPlayer influentialCards equals: (OrderedCollection new).
 	
 ]
 
@@ -687,17 +755,16 @@ BoardGameTest >> testAPlayerUsesAnOverloadCardOnAnotherPlayerAndItReducesInTwoTh
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> testEffectsDistribution [
-	| aBoard atomicBombEffect speedUpEffect wormHoleEffect moonWalkEffect nullEffect effectsDistribution effectManagerDistribution fields |
+	|atomicBombEffect speedUpEffect wormHoleEffect moonWalkEffect nullEffect effectsDistribution effectManagerDistribution fields anotherMoonWalkEffect |
 	atomicBombEffect:= ProbabilityEvent with: 0.02 of: (AtomicBomb new). 
 	speedUpEffect:= ProbabilityEvent with: 0.2 of: (SpeedUp new). 
 	wormHoleEffect:= ProbabilityEvent with: 0.2 of: (WormHole new). 
-	moonWalkEffect:=ProbabilityEvent with: 0.1 of: (MoonWalk new).
+	moonWalkEffect:=ProbabilityEvent with: 0.05 of: (MoonWalk with:3).
+	anotherMoonWalkEffect:=ProbabilityEvent with: 0.05 of: (MoonWalk with:4).
 	nullEffect:= ProbabilityEvent with: 0.48 of: (NoEffect new).
-	effectsDistribution:=OrderedCollection newFrom: {atomicBombEffect . speedUpEffect . wormHoleEffect . moonWalkEffect . nullEffect  }.
+	effectsDistribution:=OrderedCollection newFrom: {atomicBombEffect . speedUpEffect . wormHoleEffect . moonWalkEffect .anotherMoonWalkEffect.nullEffect  }.
 	effectManagerDistribution:= RandomProbabilityEventManager basedOn: effectsDistribution.
 	fields:= effectManagerDistribution generate: 1100.
-	
-	aBoard := Board has: fields.
 	self assert: fields areDistributedBasedOn: effectsDistribution  withTolerance: 5.
 ]
 
