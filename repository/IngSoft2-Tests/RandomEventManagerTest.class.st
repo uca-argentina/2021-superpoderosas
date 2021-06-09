@@ -110,6 +110,5 @@ RandomEventManagerTest >> testsARandomEventManagerGeneratesAFarmWithPlentyAnimal
 	eventsDistribution  := self groupProbabilityEventsOfCowsWith: 0.25 piggsWith: 0.15 horsesWith:0.2 andDucksWith: 0.4.
 	eventManager:= RandomProbabilityEventManager basedOn: eventsDistribution.
 	events:= eventManager generate:1000.
-	"ver lo de la tolerancia"
 	self assert: events areDistributedBasedOn: eventsDistribution withTolerance: 5.
 ]

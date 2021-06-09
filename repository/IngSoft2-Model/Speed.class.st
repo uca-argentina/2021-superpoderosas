@@ -1,6 +1,6 @@
 Class {
 	#name : #Speed,
-	#superclass : #Card,
+	#superclass : #Permanent,
 	#category : #'IngSoft2-Model'
 }
 

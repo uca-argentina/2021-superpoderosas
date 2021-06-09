@@ -15,6 +15,11 @@ SequenceSimulator class >> newFrom: aMaximun [
 ]
 
 { #category : #accessing }
+SequenceSimulator >> actualIndex [
+	^index.
+]
+
+{ #category : #accessing }
 SequenceSimulator >> findNextIndex [
 	| oldIndex |
 	oldIndex:= index.

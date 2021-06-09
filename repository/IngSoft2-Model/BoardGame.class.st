@@ -19,6 +19,34 @@ BoardGame class >> playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWh
 		^ self new initializePlayedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
 ]
 
+{ #category : #'actions - cards' }
+BoardGame >> a: card of: cardToBeCancel wantsToBeThrowTo: player by: currentPlayer [ 
+	(self verifyIf: card canBePlayedBy: currentPlayer).
+	currentPlayer lays: card.
+	card actAt: self on: player with: cardToBeCancel .
+]
+
+{ #category : #'actions - cards' }
+BoardGame >> a: card of: cardToBeCancel wantsToBeThrownBy: currentPlayer [  
+	(self verifyIf: card canBePlayedBy: currentPlayer).
+	currentPlayer lays: card.
+	card actAt: self with: cardToBeCancel .
+]
+
+{ #category : #'actions - cards' }
+BoardGame >> a: card wantsToBeThrownBy: currentPlayer [ 
+	(self verifyIf: card canBePlayedBy: currentPlayer).
+	currentPlayer lays: card.
+	card actAt: self.
+]
+
+{ #category : #'actions - cards' }
+BoardGame >> a: card wantsToBeThrownTo: player by: currentPlayer [ 
+	(self verifyIf: card canBePlayedBy: currentPlayer).
+	currentPlayer lays: card.
+	card actAt: self on: player.
+]
+
 { #category : #private }
 BoardGame >> addOrSubstractOneIfThePlayerHasChangedRound: totalFields [
 	^ (totalFields-1) // numberOfFields.
@@ -65,6 +93,11 @@ BoardGame >> endGameIfTheWinnerIs: player [
 	newPosition := self detectPositionOf: player.
 	newPosition round > spinsNeededToWin
 		ifTrue: [ self changeCurrentStateToFinished ]
+]
+
+{ #category : #'error messages' }
+BoardGame >> errorMessageCardCanNotBePlayedOutsidePlayersTurn [
+ ^ 'All permanent cards can only be played when it is the turn of the player'.
 ]
 
 { #category : #'error messages' }
@@ -153,7 +186,7 @@ BoardGame >> move: aNumberOfFields thePlayerOf: oldPosition [
 	self move: (oldPosition player) over: aNumberOfFields from: oldPosition.
 ]
 
-{ #category : #'error messages' }
+{ #category : #actions }
 BoardGame >> moveAllPlayers: aNumberOfFields exceptThePlayerOf: aPosition [
 	playersPosition  := playersPosition reject: [ :position | position=aPosition ] thenCollect: [ :position | self findNewPositionWhen: (position player) hasMoved: aNumberOfFields from: position].
 	playersPosition add: aPosition .
@@ -176,38 +209,6 @@ BoardGame >> nextTurn [
 	self orderPlayersPosition.
 	^ player.
 
-]
-
-{ #category : #actions }
-BoardGame >> nextTurnThrowing: aCard [
-	| currentPlayer |
-	currentPlayer := self nextTurn.
-	currentPlayer lays: aCard.
-	aCard actAt: self.
-]
-
-{ #category : #actions }
-BoardGame >> nextTurnThrowing: aCard of: anotherCard [ 
-	| currentPlayer |
-	currentPlayer := self nextTurn.
-	currentPlayer lays: aCard.
-	aCard actAt: self with: anotherCard .
-]
-
-{ #category : #actions }
-BoardGame >> nextTurnThrowing: aCard of: anotherCard to: aPlayer [ 
-	| currentPlayer |
-	currentPlayer := self nextTurn.
-	currentPlayer lays: aCard.
-	aCard actAt: self on: aPlayer with: anotherCard .
-]
-
-{ #category : #actions }
-BoardGame >> nextTurnThrowing: aCard to: aPlayer [
-	| currentPlayer |
-	currentPlayer := self nextTurn.
-	currentPlayer lays: aCard.
-	aCard actAt: self on: aPlayer.
 ]
 
 { #category : #actions }
@@ -249,9 +250,19 @@ BoardGame >> validate: aPosition [
 ]
 
 { #category : #validations }
+BoardGame >> verifyIf: card canBePlayedBy: currentPlayer [
+	(card canBePlayedInAnyTurn) ifFalse:[ self verifyIfItIsTheTurnOf: currentPlayer ]
+]
+
+{ #category : #validations }
 BoardGame >> verifyIfItIsNotEmpty: aGroupOfPlayers [ 
 	(aGroupOfPlayers isEmpty ) 
 		ifTrue: [ Error signal: self errorMessageMustHaveAtLeastAPlayer ] .
+]
+
+{ #category : #validations }
+BoardGame >> verifyIfItIsTheTurnOf: currentPlayer [
+	(currentPlayer = (players at: (playersTurnIdentificator actualIndex))) ifFalse:[Error signal: self errorMessageCardCanNotBePlayedOutsidePlayersTurn]
 ]
 
 { #category : #validations }
