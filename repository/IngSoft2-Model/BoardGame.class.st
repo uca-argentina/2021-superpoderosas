@@ -10,7 +10,8 @@ Class {
 		'playersPosition',
 		'numberOfFields',
 		'board',
-		'effectsHistory'
+		'effectsHistory',
+		'cardsHistory'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -25,6 +26,7 @@ BoardGame >> a: card of: cardToBeCancel wantsToBeThrowTo: player by: currentPlay
 	(self verifyIf: card canBePlayedBy: currentPlayer).
 	currentPlayer lays: card.
 	card actAt: self on: player with: cardToBeCancel .
+	(card class = DoOver) ifFalse:[cardsHistory add: card].
 ]
 
 { #category : #'actions - cards' }
@@ -32,6 +34,7 @@ BoardGame >> a: card of: cardToBeCancel wantsToBeThrownBy: currentPlayer [
 	(self verifyIf: card canBePlayedBy: currentPlayer).
 	currentPlayer lays: card.
 	card actAt: self with: cardToBeCancel .
+	(card class = DoOver) ifFalse:[cardsHistory add: card].
 ]
 
 { #category : #'actions - cards' }
@@ -39,6 +42,7 @@ BoardGame >> a: card wantsToBeThrownBy: currentPlayer [
 	(self verifyIf: card canBePlayedBy: currentPlayer).
 	currentPlayer lays: card.
 	card actAt: self.
+	(card class = DoOver) ifFalse:[cardsHistory add: card].
 ]
 
 { #category : #'actions - cards' }
@@ -46,6 +50,7 @@ BoardGame >> a: card wantsToBeThrownTo: player by: currentPlayer [
 	(self verifyIf: card canBePlayedBy: currentPlayer).
 	currentPlayer lays: card.
 	card actAt: self on: player.
+	(card class = DoOver) ifFalse:[cardsHistory add: card].
 ]
 
 { #category : #private }
@@ -65,6 +70,13 @@ BoardGame >> applyInfluentialCardsOn: sumOfAllDices of: player [
 	result:= sumOfAllDices.
 	(player influentialCards) do: [ :aCard | result :=(result + aCard action) ].
 	^ result.
+]
+
+{ #category : #actions }
+BoardGame >> applyLastCardThrownTo: aPlayer [
+	(cardsHistory isEmpty) 
+		ifFalse:[ 
+			(cardsHistory last) actAt: self on: aPlayer.].
 ]
 
 { #category : #actions }
@@ -152,6 +164,7 @@ BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup on: aBoard winn
 	numberOfFields := aBoard numberOfFields.
 	playersPosition:= OrderedCollection newFrom: (self placePlayersAtTheInitialPosition).
 	effectsHistory:= OrderedCollection new.
+	cardsHistory:= OrderedCollection new.
 ]
 
 { #category : #accessing }
@@ -275,6 +288,13 @@ BoardGame >> replace: oldPosition with: newPosition [
 	playersPosition add: newPosition
 ]
 
+{ #category : #actions }
+BoardGame >> theLastCardThrownCanBePlayedInAnyTurn [
+	^ (cardsHistory isEmpty) 
+	ifTrue: [ true. ]
+	ifFalse: [(cardsHistory last) canBePlayedInAnyTurn].
+]
+
 { #category : #private }
 BoardGame >> validate: aPosition [
  (aPosition round <= 0) ifTrue: [^( Position of: (aPosition player) standingOn: 1 after: 1)] ifFalse:[^aPosition].
@@ -282,7 +302,7 @@ BoardGame >> validate: aPosition [
 
 { #category : #validations }
 BoardGame >> verifyIf: card canBePlayedBy: currentPlayer [
-	(card canBePlayedInAnyTurn) ifFalse:[ self verifyIfItIsTheTurnOf: currentPlayer ]
+	(card canBePlayedInAnyTurnAt:self) ifFalse:[ self verifyIfItIsTheTurnOf: currentPlayer ]
 ]
 
 { #category : #validations }

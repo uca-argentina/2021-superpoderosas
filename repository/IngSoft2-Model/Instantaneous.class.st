@@ -8,3 +8,8 @@ Class {
 Instantaneous >> canBePlayedInAnyTurn [
 	^true.
 ]
+
+{ #category : #actions }
+Instantaneous >> canBePlayedInAnyTurnAt: aBoardGame [
+	^true.
+]

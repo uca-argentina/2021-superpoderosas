@@ -560,6 +560,35 @@ BoardGameTest >> testAPlayerCanNotUseACardHeDoesNotHave [
 ]
 
 { #category : #playingWithCardsTests }
+BoardGameTest >> testAPlayerCanNotUseADoOverCardWhenTheLastCardPlayedHadASpeedEffectOutsideHisTurn [
+	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards doOverCard anotherPlayer speedCard |
+	doOverCard := DoOver new.
+	speedCard:= Speed new.
+	cards:=OrderedCollection newFrom:{doOverCard . speedCard}.
+	aPlayer := Player named: 'Pau' with: cards.
+	anotherPlayer := Player named: 'Belu' with: cards.
+	aDice := DeterministicDice with: #(9 10 7 3).
+	aGroupOfPlayers := {aPlayer . anotherPlayer}.
+	aGroupOfDices := {aDice}.
+	aNumberOfFields := 61.
+	aDiceCup := DiceCup containing: aGroupOfDices.
+	aSpinNumber:=5.
+	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	aBoard:= Board has: fields.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
+	aBoardGame nextTurn.
+	aBoardGame a: speedCard wantsToBeThrownTo: aPlayer by: anotherPlayer.
+	aBoardGame nextTurn.
+	
+	
+	self 
+		should:[aBoardGame a: doOverCard wantsToBeThrownTo: aPlayer by: anotherPlayer] 
+		raise: Error 
+		withExceptionDo: [:error | self assert: error messageText equals: 'All permanent cards can only be played when it is the turn of the player' ].
+	
+]
+
+{ #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerCanNotUseASpeedUpCardIfItIsNotHisTurn [
 	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards overloadCard anotherPlayer speedCard |
 	overloadCard := Overload new.
@@ -726,6 +755,87 @@ BoardGameTest >> testAPlayerUsesACancellationCardAndRemovesAnAccelerationCard [
 	self assert: anotherPlayer influentialCards equals: (OrderedCollection new).
 	self assert: aPlayer influentialCards equals: (OrderedCollection new).
 	
+]
+
+{ #category : #playingWithCardsTests }
+BoardGameTest >> testAPlayerUsesADoOverCardWhenNoDiceHasBeenThrowsThusItHasNoEffect [
+	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards doOverCard anotherPlayer pauPosition beluPosition speedCard |
+	doOverCard := DoOver new.
+	speedCard:= Speed new.
+	cards:=OrderedCollection newFrom:{doOverCard . speedCard}.
+	aPlayer := Player named: 'Pau' with: cards.
+	anotherPlayer := Player named: 'Belu' with: cards.
+	aDice := DeterministicDice with: #(9 10 7 3).
+	aGroupOfPlayers := {aPlayer . anotherPlayer}.
+	aGroupOfDices := {aDice}.
+	aNumberOfFields := 61.
+	aDiceCup := DiceCup containing: aGroupOfDices.
+	aSpinNumber:=5.
+	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	aBoard:= Board has: fields.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
+	pauPosition := Position of: aPlayer standingOn: 1 after: 1.
+	beluPosition := Position of: anotherPlayer standingOn: 1 after: 1.
+		
+	aBoardGame a: doOverCard wantsToBeThrownTo: aPlayer by: aPlayer.
+	
+	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
+	
+]
+
+{ #category : #playingWithCardsTests }
+BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedHadASpeedEffect [
+	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards doOverCard anotherPlayer pauPosition beluPosition speedCard |
+	doOverCard := DoOver new.
+	speedCard:= Speed new.
+	cards:=OrderedCollection newFrom:{doOverCard . speedCard}.
+	aPlayer := Player named: 'Pau' with: cards.
+	anotherPlayer := Player named: 'Belu' with: cards.
+	aDice := DeterministicDice with: #(9 10 7 3).
+	aGroupOfPlayers := {aPlayer . anotherPlayer}.
+	aGroupOfDices := {aDice}.
+	aNumberOfFields := 61.
+	aDiceCup := DiceCup containing: aGroupOfDices.
+	aSpinNumber:=5.
+	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	aBoard:= Board has: fields.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
+	pauPosition := Position of: aPlayer standingOn: 20 after: 1.
+	beluPosition := Position of: anotherPlayer standingOn: 11 after: 1.
+		
+	aBoardGame a: speedCard wantsToBeThrownTo: aPlayer by: aPlayer.
+	aBoardGame nextTurn.
+	aBoardGame a: doOverCard wantsToBeThrownTo: aPlayer by: anotherPlayer.
+	aBoardGame nextTurn.
+	aBoardGame nextTurn.
+		
+	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
+	
+]
+
+{ #category : #playingWithCardsTests }
+BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedWasACancellationCard [
+	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards doOverCard anotherPlayer cancellationCard|
+	doOverCard := DoOver new.
+	cancellationCard:= Cancellation  new.
+	cards:=OrderedCollection newFrom:{doOverCard . cancellationCard}.
+	aPlayer := Player named: 'Pau' with: cards.
+	anotherPlayer := Player named: 'Belu' with: cards.
+	aDice := DeterministicDice with: #(9 10 7 3).
+	aGroupOfPlayers := {aPlayer . anotherPlayer}.
+	aGroupOfDices := {aDice}.
+	aNumberOfFields := 61.
+	aDiceCup := DiceCup containing: aGroupOfDices.
+	aSpinNumber:=5.
+	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	aBoard:= Board has: fields.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
+	aBoardGame nextTurn.
+	aBoardGame a: doOverCard wantsToBeThrowTo: aPlayer by: anotherPlayer.
+	aBoardGame a: cancellationCard of: doOverCard wantsToBeThrowTo: aPlayer by: anotherPlayer.
+	aBoardGame nextTurn.
+	aBoardGame a: doOverCard of: cancellationCard wantsToBeThrowTo: aPlayer by: anotherPlayer.
+	self assert: aPlayer influentialCards equals: (OrderedCollection new).
 ]
 
 { #category : #playingWithCardsTests }

@@ -8,3 +8,8 @@ Class {
 Permanent >> canBePlayedInAnyTurn [
 	^false.
 ]
+
+{ #category : #actions }
+Permanent >> canBePlayedInAnyTurnAt: aBoardGame [
+	^false.
+]
