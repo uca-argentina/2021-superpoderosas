@@ -8,4 +8,5 @@ Class {
 AtomicBomb >> applyTheEffectOn: aPosition of: aBoardGame [
 
 	aBoardGame moveAllPlayersTo: 1.
+	super.
 ]

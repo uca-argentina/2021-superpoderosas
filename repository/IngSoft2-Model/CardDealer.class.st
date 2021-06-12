@@ -7,4 +7,5 @@ Class {
 { #category : #actions }
 CardDealer >> applyTheEffectOn: aPosition of: aBoardGame [ 
 	aBoardGame deal: 'card1' toPlayerOf: aPosition.
+	super.
 ]

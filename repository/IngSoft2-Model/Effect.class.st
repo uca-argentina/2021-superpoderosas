@@ -6,5 +6,5 @@ Class {
 
 { #category : #actions }
 Effect >> applyTheEffectOn: aPosition of: aBoardGame [ 
-	self subclassResponsibility.
+	^self.
 ]

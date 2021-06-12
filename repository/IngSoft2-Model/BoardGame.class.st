@@ -9,7 +9,8 @@ Class {
 		'spinsNeededToWin',
 		'playersPosition',
 		'numberOfFields',
-		'board'
+		'board',
+		'effectsHistory'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -64,6 +65,19 @@ BoardGame >> applyInfluentialCardsOn: sumOfAllDices of: player [
 	result:= sumOfAllDices.
 	(player influentialCards) do: [ :aCard | result :=(result + aCard action) ].
 	^ result.
+]
+
+{ #category : #actions }
+BoardGame >> applyLastEffectTo: aPlayer [
+	effectsHistory last applyTheEffectOn: (self detectPositionOf: aPlayer) of: self.
+	self endGameIfTheWinnerIs: aPlayer.
+	self orderPlayersPosition.
+]
+
+{ #category : #actions }
+BoardGame >> applyLastEffectToAllPlayers [
+	players do: [:player | effectsHistory last applyTheEffectOn: (self detectPositionOf: player) of: self. self endGameIfTheWinnerIs: player].
+	self orderPlayersPosition.
 ]
 
 { #category : #private }
@@ -137,6 +151,7 @@ BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup on: aBoard winn
 	spinsNeededToWin := aSpinNumber.
 	numberOfFields := aBoard numberOfFields.
 	playersPosition:= OrderedCollection newFrom: (self placePlayersAtTheInitialPosition).
+	effectsHistory:= OrderedCollection new.
 ]
 
 { #category : #accessing }
@@ -167,10 +182,12 @@ BoardGame >> move: player along: result [
 
 { #category : #actions }
 BoardGame >> move: aPlayer over: aNumberOfFields consideringAnEffectFrom: oldPosition [
-	| newPosition field |
+	| newPosition field effect |
 	newPosition := self move: aPlayer over: aNumberOfFields from: oldPosition.
 	field := board searchFieldFor: newPosition.
-	field applyTheEffectOn: newPosition of: self
+	effect:=field applyTheEffectOn: newPosition of: self.
+	effectsHistory add:effect.
+	
 ]
 
 { #category : #actions }
@@ -236,6 +253,20 @@ BoardGame >> removes: aCard from: aPlayer [
 { #category : #actions }
 BoardGame >> removesEveryPlayers: card [ 
 	players do: [:player| player cancel: card].
+]
+
+{ #category : #actions }
+BoardGame >> repeatlastEffectApplied [
+	effectsHistory isEmpty
+		ifFalse:
+			[ self applyLastEffectToAllPlayers ]
+]
+
+{ #category : #actions }
+BoardGame >> repeatlastEffectAppliedOn: aPlayer [
+	effectsHistory isEmpty
+		ifFalse:
+			[ self applyLastEffectTo: aPlayer ]
 ]
 
 { #category : #private }

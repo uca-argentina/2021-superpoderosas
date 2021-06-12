@@ -6,5 +6,5 @@ Class {
 
 { #category : #actions }
 NoEffect >> applyTheEffectOn: aPosition of: aBoard [
-
+	super.
 ]

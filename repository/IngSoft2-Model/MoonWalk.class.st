@@ -15,6 +15,7 @@ MoonWalk class >> with: anN [
 { #category : #actions }
 MoonWalk >> applyTheEffectOn: aPosition of: aBoardGame [
 	aBoardGame moveAllPlayers: (n negated) exceptThePlayerOf: aPosition.
+	super.
 ]
 
 { #category : #initialize }

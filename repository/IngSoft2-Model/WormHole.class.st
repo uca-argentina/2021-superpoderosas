@@ -8,4 +8,5 @@ Class {
 WormHole >> applyTheEffectOn: aPosition of: aBoardGame [
 
 	aBoardGame move: -4 thePlayerOf: aPosition.
+	super.
 ]
