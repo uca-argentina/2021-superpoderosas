@@ -1,9 +1,5 @@
 Class {
-	#name : #DesiredMove,
+	#name : #Global,
 	#superclass : #Object,
-	#instVars : [
-		'max',
-		'index'
-	],
 	#category : #'IngSoft2-Model'
 }

@@ -981,7 +981,7 @@ BoardGameTest >> testAPlayerUsesARepeatWhenNoDiceHasBeenThrowsThusItHasNoEffect 
 	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
 	pauPosition := Position of: aPlayer standingOn: 1 after: 1.
 	beluPosition := Position of: anotherPlayer standingOn: 1 after: 1.
-		
+	
 	aBoardGame a: repeatCard wantsToBeThrownTo: anotherPlayer by: anotherPlayer.
 	
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
@@ -1326,13 +1326,4 @@ BoardGameTest >> testWhenAPlayerFellsOnAnAtomicBombAllPlayersMoveToFieldOne [
 			(OrderedCollection
 				newFrom:
 					{pauPosition . malePosition . beluPosition })
-]
-
-{ #category : #playingWithCardsTests }
-BoardGameTest >> testWishedMove [
-"Objeto DesireMove"
-"Ambas subclases van a tener a la carta que se quiere jugar. La carta cancelation va a venir ademas con el plus la carta a cancelar"
-"Van a haber dos sublcases: 
-1) Global -> aplica a todos los jugadores
-2) Individual -> aplica a un jugador en particular"
 ]

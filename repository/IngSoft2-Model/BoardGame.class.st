@@ -64,7 +64,7 @@ BoardGame >> apply: aCard on: aPlayer [
 		aPlayer isInfluencedBy: aCard.
 ]
 
-{ #category : #actions }
+{ #category : #'actions - cards' }
 BoardGame >> applyInfluentialCardsOn: sumOfAllDices of: player [
 	| result |
 	result:= sumOfAllDices.
@@ -72,28 +72,28 @@ BoardGame >> applyInfluentialCardsOn: sumOfAllDices of: player [
 	^ result.
 ]
 
-{ #category : #actions }
+{ #category : #'actions - cards' }
 BoardGame >> applyLastCardThrownTo: aPlayer [
 	(cardsHistory isEmpty) 
 		ifFalse:[ 
 			(cardsHistory last) actAt: self on: aPlayer.].
 ]
 
-{ #category : #actions }
+{ #category : #'actions - cards' }
 BoardGame >> applyLastCardThrownToAllPlayer [
 	(cardsHistory isEmpty) 
 		ifFalse:[ 
 			(cardsHistory last) actAt: self].
 ]
 
-{ #category : #actions }
+{ #category : #'actions - effects' }
 BoardGame >> applyLastEffectTo: aPlayer [
 	effectsHistory last applyTheEffectOn: (self detectPositionOf: aPlayer) of: self.
 	self endGameIfTheWinnerIs: aPlayer.
 	self orderPlayersPosition.
 ]
 
-{ #category : #actions }
+{ #category : #'actions - effects' }
 BoardGame >> applyLastEffectToAllPlayers [
 	players do: [:player | effectsHistory last applyTheEffectOn: (self detectPositionOf: player) of: self. self endGameIfTheWinnerIs: player].
 	self orderPlayersPosition.
@@ -109,7 +109,7 @@ BoardGame >> changeCurrentStateToFinished [
 	isFinished := true.
 ]
 
-{ #category : #actions }
+{ #category : #'actions - cards' }
 BoardGame >> deal: aCard toPlayerOf: aPosition [ 
 	aPosition player pickUp: aCard.
 ]
@@ -265,12 +265,12 @@ BoardGame >> ranking [
 	^ playersPosition.
 ]
 
-{ #category : #actions }
+{ #category : #'actions - remove' }
 BoardGame >> removes: aCard from: aPlayer [ 
 	aPlayer cancel: aCard.
 ]
 
-{ #category : #actions }
+{ #category : #'actions - remove' }
 BoardGame >> removesEveryPlayers: card [ 
 	players do: [:player| player cancel: card].
 ]
