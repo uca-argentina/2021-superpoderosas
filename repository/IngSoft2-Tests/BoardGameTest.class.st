@@ -814,6 +814,36 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedHadASpeedEffect 
 ]
 
 { #category : #playingWithCardsTests }
+BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedHadAnAccelerationEffect [
+	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards doOverCard anotherPlayer pauPosition beluPosition accelerationCard |
+	doOverCard := DoOver new.
+	accelerationCard:= Acceleration new.
+	cards:=OrderedCollection newFrom:{doOverCard . accelerationCard}.
+	aPlayer := Player named: 'Pau' with: cards.
+	anotherPlayer := Player named: 'Belu' with: cards.
+	aDice := DeterministicDice with: #(9 10 7 3).
+	aGroupOfPlayers := {aPlayer . anotherPlayer}.
+	aGroupOfDices := {aDice}.
+	aNumberOfFields := 61.
+	aDiceCup := DiceCup containing: aGroupOfDices.
+	aSpinNumber:=5.
+	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	aBoard:= Board has: fields.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
+	pauPosition := Position of: aPlayer standingOn: 20 after: 1.
+	beluPosition := Position of: anotherPlayer standingOn: 13 after: 1.
+		
+	aBoardGame a: accelerationCard wantsToBeThrownBy: aPlayer.
+	aBoardGame nextTurn.
+	aBoardGame a: doOverCard wantsToBeThrownBy: anotherPlayer.
+	aBoardGame nextTurn.
+	aBoardGame nextTurn.
+		
+	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
+	
+]
+
+{ #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedWasACancellationCard [
 	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards doOverCard anotherPlayer cancellationCard|
 	doOverCard := DoOver new.
@@ -831,11 +861,42 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedWasACancellation
 	aBoard:= Board has: fields.
 	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
 	aBoardGame nextTurn.
-	aBoardGame a: doOverCard wantsToBeThrowTo: aPlayer by: anotherPlayer.
+	"agregar mas cartas"
 	aBoardGame a: cancellationCard of: doOverCard wantsToBeThrowTo: aPlayer by: anotherPlayer.
 	aBoardGame nextTurn.
 	aBoardGame a: doOverCard of: cancellationCard wantsToBeThrowTo: aPlayer by: anotherPlayer.
 	self assert: aPlayer influentialCards equals: (OrderedCollection new).
+]
+
+{ #category : #playingWithCardsTests }
+BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedWasARepeatCard [
+	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards doOverCard anotherPlayer pauPosition beluPosition repeatCard |
+	doOverCard := DoOver new.
+	repeatCard := Repetition new.
+	cards:=OrderedCollection newFrom:{doOverCard . repeatCard}.
+	aPlayer := Player named: 'Pau' with: cards.
+	anotherPlayer := Player named: 'Belu' with: cards.
+	aDice := DeterministicDice with: #(9 10 7 3).
+	aGroupOfPlayers := {aPlayer . anotherPlayer}.
+	aGroupOfDices := {aDice}.
+	aNumberOfFields := 61.
+	aDiceCup := DiceCup containing: aGroupOfDices.
+	aSpinNumber:=5.
+	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	aBoard:= Board has: fields.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
+	pauPosition := Position of: aPlayer standingOn: 13 after: 1.
+	beluPosition := Position of: anotherPlayer standingOn: 10 after: 1.
+		
+	aBoardGame nextTurn.
+	aBoardGame a: repeatCard wantsToBeThrownTo: aPlayer by:anotherPlayer.
+	aBoardGame nextTurn.
+	aBoardGame nextTurn.
+	aBoardGame a: doOverCard wantsToBeThrownTo: anotherPlayer by: aPlayer.
+	aBoardGame nextTurn.
+		
+	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
+	
 ]
 
 { #category : #playingWithCardsTests }
@@ -1265,4 +1326,13 @@ BoardGameTest >> testWhenAPlayerFellsOnAnAtomicBombAllPlayersMoveToFieldOne [
 			(OrderedCollection
 				newFrom:
 					{pauPosition . malePosition . beluPosition })
+]
+
+{ #category : #playingWithCardsTests }
+BoardGameTest >> testWishedMove [
+"Objeto DesireMove"
+"Ambas subclases van a tener a la carta que se quiere jugar. La carta cancelation va a venir ademas con el plus la carta a cancelar"
+"Van a haber dos sublcases: 
+1) Global -> aplica a todos los jugadores
+2) Individual -> aplica a un jugador en particular"
 ]

@@ -6,7 +6,7 @@ Class {
 
 { #category : #actions }
 DoOver >> actAt: aBoardGame [ 
-	
+	aBoardGame applyLastCardThrownToAllPlayer.
 ]
 
 { #category : #actions }

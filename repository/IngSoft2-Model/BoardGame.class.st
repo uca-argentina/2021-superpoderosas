@@ -80,6 +80,13 @@ BoardGame >> applyLastCardThrownTo: aPlayer [
 ]
 
 { #category : #actions }
+BoardGame >> applyLastCardThrownToAllPlayer [
+	(cardsHistory isEmpty) 
+		ifFalse:[ 
+			(cardsHistory last) actAt: self].
+]
+
+{ #category : #actions }
 BoardGame >> applyLastEffectTo: aPlayer [
 	effectsHistory last applyTheEffectOn: (self detectPositionOf: aPlayer) of: self.
 	self endGameIfTheWinnerIs: aPlayer.
