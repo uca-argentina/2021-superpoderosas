@@ -131,7 +131,7 @@ BoardGame >> changeCurrentStateToFinished [
 BoardGame >> dealACardToPlayerOf: aPosition [ 
 	| card |
 	card:= deck pickUp.
-	aPosition player pickUp: card.
+	(self findPlayerNamed: aPosition player) pickUp: card.
 ]
 
 { #category : #actions }
