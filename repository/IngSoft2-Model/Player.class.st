@@ -27,7 +27,7 @@ Player >> cancel: aCard [
 ]
 
 { #category : #accessing }
-Player >> cards [
+Player >> cardsInHand [
 	^ cardsInHand.
 ]
 
@@ -41,26 +41,13 @@ Player >> errorMessageAPlayerMustHaveTheCardToBeRemoved [
 	^'The player must have the influential card needed to be cancelled'.
 ]
 
-{ #category : #'error messages' }
-Player >> errorMessageInvalidNumberOfCards [
-	^ 'A player must have two cards in hand at the beginning of the game'.
-]
-
-{ #category : #validation }
-Player >> evaluateIfNumberOfCardsIsValidIn: someCards [
-	(someCards size =2)
-		ifFalse:[Error signal: self errorMessageInvalidNumberOfCards]
-		
-]
-
 { #category : #accessing }
 Player >> influentialCards [
 	^ influentialCards
 ]
 
 { #category : #initialize }
-Player >> initializeNamed: aName with: someCards [ 
-	self evaluateIfNumberOfCardsIsValidIn: someCards.
+Player >> initializeNamed: aName with: someCards [ .
 	name:= aName.
 	cardsInHand:=someCards.
 	influentialCards:= OrderedCollection new.
@@ -75,8 +62,7 @@ Player >> isInfluencedBy: aCard [
 
 { #category : #actions }
 Player >> lays: aCard [
-	cardsInHand remove: aCard
-		ifAbsent: [Error signal: self errorMessageAPlayerMustHaveTheCardInHand ].
+	cardsInHand remove: aCard ifAbsent: [Error signal: self errorMessageAPlayerMustHaveTheCardInHand ].
 ]
 
 { #category : #accessing }

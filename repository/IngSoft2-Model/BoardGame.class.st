@@ -11,18 +11,22 @@ Class {
 		'numberOfFields',
 		'board',
 		'effectsHistory',
-		'cardsHistory'
+		'cardsHistory',
+		'deck'
 	],
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #initialization }
-BoardGame class >> playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber [
-		^ self new initializePlayedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
+BoardGame class >> playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber [
+		^ self new initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
 ]
 
 { #category : #'actions - cards' }
-BoardGame >> a: card of: cardToBeCancel wantsToBeThrowTo: player by: currentPlayer [ 
+BoardGame >> a: card of: cardToBeCancel wantsToBeThrowTo: playerName by: currentPlayerName [
+	| currentPlayer player |
+	currentPlayer:= self findPlayerNamed: currentPlayerName.
+	player:= self findPlayerNamed: playerName.
 	(self verifyIf: card canBePlayedBy: currentPlayer).
 	currentPlayer lays: card.
 	card actAt: self on: player with: cardToBeCancel .
@@ -30,7 +34,9 @@ BoardGame >> a: card of: cardToBeCancel wantsToBeThrowTo: player by: currentPlay
 ]
 
 { #category : #'actions - cards' }
-BoardGame >> a: card of: cardToBeCancel wantsToBeThrownBy: currentPlayer [  
+BoardGame >> a: card of: cardToBeCancel wantsToBeThrownBy: currentPlayerName [ 
+	| currentPlayer |
+	currentPlayer:= self findPlayerNamed: currentPlayerName.
 	(self verifyIf: card canBePlayedBy: currentPlayer).
 	currentPlayer lays: card.
 	card actAt: self with: cardToBeCancel .
@@ -38,7 +44,9 @@ BoardGame >> a: card of: cardToBeCancel wantsToBeThrownBy: currentPlayer [
 ]
 
 { #category : #'actions - cards' }
-BoardGame >> a: card wantsToBeThrownBy: currentPlayer [ 
+BoardGame >> a: card wantsToBeThrownBy: currentPlayerName [ 
+	| currentPlayer |
+	currentPlayer:= self findPlayerNamed: currentPlayerName.
 	(self verifyIf: card canBePlayedBy: currentPlayer).
 	currentPlayer lays: card.
 	card actAt: self.
@@ -46,7 +54,10 @@ BoardGame >> a: card wantsToBeThrownBy: currentPlayer [
 ]
 
 { #category : #'actions - cards' }
-BoardGame >> a: card wantsToBeThrownTo: player by: currentPlayer [ 
+BoardGame >> a: card wantsToBeThrownTo: playerName by: currentPlayerName [
+	| currentPlayer player |
+	currentPlayer:= self findPlayerNamed: currentPlayerName.
+	player:= self findPlayerNamed: playerName.
 	(self verifyIf: card canBePlayedBy: currentPlayer).
 	currentPlayer lays: card.
 	card actAt: self on: player.
@@ -104,19 +115,28 @@ BoardGame >> applyToAllPlayers: aCard [
 	players do: [:player | player isInfluencedBy: aCard].
 ]
 
+{ #category : #'actions - cards' }
+BoardGame >> cardsInHandOf: aName [
+	| player |
+	player := self findPlayerNamed: aName.
+	^ player cardsInHand
+]
+
 { #category : #private }
 BoardGame >> changeCurrentStateToFinished [
 	isFinished := true.
 ]
 
 { #category : #'actions - cards' }
-BoardGame >> deal: aCard toPlayerOf: aPosition [ 
-	aPosition player pickUp: aCard.
+BoardGame >> dealACardToPlayerOf: aPosition [ 
+	| card |
+	card:= deck pickUp.
+	aPosition player pickUp: card.
 ]
 
 { #category : #actions }
 BoardGame >> detectPositionOf: player [
- ^playersPosition detect: [ :aPosition | aPosition player= player ].
+ ^playersPosition detect: [ :aPosition | aPosition player= player name].
 	
 ]
 
@@ -149,22 +169,28 @@ BoardGame >> errorMessageTheGameHasFinished [
 ]
 
 { #category : #private }
-BoardGame >> findNewPositionWhen: aPlayer hasMoved: aNumberOfFields from: oldPosition [
+BoardGame >> findNewPositionWhen: playerName hasMoved: aNumberOfFields from: oldPosition [
 	| totalFields newPosition newRoundNumber newFieldNumber |
 	totalFields := oldPosition field + aNumberOfFields.
 	newFieldNumber := self lookUpResultingFieldNumberBasingOn: totalFields.
 	newRoundNumber :=  oldPosition round + (self addOrSubstractOneIfThePlayerHasChangedRound: totalFields).
-	newPosition := Position of: aPlayer standingOn: newFieldNumber after: newRoundNumber.
+	newPosition := Position of: playerName standingOn: newFieldNumber after: newRoundNumber.
 	newPosition := self validate: newPosition.
 	^ newPosition
 ]
 
+{ #category : #actions }
+BoardGame >> findPlayerNamed: aName [
+	^ players detect: [ :aPlayer | aPlayer name = aName ]
+]
+
 { #category : #initialize }
-BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber [
+BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber [
 	self verifyIfItIsNotEmpty: aGroupOfPlayers .
+	deck:= aDeck.
 	diceCup := aDiceCup.
 	board:= aBoard.
-	players := aGroupOfPlayers.
+	players := OrderedCollection newFrom:(aGroupOfPlayers collect:[:playerName | Player named: playerName with: (aDeck pickUp: 2)]).
 	playersTurnIdentificator := SequenceSimulator newFrom: (aGroupOfPlayers size).
 	isFinished := false.
 	spinsNeededToWin := aSpinNumber.
@@ -203,7 +229,7 @@ BoardGame >> move: player along: result [
 { #category : #actions }
 BoardGame >> move: aPlayer over: aNumberOfFields consideringAnEffectFrom: oldPosition [
 	| newPosition field effect |
-	newPosition := self move: aPlayer over: aNumberOfFields from: oldPosition.
+	newPosition := self move: aPlayer name over: aNumberOfFields from: oldPosition.
 	field := board searchFieldFor: newPosition.
 	effect:=field applyTheEffectOn: newPosition of: self.
 	effectsHistory add:effect.
@@ -211,9 +237,9 @@ BoardGame >> move: aPlayer over: aNumberOfFields consideringAnEffectFrom: oldPos
 ]
 
 { #category : #actions }
-BoardGame >> move: aPlayer over: aNumberOfFields from: oldPosition [
+BoardGame >> move: playerName over: aNumberOfFields from: oldPosition [
 	| newPosition |
-	newPosition := self findNewPositionWhen: aPlayer hasMoved: aNumberOfFields from: oldPosition.
+	newPosition := self findNewPositionWhen: playerName hasMoved: aNumberOfFields from: oldPosition.
 	self replace: oldPosition with: newPosition.
 	^ newPosition
 ]
@@ -257,7 +283,7 @@ BoardGame >> orderPlayersPosition [
 { #category : #initialize }
 BoardGame >> placePlayersAtTheInitialPosition [
 	^ players
-		collect: [ :aPlayer | Position of: aPlayer standingOn: 1 after: 1 ]
+		collect: [ :aPlayer | Position of: (aPlayer name) standingOn: 1 after: 1 ]
 ]
 
 { #category : #accessing }
@@ -275,14 +301,14 @@ BoardGame >> removesEveryPlayers: card [
 	players do: [:player| player cancel: card].
 ]
 
-{ #category : #actions }
+{ #category : #'actions - effects' }
 BoardGame >> repeatlastEffectApplied [
 	effectsHistory isEmpty
 		ifFalse:
 			[ self applyLastEffectToAllPlayers ]
 ]
 
-{ #category : #actions }
+{ #category : #'actions - effects' }
 BoardGame >> repeatlastEffectAppliedOn: aPlayer [
 	effectsHistory isEmpty
 		ifFalse:
@@ -295,7 +321,7 @@ BoardGame >> replace: oldPosition with: newPosition [
 	playersPosition add: newPosition
 ]
 
-{ #category : #actions }
+{ #category : #'actions - cards' }
 BoardGame >> theLastCardThrownCanBePlayedInAnyTurn [
 	^ (cardsHistory isEmpty) 
 	ifTrue: [ true. ]

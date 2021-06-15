@@ -28,20 +28,16 @@ BoardGameTest >> creationOfAnotherBoardGameWithThreePlayers [
 
 { #category : #positionTests }
 BoardGameTest >> creationOfBoardGameWithThatUsesA: firstDice a: secondDice andA: thirdDice [
-	| aGroupOfDices aDiceCup aSpinNumber aNumberOfFields aBoard aBoardGame aGroupOfPlayers fields cards pau belu male anOverloadCard |
-	anOverloadCard := Overload new.
-	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
-	pau := Player named: 'Pau' with: cards.
-	belu:= Player named: 'Belu' with: cards.
-	male:= Player named: 'Male' with: cards.
-	aGroupOfPlayers := {pau . male . belu}.
+	| aGroupOfDices aDiceCup aSpinNumber aNumberOfFields aBoard aBoardGame aGroupOfPlayers fields aDeck |
+	aGroupOfPlayers := {#pau . #male . #belu}.
 	aGroupOfDices := {firstDice. secondDice. thirdDice}.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aNumberOfFields := 50.
 	aSpinNumber := 3.
 	fields:= self generateManually: aNumberOfFields.
 	aBoard := Board has:fields.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
+	aDeck := self generateDeck.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
 	^ aBoardGame
 ]
 
@@ -58,6 +54,14 @@ BoardGameTest >> creationOfBoardGameWithThreePlayers [
 ]
 
 { #category : #fieldsEffectTests }
+BoardGameTest >> generateDeck [
+	| cards aDeck |
+	cards := OrderedCollection newFrom: { Cancellation new . Acceleration new . Speed new . DoOver new . Repetition new . Overload new}.
+	aDeck := RandomDeck containing: cards.
+	^aDeck.
+]
+
+{ #category : #fieldsEffectTests }
 BoardGameTest >> generateManually: aNumberOfFields [ 
 	|  fields  effectDistributionFields effectToDistribute |
 	fields:= OrderedCollection new: aNumberOfFields withAll: NoEffect new.
@@ -70,7 +74,7 @@ BoardGameTest >> generateManually: aNumberOfFields [
 ]
 
 { #category : #playingWithCardsTests }
-BoardGameTest >> generateManuallyIncludingCards: aNumberOfFields [ 
+BoardGameTest >> generateManuallyIncludingCardDealer: aNumberOfFields [ 
 	|  fields effectDistributionFields effectToDistribute |
 	fields:= OrderedCollection new: aNumberOfFields withAll: NoEffect new.
 	effectToDistribute := {WormHole new. SpeedUp new.AtomicBomb new.MoonWalk with: 16. MoonWalk with: 11. CardDealer new}.
@@ -83,50 +87,36 @@ BoardGameTest >> generateManuallyIncludingCards: aNumberOfFields [
 
 { #category : #accessingTests }
 BoardGameTest >> newBoardGameWithASinglePlayerAndASingleRound [
-	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields anOverloadCard cards |
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields anOverloadCard aDeck |
 	anOverloadCard := Overload new.
-	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
-	aPlayer := Player named: 'Pau' with: cards.
 	aDice := DeterministicDice with: #(2 4 7 3).
-	aGroupOfPlayers := {aPlayer}.
+	aGroupOfPlayers := {#pau}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aSpinNumber:=1.
 	fields:= self generateManually: aNumberOfFields.
 	aBoard:= Board has: fields.
-	aBoardGame := BoardGame
-		playedBy: aGroupOfPlayers
-		using: aDiceCup
-		on: aBoard
-		winnedWhenReach: aSpinNumber.
+	aDeck := self generateDeck.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
 	^ aBoardGame
 ]
 
 { #category : #accessingTests }
 BoardGameTest >> newBoardGameWithMultiplePlayers [
-	| aBoardGame secondDice aGroupOfPlayers aGroupOfDices firstDice aNumberOfFields thirdDice aDiceCup aSpinNumber aBoard fields anOverloadCard cards pau belu male juli |
+	| aBoardGame secondDice aGroupOfPlayers aGroupOfDices firstDice aNumberOfFields thirdDice aDiceCup aSpinNumber aBoard fields aDeck |
 	firstDice := DeterministicDice with: #(2 4 7 2).
 	secondDice := DeterministicDice with: #(8 5 4 7 2).
 	thirdDice := DeterministicDice with: #(4 1 2 7 2).
-	anOverloadCard := Overload new.
-	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
-	pau := Player named: 'Pau' with: cards.
-	belu:= Player named: 'Belu' with: cards.
-	male:= Player named: 'Male' with: cards.
-	juli:= Player named: 'Juli' with: cards.
-	aGroupOfPlayers := {pau . male . belu . juli}.
+	aGroupOfPlayers := {#pau . #male . #belu . #juli}.
 	aGroupOfDices := {firstDice. secondDice. thirdDice}.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aNumberOfFields := 50.
 	aSpinNumber:=1.
 	fields:= self generateManually: aNumberOfFields.
 	aBoard:= Board has: fields.
-	aBoardGame := BoardGame
-		playedBy: aGroupOfPlayers
-		using: aDiceCup
-		on: aBoard
-		winnedWhenReach: aSpinNumber.
+	aDeck := self generateDeck.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
 		
 	^ aBoardGame
 ]
@@ -143,18 +133,12 @@ BoardGameTest >> relativeEventOcurrenceOf: aProbabilityEvent in: groupOfEvents [
 { #category : #playingTests }
 BoardGameTest >> testABoardGameCanDistinguishBetweenWhoseTurnIsIt [
  		
-	| aBoardGame pauPosition beluPosition juliPosition malePosition cards pau belu male juli anOverloadCard |
+	| aBoardGame pauPosition beluPosition juliPosition malePosition |
 	aBoardGame := self newBoardGameWithMultiplePlayers.
-	anOverloadCard := Overload new.
-	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
-	pau := Player named: 'Pau' with: cards.
-	belu:= Player named: 'Belu' with: cards.
-	male:= Player named: 'Male' with: cards.
-	juli:= Player named: 'Juli' with: cards.
-	pauPosition := Position of: pau standingOn: 21 after: 1.
-	beluPosition := Position of: belu standingOn: 14 after: 1.
-	juliPosition := Position of: juli standingOn: 13 after: 1.
-	malePosition := Position of: male standingOn: 11 after: 1.
+	pauPosition := Position of: #pau standingOn: 21 after: 1.
+	beluPosition := Position of: #belu standingOn: 14 after: 1.
+	juliPosition := Position of: #juli standingOn: 13 after: 1.
+	malePosition := Position of: #male standingOn: 11 after: 1.
 	1 to: 5 do: [ :n | aBoardGame nextTurn ].
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition . juliPosition . malePosition }).
 ]
@@ -174,17 +158,12 @@ BoardGameTest >> testABoardGameDoesntHaveAWinnerYet [
 
 { #category : #positionTests }
 BoardGameTest >> testABoardGameHasAFinalRanking [
-	| aBoardGame pauPosition beluPosition malePosition anOverloadCard cards pau belu male |
+	| aBoardGame pauPosition beluPosition malePosition |
 	aBoardGame := self creationOfBoardGameWithThreePlayers.
 	1 to: 34 do: [ :n | aBoardGame nextTurn ].
-	anOverloadCard := Overload new.
-	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
-	pau := Player named: 'Pau' with: cards.
-	belu:= Player named: 'Belu' with: cards.
-	male:= Player named: 'Male' with: cards.
-	pauPosition := Position of: pau standingOn: 46 after: 1.
-	beluPosition := Position of: belu standingOn: 13 after: 1.
-	malePosition := Position of: male standingOn: 21 after: 1.
+	pauPosition := Position of: #pau standingOn: 46 after: 1.
+	beluPosition := Position of: #belu standingOn: 13 after: 1.
+	malePosition := Position of: #male standingOn: 21 after: 1.
 	self
 		assert: aBoardGame ranking
 		equals:
@@ -195,27 +174,21 @@ BoardGameTest >> testABoardGameHasAFinalRanking [
 
 { #category : #accessingTests }
 BoardGameTest >> testABoardGameHasARanking [
-	| aBoardGame pauPosition anOverloadCard cards pau |
+	| aBoardGame pauPosition |
 	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
-	anOverloadCard := Overload new.
-	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
-	pau := Player named: 'Pau' with: cards.
-	pauPosition := Position of: pau standingOn: 61 after: 1.
+	pauPosition := Position of: #pau standingOn: 61 after: 1.
 	1 to: 18 do: [ :n | aBoardGame nextTurn ].
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition}).
 ]
 
 { #category : #positionTests }
 BoardGameTest >> testABoardGameHasAWinner [
-	| aBoardGame anOverloadCard cards pau |
-	anOverloadCard := Overload new.
-	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
-	pau := Player named: 'Pau' with: cards.
+	| aBoardGame |
 	aBoardGame := self creationOfAnotherBoardGameWithThreePlayers.
 	1 to: 16 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame winner 
-		equals: pau.
+		equals: #pau.
 ]
 
 { #category : #positionTests }
@@ -241,96 +214,89 @@ BoardGameTest >> testABoardGameHasFinished [
 
 { #category : #statusTests }
 BoardGameTest >> testABoardGameHasFinishedAndHasAWinner [
-	| pau aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup jorge aSpinNumber aBoard fields anOverloadCard cards |
-	anOverloadCard := Overload new.
-	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
-	pau := Player named: 'Pau' with: cards.
-	jorge:= Player named: 'Jorge' with: cards.
+	| aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup aSpinNumber aBoard fields aDeck |
 	aDice := DeterministicDice with: #(20 15 26 37).
-	aGroupOfPlayers := {pau. jorge}.
+	aGroupOfPlayers := {#pau. #jorge}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 54.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aSpinNumber:=3.
 	fields:= self generateManually: aNumberOfFields.
 	aBoard:= Board has: fields.
-	aBoardGame := BoardGame
-		playedBy: aGroupOfPlayers
-		using: aDiceCup
-		on: aBoard
-		winnedWhenReach: aSpinNumber.
-	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 1.
-	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 1.
-	self assert: ((aBoardGame detectPositionOf: pau) round) equals: 1.
-	self assert: ((aBoardGame detectPositionOf: jorge) round) equals: 1.
+	aDeck := self generateDeck.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #pau)) field) equals: 1.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #jorge)) field) equals: 1.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #pau)) round) equals: 1.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #jorge)) round) equals: 1.
 	aBoardGame nextTurn.
 	self deny: aBoardGame isFinished.
-	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 21.
-	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 1.
-	self assert: ((aBoardGame detectPositionOf: pau) round) equals: 1.
-	self assert: ((aBoardGame detectPositionOf: jorge) round) equals: 1.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #pau)) field) equals: 21.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #jorge)) field) equals: 1.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #pau)) round) equals: 1.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #jorge)) round) equals: 1.
 	aBoardGame nextTurn.
-	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 21.
-	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 16.
-	self assert: ((aBoardGame detectPositionOf: pau) round) equals: 1.
-	self assert: ((aBoardGame detectPositionOf: jorge) round) equals: 1.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #pau)) field) equals: 21.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #jorge)) field) equals: 16.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #pau)) round) equals: 1.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #jorge)) round) equals: 1.
 	aBoardGame nextTurn.
-	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 47.
-	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 16.
-	self assert: ((aBoardGame detectPositionOf: pau) round) equals: 1.
-	self assert: ((aBoardGame detectPositionOf: jorge) round) equals: 1.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #pau)) field) equals: 47.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #jorge)) field) equals: 16.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #pau)) round) equals: 1.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #jorge)) round) equals: 1.
 	aBoardGame nextTurn.
-	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 47.
-	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 53.
-	self assert: ((aBoardGame detectPositionOf: pau) round) equals: 1.
-	self assert: ((aBoardGame detectPositionOf: jorge) round) equals: 1.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #pau)) field) equals: 47.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #jorge)) field) equals: 53.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #pau)) round) equals: 1.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #jorge)) round) equals: 1.
 	aBoardGame nextTurn.
-	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 13.
-	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 53.
-	self assert: ((aBoardGame detectPositionOf: pau) round) equals: 2.
-	self assert: ((aBoardGame detectPositionOf: jorge) round) equals: 1.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #pau)) field) equals: 13.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #jorge)) field) equals: 53.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #pau)) round) equals: 2.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #jorge)) round) equals: 1.
 	aBoardGame nextTurn.
-	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 13.
-	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 14.
-	self assert: ((aBoardGame detectPositionOf: pau) round) equals: 2.
-	self assert: ((aBoardGame detectPositionOf: jorge) round) equals: 2.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #pau)) field) equals: 13.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #jorge)) field) equals: 14.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #pau)) round) equals: 2.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #jorge)) round) equals: 2.
 	aBoardGame nextTurn.
-	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 39.
-	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 14.
-	self assert: ((aBoardGame detectPositionOf: pau) round) equals: 2.
-	self assert: ((aBoardGame detectPositionOf: jorge) round) equals: 2.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #pau)) field) equals: 39.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #jorge)) field) equals: 14.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #pau)) round) equals: 2.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #jorge)) round) equals: 2.
 	aBoardGame nextTurn.
-	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 39.
-	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 51.
-	self assert: ((aBoardGame detectPositionOf: pau) round) equals: 2.
-	self assert: ((aBoardGame detectPositionOf: jorge) round) equals: 2.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #pau)) field) equals: 39.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #jorge)) field) equals: 51.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #pau)) round) equals: 2.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #jorge)) round) equals: 2.
 	aBoardGame nextTurn.
-	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 5.
-	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 51.
-	self assert: ((aBoardGame detectPositionOf: pau) round) equals: 3.
-	self assert: ((aBoardGame detectPositionOf: jorge) round) equals: 2.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #pau)) field) equals: 5.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #jorge)) field) equals: 51.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #pau)) round) equals: 3.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #jorge)) round) equals: 2.
 	aBoardGame nextTurn.
-	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 5.
-	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 12.
-	self assert: ((aBoardGame detectPositionOf: pau) round) equals: 3.
-	self assert: ((aBoardGame detectPositionOf: jorge) round) equals: 3.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #pau)) field) equals: 5.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #jorge)) field) equals: 12.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #pau)) round) equals: 3.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #jorge)) round) equals: 3.
 	aBoardGame nextTurn.
-	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 31.
-	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 12.
-	self assert: ((aBoardGame detectPositionOf: pau) round) equals: 3.
-	self assert: ((aBoardGame detectPositionOf: jorge) round) equals: 3.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #pau)) field) equals: 31.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #jorge)) field) equals: 12.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #pau)) round) equals: 3.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #jorge)) round) equals: 3.
 	aBoardGame nextTurn.
-	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 31.
-	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 49.
-	self assert: ((aBoardGame detectPositionOf: pau) round) equals: 3.
-	self assert: ((aBoardGame detectPositionOf: jorge) round) equals: 3.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #pau)) field) equals: 31.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #jorge)) field) equals: 49.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #pau)) round) equals: 3.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #jorge)) round) equals: 3.
 	aBoardGame nextTurn.
-	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 51.
-	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 49.
-	self assert: ((aBoardGame detectPositionOf: pau) round) equals: 3.
-	self assert: ((aBoardGame detectPositionOf: jorge) round) equals: 3.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #pau)) field) equals: 51.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #jorge)) field) equals: 49.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #pau)) round) equals: 3.
+	self assert: ((aBoardGame detectPositionOf: (aBoardGame findPlayerNamed: #jorge)) round) equals: 3.
 	aBoardGame nextTurn.
-	self assert: aBoardGame winner equals: jorge
+	self assert: aBoardGame winner equals: #jorge
 ]
 
 { #category : #validationTests }
@@ -348,16 +314,11 @@ BoardGameTest >> testABoardGameHasFinishedAndPlayersMustBeHalted [
 
 { #category : #positionTests }
 BoardGameTest >> testABoardGameHasThreePlayersThatChangePositionOvertime [
-	| aBoardGame pauPosition beluPosition malePosition anOverloadCard cards pau belu male |
+	| aBoardGame pauPosition beluPosition malePosition|
 	aBoardGame := self creationOfBoardGameWithThreePlayers.
-	anOverloadCard := Overload new.
-	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
-	pau := Player named: 'Pau' with: cards.
-	belu:= Player named: 'Belu' with: cards.
-	male:= Player named: 'Male' with: cards.
-	pauPosition := Position of: pau standingOn: 31 after: 1.
-	beluPosition := Position of: belu standingOn: 14 after: 1.
-	malePosition := Position of: male standingOn: 13 after: 1.
+	pauPosition := Position of: #pau standingOn: 31 after: 1.
+	beluPosition := Position of: #belu standingOn: 14 after: 1.
+	malePosition := Position of: #male standingOn: 13 after: 1.
 	1 to: 5 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
@@ -369,16 +330,11 @@ BoardGameTest >> testABoardGameHasThreePlayersThatChangePositionOvertime [
 
 { #category : #positionTests }
 BoardGameTest >> testABoardGameHasThreePlayersThatChangeRoundNumberOvertime [
-	| aBoardGame pauPosition beluPosition malePosition anOverloadCard cards pau belu male |
+	| aBoardGame pauPosition beluPosition malePosition |
 	aBoardGame := self creationOfAnotherBoardGameWithThreePlayers.
-	anOverloadCard := Overload new.
-	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
-	pau := Player named: 'Pau' with: cards.
-	belu:= Player named: 'Belu' with: cards.
-	male:= Player named: 'Male' with: cards.
-	pauPosition := Position of: pau standingOn: 33 after: 2.
-	beluPosition := Position of: belu standingOn: 10 after: 2.
-	malePosition := Position of: male standingOn: 43 after: 1.
+	pauPosition := Position of: #pau standingOn: 33 after: 2.
+	beluPosition := Position of: #belu standingOn: 10 after: 2.
+	malePosition := Position of: #male standingOn: 43 after: 1.
 	1 to: 7 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
@@ -390,16 +346,11 @@ BoardGameTest >> testABoardGameHasThreePlayersThatChangeRoundNumberOvertime [
 
 { #category : #positionTests }
 BoardGameTest >> testABoardGameHasThreePlayersWithAnInitialPosition [
-	| aBoardGame pauPosition beluPosition malePosition anOverloadCard cards pau belu male |
+	| aBoardGame pauPosition beluPosition malePosition|
 	aBoardGame := self creationOfBoardGameWithThreePlayers.
-	anOverloadCard := Overload new.
-	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
-	pau := Player named: 'Pau' with: cards.
-	belu:= Player named: 'Belu' with: cards.
-	male:= Player named: 'Male' with: cards.
-	pauPosition := Position of: pau standingOn: 1 after: 1.
-	beluPosition := Position of: belu standingOn: 1 after: 1.
-	malePosition := Position of: male standingOn: 1 after: 1.
+	pauPosition := Position of: #pau standingOn: 1 after: 1.
+	beluPosition := Position of: #belu standingOn: 1 after: 1.
+	malePosition := Position of: #male standingOn: 1 after: 1.
 
 	self assert: (aBoardGame ranking) equals: (OrderedCollection newFrom: {pauPosition . malePosition . beluPosition }).
 
@@ -418,12 +369,9 @@ BoardGameTest >> testABoardGameIsInProcess [
 { #category : #accessingTests }
 BoardGameTest >> testABoardGameKnowsThePlayersInitialPosition [
  		
-	| aBoardGame pauPosition anOverloadCard cards pau |
+	| aBoardGame pauPosition |
 	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
-	anOverloadCard := Overload new.
-	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
-	pau := Player named: 'Pau' with: cards.
-	pauPosition := Position of: pau standingOn: 1 after: 1.
+	pauPosition := Position of: #pau standingOn: 1 after: 1.
 	
 	self assert: (aBoardGame ranking) equals: (OrderedCollection newFrom: {pauPosition}).
 ]
@@ -431,12 +379,9 @@ BoardGameTest >> testABoardGameKnowsThePlayersInitialPosition [
 { #category : #playingTests }
 BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowADiceAndMoveOnTheBoard [
  		
-	| aBoardGame pauPosition anOverloadCard cards pau |
+	| aBoardGame pauPosition |
 	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
-	anOverloadCard := Overload new.
-	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
-	pau := Player named: 'Pau' with: cards.
-	pauPosition := Position of: pau standingOn: 5 after: 1.
+	pauPosition := Position of: #pau standingOn: 5 after: 1.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 		
@@ -446,22 +391,20 @@ BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowADiceAndMoveOnThe
 { #category : #playingTests }
 BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowThreeDicesSimultaneously [
  		
-	| aPlayer aBoardGame aGroupOfPlayers aGroupOfDices firstDice secondDice thirdDice aNumberOfFields aDiceCup aSpinNumber aBoard pauPosition fields anOverloadCard cards |
-	anOverloadCard := Overload new.
-	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
-	aPlayer := Player named: 'Pau' with: cards.
-	pauPosition := Position of: aPlayer standingOn: 25 after: 1.
+	|  aBoardGame aGroupOfPlayers aGroupOfDices firstDice secondDice thirdDice aNumberOfFields aDiceCup aSpinNumber aBoard pauPosition fields aDeck |
+	pauPosition := Position of: #pau standingOn: 25 after: 1.
 	firstDice:= DeterministicDice with:#(2 4 7 2).
 	secondDice:= DeterministicDice with:#(8 5 4 7 2).
 	thirdDice:= DeterministicDice with:#(4 1 2 7 2).
-	aGroupOfPlayers:= {aPlayer}.
+	aGroupOfPlayers:= {#pau}.
 	aGroupOfDices:= { firstDice. secondDice. thirdDice}.
 	aNumberOfFields:= 50.
 	aDiceCup:= DiceCup containing: aGroupOfDices.
 	aSpinNumber:=1.
 	fields:= self generateManually: aNumberOfFields.
 	aBoard:= Board has: fields.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
+	aDeck := self generateDeck.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition}).
@@ -471,7 +414,7 @@ BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowThreeDicesSimulta
 { #category : #validationTests }
 BoardGameTest >> testABoardGameNeedsAtLeastOnePlayer [
  		
-	|aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup aSpinNumber aBoard fields |
+	|aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup aSpinNumber aBoard fields aDeck |
 	aDice:= DeterministicDice with:#(2 4 7 3).
 	aGroupOfPlayers:= {}.
 	aGroupOfDices := { aDice }.
@@ -480,52 +423,44 @@ BoardGameTest >> testABoardGameNeedsAtLeastOnePlayer [
 	aSpinNumber:=1.
 	fields:= self generateManually: aNumberOfFields.
 	aBoard:= Board has: fields.
+	aDeck := self generateDeck.
 
 	self 
-		should:[BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.] 
+		should:[BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.] 
 		raise: Error 
 		withExceptionDo: [:error | self assert: error messageText equals: 'The board game must have at leaste ONE player'].
 ]
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testACancellationCardCanAlsoBeUsedByAPlayerIfItIsNotHisTurn [
-	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards anotherPlayer speedCard cancellationCard |
-	speedCard:= Speed new.
-	cancellationCard:= Cancellation new.
-	cards:=OrderedCollection newFrom:{speedCard.cancellationCard}.
-	aPlayer := Player named: 'Pau' with: cards.
-	anotherPlayer := Player named: 'Belu' with: cards.
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields speedCard cancellationCard aDeck |
 	aDice := DeterministicDice with: #(9 10 7 3).
-	aGroupOfPlayers := {aPlayer . anotherPlayer}.
+	aGroupOfPlayers := {#pau . #belu}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
 	aBoard:= Board has: fields.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
-	aBoardGame a: speedCard wantsToBeThrownTo: anotherPlayer by: aPlayer.
+	aDeck := self generateDeck.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	aBoardGame a: speedCard wantsToBeThrownTo: #belu by: #pau.
 	aBoardGame nextTurn.
-	aBoardGame a: cancellationCard of: speedCard wantsToBeThrowTo: anotherPlayer by: aPlayer.
+	aBoardGame a: cancellationCard of: speedCard wantsToBeThrowTo: #belu by: #pau.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	
-	self assert: anotherPlayer influentialCards equals: (OrderedCollection new).
+	self assert: #belu influentialCards equals: (OrderedCollection new).
 	
 ]
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> testAFieldHasNoEffect [
-	| aBoardGame pauPosition beluPosition malePosition anOverloadCard cards pau belu male |
+	| aBoardGame pauPosition beluPosition malePosition |
 	aBoardGame := self creationOfBoardGameWithThreePlayers.
-	anOverloadCard := Overload new.
-	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
-	pau := Player named: 'Pau' with: cards.
-	belu:= Player named: 'Belu' with: cards.
-	male:= Player named: 'Male' with: cards.
-	pauPosition := Position of: pau standingOn: 31 after: 1.
-	beluPosition := Position of: belu standingOn: 14 after: 1.
-	malePosition := Position of: male standingOn: 11 after: 1.
+	pauPosition := Position of: #pau standingOn: 31 after: 1.
+	beluPosition := Position of: #belu standingOn: 14 after: 1.
+	malePosition := Position of: #male standingOn: 11 after: 1.
 	1 to: 4 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
@@ -538,22 +473,20 @@ BoardGameTest >> testAFieldHasNoEffect [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerCanNotUseACardHeDoesNotHave [
-	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards overloadCard anotherPlayer|
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields overloadCard aDeck |
 	overloadCard := Overload new.
-	cards:=OrderedCollection newFrom:{#card1 . #card2 }.
-	aPlayer := Player named: 'Pau' with: cards.
-	anotherPlayer := Player named: 'Belu' with: cards.
 	aDice := DeterministicDice with: #(10 10 7 3).
-	aGroupOfPlayers := {aPlayer . anotherPlayer}.
+	aGroupOfPlayers := {#pau . #belu}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
 	aBoard:= Board has: fields.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.	
+	aDeck := DeterministicDeck containing: { Acceleration new . Cancellation  new . DoOver new . Speed new . Repetition new }.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.	
 	self 
-		should:[aBoardGame a: overloadCard wantsToBeThrownTo: anotherPlayer by: aPlayer.] 
+		should:[aBoardGame a: overloadCard wantsToBeThrownTo: #pau by: #pau.] 
 		raise: Error 
 		withExceptionDo: [:error | self assert: error messageText equals: 'A player must have a card in hand in order to use it' ].
 	
@@ -561,28 +494,24 @@ BoardGameTest >> testAPlayerCanNotUseACardHeDoesNotHave [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerCanNotUseADoOverCardWhenTheLastCardPlayedHadASpeedEffectOutsideHisTurn [
-	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards doOverCard anotherPlayer speedCard |
-	doOverCard := DoOver new.
-	speedCard:= Speed new.
-	cards:=OrderedCollection newFrom:{doOverCard . speedCard}.
-	aPlayer := Player named: 'Pau' with: cards.
-	anotherPlayer := Player named: 'Belu' with: cards.
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields aDeck speedCard doOverCard |
 	aDice := DeterministicDice with: #(9 10 7 3).
-	aGroupOfPlayers := {aPlayer . anotherPlayer}.
+	aGroupOfPlayers := {#pau . #belu}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
 	aBoard:= Board has: fields.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
+	aDeck := self generateDeck.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
 	aBoardGame nextTurn.
-	aBoardGame a: speedCard wantsToBeThrownTo: aPlayer by: anotherPlayer.
+	aBoardGame a: speedCard wantsToBeThrownTo: #pau by: #belu.
 	aBoardGame nextTurn.
 	
 	
 	self 
-		should:[aBoardGame a: doOverCard wantsToBeThrownTo: aPlayer by: anotherPlayer] 
+		should:[aBoardGame a: doOverCard wantsToBeThrownTo: #pau by: #belu] 
 		raise: Error 
 		withExceptionDo: [:error | self assert: error messageText equals: 'All permanent cards can only be played when it is the turn of the player' ].
 	
@@ -590,26 +519,22 @@ BoardGameTest >> testAPlayerCanNotUseADoOverCardWhenTheLastCardPlayedHadASpeedEf
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerCanNotUseASpeedUpCardIfItIsNotHisTurn [
-	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards overloadCard anotherPlayer speedCard |
-	overloadCard := Overload new.
-	speedCard:= Speed new.
-	cards:=OrderedCollection newFrom:{overloadCard . speedCard}.
-	aPlayer := Player named: 'Pau' with: cards.
-	anotherPlayer := Player named: 'Belu' with: cards.
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields aDeck speedCard |
 	aDice := DeterministicDice with: #(9 10 7 3).
-	aGroupOfPlayers := {aPlayer . anotherPlayer}.
+	aGroupOfPlayers := {#pau . #belu}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
 	aBoard:= Board has: fields.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
+	aDeck := self generateDeck.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
 		
 	aBoardGame nextTurn.
 	
 	self 
-		should:[aBoardGame a: speedCard wantsToBeThrownTo: aPlayer by: aPlayer.] 
+		should:[aBoardGame a: speedCard wantsToBeThrownTo: #pau by: #pau.] 
 		raise: Error 
 		withExceptionDo: [:error | self assert: error messageText equals: 'All permanent cards can only be played when it is the turn of the player' ].
 	
@@ -617,87 +542,51 @@ BoardGameTest >> testAPlayerCanNotUseASpeedUpCardIfItIsNotHisTurn [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerHas2CardsAtTheBegginingOfTheGame [
-	| aPlayer cards |
-	cards:={'card1' . 'card2'}.
-	aPlayer := Player named: 'Pau' with: cards.
-		
-	self assert: aPlayer cards size equals: 2.
+	| aBoardGame |
+	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
+	self assert: (aBoardGame cardsInHandOf: #pau) size equals: 2.
 ]
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerHasThreeCardsAfterLandingOnAFieldWithACardDealerEffect [
-	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards |
-	cards:=OrderedCollection newFrom:{'card1' . 'card2'}.
-	aPlayer := Player named: 'Pau' with: cards.
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields aDeck |
 	aDice := DeterministicDice with: #(9 10 7 3).
-	aGroupOfPlayers := {aPlayer}.
+	aGroupOfPlayers := {#pau}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aSpinNumber:=1.
-	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
 	aBoard:= Board has: fields.
-	aBoardGame := BoardGame
-		playedBy: aGroupOfPlayers
-		using: aDiceCup
-		on: aBoard
-		winnedWhenReach: aSpinNumber.
+	aDeck := self generateDeck.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
 	aBoardGame nextTurn.
-	self assert: aPlayer cards size equals: 3.
-]
-
-{ #category : #playingWithCardsTests }
-BoardGameTest >> testAPlayerHasTwoCardsAtTheBeginning [
-	|cards aCancellationCard anAccelerationCard anotherSetOfCards |
-	aCancellationCard:= Cancellation new.
-	anAccelerationCard:= Acceleration new.
-	cards:=OrderedCollection newFrom:{anAccelerationCard.aCancellationCard.anAccelerationCard}.
-	anotherSetOfCards:=OrderedCollection newFrom:{anAccelerationCard}.
-	self 
-		should:[Player named: 'Pau' with: cards.] 
-		raise: Error 
-		withExceptionDo: [:error | self assert: error messageText equals: 'A player must have two cards in hand at the beginning of the game' ].
-	self 
-		should:[Player named: 'Belu' with: anotherSetOfCards.] 
-		raise: Error 
-		withExceptionDo: [:error | self assert: error messageText equals: 'A player must have two cards in hand at the beginning of the game' ].
-	
-	
-
-	
-	
+	self assert: (aBoardGame cardsInHandOf: #pau) size equals: 3.
 ]
 
 { #category : #circularBoardTests }
 BoardGameTest >> testAPlayerMustGoThreeTimesAroundTheBoardToWin [
-	| aBoardGame anOverloadCard cards pau |
-	anOverloadCard := Overload new.
-	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
-	pau := Player named: 'Pau' with: cards.
+	| aBoardGame |
 	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
 	1 to: 19 do: [ :n | aBoardGame nextTurn ].
-	self assert: aBoardGame winner equals: pau.	
+	self assert: aBoardGame winner equals: #pau.	
 ]
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerMustHaveASpeedCardInOrderToBeCancelled [
-	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards anotherPlayer speedCard cancellationCard |
-	speedCard:= Speed new.
-	cancellationCard:= Cancellation new.
-	cards:=OrderedCollection newFrom:{speedCard.cancellationCard}.
-	aPlayer := Player named: 'Pau' with: cards.
-	anotherPlayer := Player named: 'Belu' with: cards.
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields  speedCard cancellationCard aDeck |
 	aDice := DeterministicDice with: #(9 10 7 3).
-	aGroupOfPlayers := {aPlayer . anotherPlayer}.
+	aGroupOfPlayers := {#pau . #belu}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
 	aBoard:= Board has: fields.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
+	aDeck := self generateDeck.
+	aBoardGame := BoardGame playedBy: #belu using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
 	self 
-		should:[aBoardGame a: cancellationCard of: speedCard wantsToBeThrowTo: anotherPlayer by: aPlayer] 
+		should:[aBoardGame a: cancellationCard of: speedCard wantsToBeThrowTo: #belu by: #pau] 
 		raise: Error 
 		withExceptionDo: [:error | self assert: error messageText equals: 'The player must have the influential card needed to be cancelled' ].
 	
@@ -705,79 +594,67 @@ BoardGameTest >> testAPlayerMustHaveASpeedCardInOrderToBeCancelled [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesACancellationCardAndRemovesASpeedCard [
-	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards anotherPlayer speedCard cancellationCard |
-	speedCard:= Speed new.
-	cancellationCard:= Cancellation new.
-	cards:=OrderedCollection newFrom:{speedCard.cancellationCard}.
-	aPlayer := Player named: 'Pau' with: cards.
-	anotherPlayer := Player named: 'Belu' with: cards.
+	| aGroupOfDices  aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields  speedCard cancellationCard aDeck |
 	aDice := DeterministicDice with: #(9 10 7 3).
-	aGroupOfPlayers := {aPlayer . anotherPlayer}.
+	aGroupOfPlayers := {#pau . #belu}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
 	aBoard:= Board has: fields.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
-	aBoardGame a: speedCard wantsToBeThrownTo: anotherPlayer by: aPlayer.
+	aDeck := self generateDeck.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	aBoardGame a: speedCard wantsToBeThrownTo: #belu by: #pau.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
-	aBoardGame a: cancellationCard of: speedCard wantsToBeThrowTo: anotherPlayer by: aPlayer.
+	aBoardGame a: cancellationCard of: speedCard wantsToBeThrowTo: #belu by: #pau.
 	aBoardGame nextTurn.
 	
-	self assert: anotherPlayer influentialCards equals: (OrderedCollection new).
+	self assert: #belu influentialCards equals: (OrderedCollection new).
 	
 ]
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesACancellationCardAndRemovesAnAccelerationCard [
-	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards anotherPlayer cancellationCard accelerationCard |
-	cancellationCard:= Cancellation new.
-	accelerationCard:= Acceleration new.
-	cards:=OrderedCollection newFrom:{accelerationCard.cancellationCard}.
-	aPlayer := Player named: 'Pau' with: cards.
-	anotherPlayer := Player named: 'Belu' with: cards.
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cancellationCard accelerationCard aDeck |
 	aDice := DeterministicDice with: #(9 10 7 3).
-	aGroupOfPlayers := {aPlayer . anotherPlayer}.
+	aGroupOfPlayers := {#pau . #belu}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
 	aBoard:= Board has: fields.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
-	aBoardGame a: accelerationCard wantsToBeThrownBy: aPlayer.
+	aDeck := self generateDeck.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	aBoardGame a: accelerationCard wantsToBeThrownBy: #pau.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
-	aBoardGame a: cancellationCard of: accelerationCard wantsToBeThrownBy: aPlayer.
+	aBoardGame a: cancellationCard of: accelerationCard wantsToBeThrownBy: #pau.
 	aBoardGame nextTurn.
-	self assert: anotherPlayer influentialCards equals: (OrderedCollection new).
-	self assert: aPlayer influentialCards equals: (OrderedCollection new).
+	self assert: #belu influentialCards equals: (OrderedCollection new).
+	self assert: #pau influentialCards equals: (OrderedCollection new).
 	
 ]
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesADoOverCardWhenNoDiceHasBeenThrowsThusItHasNoEffect [
-	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards doOverCard anotherPlayer pauPosition beluPosition speedCard |
-	doOverCard := DoOver new.
-	speedCard:= Speed new.
-	cards:=OrderedCollection newFrom:{doOverCard . speedCard}.
-	aPlayer := Player named: 'Pau' with: cards.
-	anotherPlayer := Player named: 'Belu' with: cards.
+	| aGroupOfDices  aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields doOverCard  pauPosition beluPosition speedCard aDeck |
 	aDice := DeterministicDice with: #(9 10 7 3).
-	aGroupOfPlayers := {aPlayer . anotherPlayer}.
+	aGroupOfPlayers := {#pau . #belu}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
 	aBoard:= Board has: fields.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
-	pauPosition := Position of: aPlayer standingOn: 1 after: 1.
-	beluPosition := Position of: anotherPlayer standingOn: 1 after: 1.
+	aDeck := self generateDeck.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	pauPosition := Position of: #pau  standingOn: 1 after: 1.
+	beluPosition := Position of: #belu standingOn: 1 after: 1.
 		
-	aBoardGame a: doOverCard wantsToBeThrownTo: aPlayer by: aPlayer.
+	aBoardGame a: doOverCard wantsToBeThrownTo: #pau by: #pau.
 	
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
 	
@@ -785,27 +662,23 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenNoDiceHasBeenThrowsThusItHasNoEff
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedHadASpeedEffect [
-	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards doOverCard anotherPlayer pauPosition beluPosition speedCard |
-	doOverCard := DoOver new.
-	speedCard:= Speed new.
-	cards:=OrderedCollection newFrom:{doOverCard . speedCard}.
-	aPlayer := Player named: 'Pau' with: cards.
-	anotherPlayer := Player named: 'Belu' with: cards.
+	| aGroupOfDices  aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields  doOverCard  pauPosition beluPosition speedCard aDeck |
 	aDice := DeterministicDice with: #(9 10 7 3).
-	aGroupOfPlayers := {aPlayer . anotherPlayer}.
+	aGroupOfPlayers := {#pau . #belu}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
 	aBoard:= Board has: fields.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
-	pauPosition := Position of: aPlayer standingOn: 20 after: 1.
-	beluPosition := Position of: anotherPlayer standingOn: 11 after: 1.
+	aDeck := self generateDeck.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	pauPosition := Position of: #pau standingOn: 20 after: 1.
+	beluPosition := Position of: #belu standingOn: 11 after: 1.
 		
-	aBoardGame a: speedCard wantsToBeThrownTo: aPlayer by: aPlayer.
+	aBoardGame a: speedCard wantsToBeThrownTo: #pau by: #pau.
 	aBoardGame nextTurn.
-	aBoardGame a: doOverCard wantsToBeThrownTo: aPlayer by: anotherPlayer.
+	aBoardGame a: doOverCard wantsToBeThrownTo: #pau by: #belu.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 		
@@ -815,27 +688,23 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedHadASpeedEffect 
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedHadAnAccelerationEffect [
-	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards doOverCard anotherPlayer pauPosition beluPosition accelerationCard |
-	doOverCard := DoOver new.
-	accelerationCard:= Acceleration new.
-	cards:=OrderedCollection newFrom:{doOverCard . accelerationCard}.
-	aPlayer := Player named: 'Pau' with: cards.
-	anotherPlayer := Player named: 'Belu' with: cards.
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields  doOverCard  pauPosition beluPosition accelerationCard aDeck |
 	aDice := DeterministicDice with: #(9 10 7 3).
-	aGroupOfPlayers := {aPlayer . anotherPlayer}.
+	aGroupOfPlayers := {#pau . #belu}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
 	aBoard:= Board has: fields.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
-	pauPosition := Position of: aPlayer standingOn: 20 after: 1.
-	beluPosition := Position of: anotherPlayer standingOn: 13 after: 1.
+	aDeck := self generateDeck.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	pauPosition := Position of: #pau standingOn: 20 after: 1.
+	beluPosition := Position of: #belu standingOn: 13 after: 1.
 		
-	aBoardGame a: accelerationCard wantsToBeThrownBy: aPlayer.
+	aBoardGame a: accelerationCard wantsToBeThrownBy: #pau.
 	aBoardGame nextTurn.
-	aBoardGame a: doOverCard wantsToBeThrownBy: anotherPlayer.
+	aBoardGame a: doOverCard wantsToBeThrownBy: #belu.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 		
@@ -845,54 +714,46 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedHadAnAcceleratio
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedWasACancellationCard [
-	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards doOverCard anotherPlayer cancellationCard|
-	doOverCard := DoOver new.
-	cancellationCard:= Cancellation  new.
-	cards:=OrderedCollection newFrom:{doOverCard . cancellationCard}.
-	aPlayer := Player named: 'Pau' with: cards.
-	anotherPlayer := Player named: 'Belu' with: cards.
+	| aGroupOfDices  aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields  doOverCard cancellationCard aDeck |
 	aDice := DeterministicDice with: #(9 10 7 3).
-	aGroupOfPlayers := {aPlayer . anotherPlayer}.
+	aGroupOfPlayers := {#pau . #belu}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
 	aBoard:= Board has: fields.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
+	aDeck := self generateDeck.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
 	aBoardGame nextTurn.
 	"agregar mas cartas"
-	aBoardGame a: cancellationCard of: doOverCard wantsToBeThrowTo: aPlayer by: anotherPlayer.
+	aBoardGame a: cancellationCard of: doOverCard wantsToBeThrowTo: #pau by: #belu.
 	aBoardGame nextTurn.
-	aBoardGame a: doOverCard of: cancellationCard wantsToBeThrowTo: aPlayer by: anotherPlayer.
-	self assert: aPlayer influentialCards equals: (OrderedCollection new).
+	aBoardGame a: doOverCard of: cancellationCard wantsToBeThrowTo: #pau by: #belu.
+	self assert: #pau influentialCards equals: (OrderedCollection new).
 ]
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedWasARepeatCard [
-	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards doOverCard anotherPlayer pauPosition beluPosition repeatCard |
-	doOverCard := DoOver new.
-	repeatCard := Repetition new.
-	cards:=OrderedCollection newFrom:{doOverCard . repeatCard}.
-	aPlayer := Player named: 'Pau' with: cards.
-	anotherPlayer := Player named: 'Belu' with: cards.
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields doOverCard pauPosition beluPosition repeatCard aDeck |
 	aDice := DeterministicDice with: #(9 10 7 3).
-	aGroupOfPlayers := {aPlayer . anotherPlayer}.
+	aGroupOfPlayers := {#pau . #belu}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
 	aBoard:= Board has: fields.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
-	pauPosition := Position of: aPlayer standingOn: 13 after: 1.
-	beluPosition := Position of: anotherPlayer standingOn: 10 after: 1.
+	aDeck := self generateDeck.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	pauPosition := Position of: #pau standingOn: 13 after: 1.
+	beluPosition := Position of: #belu standingOn: 10 after: 1.
 		
 	aBoardGame nextTurn.
-	aBoardGame a: repeatCard wantsToBeThrownTo: aPlayer by:anotherPlayer.
+	aBoardGame a: repeatCard wantsToBeThrownTo: #pau by:#belu.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
-	aBoardGame a: doOverCard wantsToBeThrownTo: anotherPlayer by: aPlayer.
+	aBoardGame a: doOverCard wantsToBeThrownTo: #belu by: #pau.
 	aBoardGame nextTurn.
 		
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
@@ -901,31 +762,26 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedWasARepeatCard [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesARepeatWhenAtomicBombEffecttHasBeenAppliedLast [
-	| aGroupOfDices pau aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards repeatCard belu male pauPosition beluPosition speedCard malePosition|
-	repeatCard := Repetition new.
-	speedCard:= Speed new.
-	cards:=OrderedCollection newFrom:{repeatCard . speedCard}.
-	pau := Player named: 'Pau' with: cards.
-	belu := Player named: 'Belu' with: cards.
-	male := Player named: 'Male' with: cards.
+	| aGroupOfDices  aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields  repeatCard  pauPosition beluPosition speedCard malePosition aDeck |
 	aDice := DeterministicDice with: #(60 10 1 44).
-	aGroupOfPlayers := {pau . belu . male}.
+	aGroupOfPlayers := {#pau . #belu . #male}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
 	aBoard:= Board has: fields.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
-	pauPosition := Position of: pau standingOn: 1 after: 2.
-	beluPosition := Position of: belu standingOn: 1 after: 1.
-	malePosition := Position of: male standingOn: 1 after: 1.
+	aDeck := self generateDeck.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	pauPosition := Position of: #pau standingOn: 1 after: 2.
+	beluPosition := Position of: #belu standingOn: 1 after: 1.
+	malePosition := Position of: #male standingOn: 1 after: 1.
 			
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
-	aBoardGame a: repeatCard wantsToBeThrownBy: pau.
+	aBoardGame a: repeatCard wantsToBeThrownBy: #pau.
 	
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition . malePosition  }).
 	
@@ -933,30 +789,27 @@ BoardGameTest >> testAPlayerUsesARepeatWhenAtomicBombEffecttHasBeenAppliedLast [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesARepeatWhenMoonWalkEffecttHasBeenAppliedLast [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards repeatCard belu male pau pauPosition beluPosition speedCard malePosition |
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields repeatCard pauPosition beluPosition speedCard malePosition aDeck |
 	repeatCard := Repetition new.
 	speedCard:= Speed new.
-	cards:=OrderedCollection newFrom:{repeatCard . speedCard}.
-	pau := Player named: 'Pau' with: cards.
-	belu := Player named: 'Belu' with: cards.
-	male := Player named: 'Male' with: cards.
 	aDice := DeterministicDice with: #(13 4  22).
-	aGroupOfPlayers := {pau . belu . male}.
+	aGroupOfPlayers := {#pau . #belu . #male}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
 	aBoard:= Board has: fields.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
-	pauPosition := Position of: pau standingOn: 3 after: 1.
-	beluPosition := Position of: belu standingOn: 1 after: 1.
-	malePosition := Position of: male standingOn: 12 after: 1.
+	aDeck := self generateDeck.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	pauPosition := Position of: #pau standingOn: 3 after: 1.
+	beluPosition := Position of: #belu standingOn: 1 after: 1.
+	malePosition := Position of: #male standingOn: 12 after: 1.
 		
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
-	aBoardGame a: repeatCard wantsToBeThrownTo:  pau by: belu.
+	aBoardGame a: repeatCard wantsToBeThrownTo: #pau by: #belu.
 	
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: { malePosition . pauPosition . beluPosition }).
 	
@@ -964,25 +817,23 @@ BoardGameTest >> testAPlayerUsesARepeatWhenMoonWalkEffecttHasBeenAppliedLast [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesARepeatWhenNoDiceHasBeenThrowsThusItHasNoEffect [
-	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards repeatCard anotherPlayer pauPosition beluPosition speedCard |
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields repeatCard pauPosition beluPosition speedCard aDeck |
 	repeatCard := Repetition new.
 	speedCard:= Speed new.
-	cards:=OrderedCollection newFrom:{repeatCard . speedCard}.
-	aPlayer := Player named: 'Pau' with: cards.
-	anotherPlayer := Player named: 'Belu' with: cards.
 	aDice := DeterministicDice with: #(9 10 7 3).
-	aGroupOfPlayers := {aPlayer . anotherPlayer}.
+	aGroupOfPlayers := {#pau . #belu}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
 	aBoard:= Board has: fields.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
-	pauPosition := Position of: aPlayer standingOn: 1 after: 1.
-	beluPosition := Position of: anotherPlayer standingOn: 1 after: 1.
+	aDeck := self generateDeck.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	pauPosition := Position of: #pau standingOn: 1 after: 1.
+	beluPosition := Position of: #belu standingOn: 1 after: 1.
 	
-	aBoardGame a: repeatCard wantsToBeThrownTo: anotherPlayer by: anotherPlayer.
+	aBoardGame a: repeatCard wantsToBeThrownTo: #belu by: #belu.
 	
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
 	
@@ -990,26 +841,24 @@ BoardGameTest >> testAPlayerUsesARepeatWhenNoDiceHasBeenThrowsThusItHasNoEffect 
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesARepeatWhenNoEffectHasBeenAppliedLast [
-	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards repeatCard anotherPlayer pauPosition beluPosition speedCard |
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields repeatCard pauPosition beluPosition speedCard aDeck |
 	repeatCard := Repetition new.
 	speedCard:= Speed new.
-	cards:=OrderedCollection newFrom:{repeatCard . speedCard}.
-	aPlayer := Player named: 'Pau' with: cards.
-	anotherPlayer := Player named: 'Belu' with: cards.
 	aDice := DeterministicDice with: #(9 10 7 3).
-	aGroupOfPlayers := {aPlayer . anotherPlayer}.
+	aGroupOfPlayers := {#pau . #belu}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
 	aBoard:= Board has: fields.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
-	pauPosition := Position of: aPlayer standingOn: 10 after: 1.
-	beluPosition := Position of: anotherPlayer standingOn: 1 after: 1.
+	aDeck := self generateDeck.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	pauPosition := Position of: #pau standingOn: 10 after: 1.
+	beluPosition := Position of: #belu standingOn: 1 after: 1.
 		
 	aBoardGame nextTurn.
-	aBoardGame a: repeatCard wantsToBeThrownTo: anotherPlayer by: anotherPlayer.
+	aBoardGame a: repeatCard wantsToBeThrownTo: #belu by: #belu.
 	
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
 	
@@ -1017,26 +866,24 @@ BoardGameTest >> testAPlayerUsesARepeatWhenNoEffectHasBeenAppliedLast [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesARepeatWhenSpeedEffecttHasBeenAppliedLast [
-	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards repeatCard anotherPlayer pauPosition beluPosition speedCard |
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields repeatCard pauPosition beluPosition speedCard aDeck |
 	repeatCard := Repetition new.
 	speedCard:= Speed new.
-	cards:=OrderedCollection newFrom:{repeatCard . speedCard}.
-	aPlayer := Player named: 'Pau' with: cards.
-	anotherPlayer := Player named: 'Belu' with: cards.
 	aDice := DeterministicDice with: #(29 10 1 10).
-	aGroupOfPlayers := {aPlayer . anotherPlayer}.
+	aGroupOfPlayers := {#pau . #belu}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
 	aBoard:= Board has: fields.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
-	pauPosition := Position of: aPlayer standingOn: 38 after: 1.
-	beluPosition := Position of: anotherPlayer standingOn: 1 after: 1.
+	aDeck := self generateDeck.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	pauPosition := Position of: #pau standingOn: 38 after: 1.
+	beluPosition := Position of: #belu standingOn: 1 after: 1.
 		
 	aBoardGame nextTurn.
-	aBoardGame a: repeatCard wantsToBeThrownTo: aPlayer by: anotherPlayer.
+	aBoardGame a: repeatCard wantsToBeThrownTo: #pau by: #belu.
 	
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
 	
@@ -1044,25 +891,23 @@ BoardGameTest >> testAPlayerUsesARepeatWhenSpeedEffecttHasBeenAppliedLast [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesASpeedCardOnHimselfAndItIncrementsInOneTheResultOfThrowingTheDices [
-	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards overloadCard anotherPlayer pauPosition beluPosition speedCard |
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields overloadCard pauPosition beluPosition speedCard aDeck |
 	overloadCard := Overload new.
 	speedCard:= Speed new.
-	cards:=OrderedCollection newFrom:{overloadCard . speedCard}.
-	aPlayer := Player named: 'Pau' with: cards.
-	anotherPlayer := Player named: 'Belu' with: cards.
 	aDice := DeterministicDice with: #(9 10 7 3).
-	aGroupOfPlayers := {aPlayer . anotherPlayer}.
+	aGroupOfPlayers := {#pau . #belu}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
 	aBoard:= Board has: fields.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
-	pauPosition := Position of: aPlayer standingOn: 19 after: 1.
-	beluPosition := Position of: anotherPlayer standingOn: 11 after: 1.
+	aDeck := self generateDeck.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	pauPosition := Position of: #pau standingOn: 19 after: 1.
+	beluPosition := Position of: #belu standingOn: 11 after: 1.
 		
-	aBoardGame a: speedCard wantsToBeThrownTo: aPlayer by: aPlayer.
+	aBoardGame a: speedCard wantsToBeThrownTo: #pau by: #pau.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.	
@@ -1072,25 +917,23 @@ BoardGameTest >> testAPlayerUsesASpeedCardOnHimselfAndItIncrementsInOneTheResult
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesAnAccelerationCardAndIncrementsInOneTheResultOfAllCurrentPlayers [
-	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards anotherPlayer pauPosition beluPosition speedCard accelerationCard |
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields pauPosition beluPosition speedCard accelerationCard aDeck |
 	speedCard:= Speed new.
 	accelerationCard:= Acceleration new.
-	cards:=OrderedCollection newFrom:{speedCard.accelerationCard}.
-	aPlayer := Player named: 'Pau' with: cards.
-	anotherPlayer := Player named: 'Belu' with: cards.
 	aDice := DeterministicDice with: #(9 10 7 3).
-	aGroupOfPlayers := {aPlayer . anotherPlayer}.
+	aGroupOfPlayers := {#pau . #belu}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
 	aBoard:= Board has: fields.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
-	pauPosition := Position of: aPlayer standingOn: 19 after: 1.
-	beluPosition := Position of: anotherPlayer standingOn: 12 after: 1.
+	aDeck := self generateDeck.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	pauPosition := Position of: #pau standingOn: 19 after: 1.
+	beluPosition := Position of: #belu standingOn: 12 after: 1.
 		
-	aBoardGame a: accelerationCard wantsToBeThrownBy: aPlayer.
+	aBoardGame a: accelerationCard wantsToBeThrownBy: #pau.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
@@ -1101,25 +944,23 @@ BoardGameTest >> testAPlayerUsesAnAccelerationCardAndIncrementsInOneTheResultOfA
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesAnOverloadCardOnAnotherPlayerAndItReducesInTwoTheResultOfThrowingADice [
-	| aGroupOfDices aPlayer aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cards overloadCard anotherPlayer pauPosition beluPosition |
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields overloadCard pauPosition beluPosition aDeck |
 	overloadCard := Overload new.
-	cards:=OrderedCollection newFrom:{overloadCard . overloadCard }.
-	aPlayer := Player named: 'Pau' with: cards.
-	anotherPlayer := Player named: 'Belu' with: cards.
 	aDice := DeterministicDice with: #(9 10 7 3).
-	aGroupOfPlayers := {aPlayer . anotherPlayer}.
+	aGroupOfPlayers := {#pau . #belu}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCards: aNumberOfFields.
+	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
 	aBoard:= Board has: fields.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup on: aBoard winnedWhenReach: aSpinNumber.
-	pauPosition := Position of: aPlayer standingOn: 29 after: 1.
-	beluPosition := Position of: anotherPlayer standingOn: 25 after: 1.
+	aDeck := self generateDeck.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	pauPosition := Position of: #pau standingOn: 29 after: 1.
+	beluPosition := Position of: #belu standingOn: 25 after: 1.
 		
 	1 to: 6 do: [ :n | aBoardGame nextTurn ].
-	aBoardGame a: overloadCard wantsToBeThrownTo: anotherPlayer by: aPlayer.
+	aBoardGame a: overloadCard wantsToBeThrownTo: #belu by: #pau.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	
@@ -1160,28 +1001,20 @@ BoardGameTest >> testEffectsDistributionWithCardDealerEffect [
 
 { #category : #circularBoardTests }
 BoardGameTest >> testTheBoardIsCircular [
-	| aBoardGame pauPosition anOverloadCard cards pau |
+	| aBoardGame pauPosition |
 	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
-	anOverloadCard := Overload new.
-	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
-	pau := Player named: 'Pau' with: cards.
-	pauPosition := Position of: pau standingOn: 7 after: 2.
+	pauPosition := Position of: #pau standingOn: 7 after: 2.
 	1 to: 19 do: [ :n | aBoardGame nextTurn ].
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition}).
 ]
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> testWhenAPlayerFellsOnAMoonWalkFieldTheRestOfThePlayersMustGoBackwardsNFields [
-	| aBoardGame pauPosition beluPosition malePosition anOverloadCard cards pau belu male |
+	| aBoardGame pauPosition beluPosition malePosition |
 	aBoardGame := self creationOfBoardGameWithThreePlayers.
-	anOverloadCard := Overload new.
-	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
-	pau := Player named: 'Pau' with: cards.
-	belu:= Player named: 'Belu' with: cards.
-	male:= Player named: 'Male' with: cards.
-	pauPosition := Position of: pau standingOn: 1 after: 1.
-	beluPosition := Position of: belu standingOn: 32 after: 1.
-	malePosition := Position of: male standingOn: 30 after: 1.
+	pauPosition := Position of: #pau standingOn: 1 after: 1.
+	beluPosition := Position of: #belu standingOn: 32 after: 1.
+	malePosition := Position of: #male standingOn: 30 after: 1.
 	1 to: 15 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
@@ -1193,19 +1026,14 @@ BoardGameTest >> testWhenAPlayerFellsOnAMoonWalkFieldTheRestOfThePlayersMustGoBa
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> testWhenAPlayerFellsOnAMoonWalkFieldTheRestOfThePlayersMustGoBackwardsNFieldsAndTheRoundChangesWhenMoveingBackwards [
-		| firstDice secondDice thirdDice aBoardGame pauPosition beluPosition malePosition anOverloadCard cards pau belu male |
+		| firstDice secondDice thirdDice aBoardGame pauPosition beluPosition malePosition |
 	firstDice := DeterministicDice with: #(10 14 13 1).
 	secondDice := DeterministicDice with: #(14 8 6 2 1).
 	thirdDice := DeterministicDice with: #(9 8 2 6 3 4).
 	aBoardGame := self creationOfBoardGameWithThatUsesA: firstDice a: secondDice andA: thirdDice.
-	anOverloadCard := Overload new.
-	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
-	pau := Player named: 'Pau' with: cards.
-	belu:= Player named: 'Belu' with: cards.
-	male:= Player named: 'Male' with: cards.
-	pauPosition := Position of: pau standingOn: 23 after: 2.
-	beluPosition := Position of: belu standingOn: 43 after: 1.
-	malePosition := Position of: male standingOn: 34 after: 1.
+	pauPosition := Position of: #pau standingOn: 23 after: 2.
+	beluPosition := Position of: #belu standingOn: 43 after: 1.
+	malePosition := Position of: #male standingOn: 34 after: 1.
 		
 	1 to: 7 do: [ :n | aBoardGame nextTurn ].
 	self
@@ -1218,16 +1046,11 @@ BoardGameTest >> testWhenAPlayerFellsOnAMoonWalkFieldTheRestOfThePlayersMustGoBa
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> testWhenAPlayerFellsOnASpeedUpFieldHeAdvancesFourMoreFields [
-	| aBoardGame pauPosition beluPosition malePosition anOverloadCard cards pau belu male |
+	| aBoardGame pauPosition beluPosition malePosition |
 	aBoardGame := self creationOfBoardGameWithThreePlayers.
-	anOverloadCard := Overload new.
-	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
-	pau := Player named: 'Pau' with: cards.
-	belu:= Player named: 'Belu' with: cards.
-	male:= Player named: 'Male' with: cards.
-	pauPosition := Position of: pau standingOn: 31 after: 1.
-	beluPosition := Position of: belu standingOn: 34 after: 1.
-	malePosition := Position of: male standingOn: 13 after: 1.
+	pauPosition := Position of: #pau standingOn: 31 after: 1.
+	beluPosition := Position of: #belu standingOn: 34 after: 1.
+	malePosition := Position of: #male standingOn: 13 after: 1.
 	1 to: 6 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
@@ -1239,19 +1062,14 @@ BoardGameTest >> testWhenAPlayerFellsOnASpeedUpFieldHeAdvancesFourMoreFields [
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> testWhenAPlayerFellsOnASpeedUpFieldHeAdvancesFourMoreFieldsAndTheRoundChangesWhenMoveingForward [
-		| firstDice secondDice thirdDice aBoardGame pauPosition beluPosition malePosition anOverloadCard cards pau belu male |
+		| firstDice secondDice thirdDice aBoardGame pauPosition beluPosition malePosition |
 	firstDice := DeterministicDice with: #(6 14 7 2).
 	secondDice := DeterministicDice with: #(1 8 5 11 8).
 	thirdDice := DeterministicDice with: #(9 4 2 17 12).
 	aBoardGame := self creationOfBoardGameWithThatUsesA: firstDice a: secondDice andA: thirdDice.
-	anOverloadCard := Overload new.
-	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
-	pau := Player named: 'Pau' with: cards.
-	belu:= Player named: 'Belu' with: cards.
-	male:= Player named: 'Male' with: cards.
-	pauPosition := Position of: pau standingOn: 2 after: 3.
-	beluPosition := Position of: belu standingOn: 37 after: 2.
-	malePosition := Position of: male standingOn: 14 after: 2.
+	pauPosition := Position of: #pau standingOn: 2 after: 3.
+	beluPosition := Position of: #belu standingOn: 37 after: 2.
+	malePosition := Position of: #male standingOn: 14 after: 2.
 	1 to: 13 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
@@ -1263,16 +1081,11 @@ BoardGameTest >> testWhenAPlayerFellsOnASpeedUpFieldHeAdvancesFourMoreFieldsAndT
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> testWhenAPlayerFellsOnAWormHoleFieldHeMovesBackwardsFourFields [
-	| aBoardGame pauPosition beluPosition malePosition anOverloadCard cards pau belu male |
+	| aBoardGame pauPosition beluPosition malePosition |
 	aBoardGame := self creationOfBoardGameWithThreePlayers.
-	anOverloadCard := Overload new.
-	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
-	pau := Player named: 'Pau' with: cards.
-	belu:= Player named: 'Belu' with: cards.
-	male:= Player named: 'Male' with: cards.
-	pauPosition := Position of: pau standingOn: 31 after: 1.
-	beluPosition := Position of: belu standingOn: 14 after: 1.
-	malePosition := Position of: male standingOn: 13 after: 1.
+	pauPosition := Position of: #pau standingOn: 31 after: 1.
+	beluPosition := Position of: #belu standingOn: 14 after: 1.
+	malePosition := Position of: #male standingOn: 13 after: 1.
 	1 to: 5 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
@@ -1284,19 +1097,14 @@ BoardGameTest >> testWhenAPlayerFellsOnAWormHoleFieldHeMovesBackwardsFourFields 
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> testWhenAPlayerFellsOnAWormHoleFieldHeMovesBackwardsFourFieldsAndTheRoundChangesWhenMoveingBackwards [
-		| firstDice secondDice thirdDice aBoardGame pauPosition beluPosition malePosition anOverloadCard cards pau belu male |
+		| firstDice secondDice thirdDice aBoardGame pauPosition beluPosition malePosition |
 	firstDice := DeterministicDice with: #(6 14 7 2).
 	secondDice := DeterministicDice with: #(1 8 5 11 8).
 	thirdDice := DeterministicDice with: #(9 4 2 17 12).
 	aBoardGame := self creationOfBoardGameWithThatUsesA: firstDice a: secondDice andA: thirdDice.
-	anOverloadCard := Overload new.
-	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
-	pau := Player named: 'Pau' with: cards.
-	belu:= Player named: 'Belu' with: cards.
-	male:= Player named: 'Male' with: cards.
-	pauPosition := Position of: pau standingOn: 43 after: 1.
-	beluPosition := Position of: belu standingOn: 15 after: 1.
-	malePosition := Position of: male standingOn: 49 after: 1.
+	pauPosition := Position of: #pau standingOn: 43 after: 1.
+	beluPosition := Position of: #belu standingOn: 15 after: 1.
+	malePosition := Position of: #male standingOn: 49 after: 1.
 		
 	1 to: 5 do: [ :n | aBoardGame nextTurn ].
 	self
@@ -1309,16 +1117,11 @@ BoardGameTest >> testWhenAPlayerFellsOnAWormHoleFieldHeMovesBackwardsFourFieldsA
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> testWhenAPlayerFellsOnAnAtomicBombAllPlayersMoveToFieldOne [
-	| aBoardGame pauPosition beluPosition malePosition anOverloadCard cards pau belu male |
+	| aBoardGame pauPosition beluPosition malePosition |
 	aBoardGame := self creationOfBoardGameWithThreePlayers.
-	anOverloadCard := Overload new.
-	cards:=OrderedCollection newFrom:{anOverloadCard . anOverloadCard }.
-	pau := Player named: 'Pau' with: cards.
-	belu:= Player named: 'Belu' with: cards.
-	male:= Player named: 'Male' with: cards.
-	pauPosition := Position of: pau standingOn: 1 after: 1.
-	beluPosition := Position of: belu standingOn: 1 after: 1.
-	malePosition := Position of: male standingOn: 1 after: 1.
+	pauPosition := Position of: #pau standingOn: 1 after: 1.
+	beluPosition := Position of: #belu standingOn: 1 after: 1.
+	malePosition := Position of: #male standingOn: 1 after: 1.
 	1 to: 7 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
