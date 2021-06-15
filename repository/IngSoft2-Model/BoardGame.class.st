@@ -23,10 +23,16 @@ BoardGame class >> playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoa
 ]
 
 { #category : #'actions - cards' }
-BoardGame >> a: card of: cardToBeCancel wantsToBeThrowTo: playerName by: currentPlayerName [
-	| currentPlayer player |
-	currentPlayer:= self findPlayerNamed: currentPlayerName.
-	player:= self findPlayerNamed: playerName.
+BoardGame >> a: card of: cardToBeCancel wantsToBeThrownBy: currentPlayer [
+
+	currentPlayer lays: card.
+	card actAt: self with: cardToBeCancel .
+	(card class = DoOver) ifFalse:[cardsHistory add: card].
+]
+
+{ #category : #'actions - cards' }
+BoardGame >> a: card of: cardToBeCancel wantsToBeThrownTo: player by: currentPlayer [
+
 	(self verifyIf: card canBePlayedBy: currentPlayer).
 	currentPlayer lays: card.
 	card actAt: self on: player with: cardToBeCancel .
@@ -34,19 +40,8 @@ BoardGame >> a: card of: cardToBeCancel wantsToBeThrowTo: playerName by: current
 ]
 
 { #category : #'actions - cards' }
-BoardGame >> a: card of: cardToBeCancel wantsToBeThrownBy: currentPlayerName [ 
-	| currentPlayer |
-	currentPlayer:= self findPlayerNamed: currentPlayerName.
-	(self verifyIf: card canBePlayedBy: currentPlayer).
-	currentPlayer lays: card.
-	card actAt: self with: cardToBeCancel .
-	(card class = DoOver) ifFalse:[cardsHistory add: card].
-]
+BoardGame >> a: card wantsToBeThrownBy: currentPlayer [
 
-{ #category : #'actions - cards' }
-BoardGame >> a: card wantsToBeThrownBy: currentPlayerName [ 
-	| currentPlayer |
-	currentPlayer:= self findPlayerNamed: currentPlayerName.
 	(self verifyIf: card canBePlayedBy: currentPlayer).
 	currentPlayer lays: card.
 	card actAt: self.
@@ -54,10 +49,8 @@ BoardGame >> a: card wantsToBeThrownBy: currentPlayerName [
 ]
 
 { #category : #'actions - cards' }
-BoardGame >> a: card wantsToBeThrownTo: playerName by: currentPlayerName [
-	| currentPlayer player |
-	currentPlayer:= self findPlayerNamed: currentPlayerName.
-	player:= self findPlayerNamed: playerName.
+BoardGame >> a: card wantsToBeThrownTo: player by: currentPlayer [
+
 	(self verifyIf: card canBePlayedBy: currentPlayer).
 	currentPlayer lays: card.
 	card actAt: self on: player.
@@ -136,7 +129,7 @@ BoardGame >> dealACardToPlayerOf: aPosition [
 
 { #category : #actions }
 BoardGame >> detectPositionOf: player [
- ^playersPosition detect: [ :aPosition | aPosition player= player name].
+ ^playersPosition detect: [ :aPosition | aPosition player = player ].
 	
 ]
 
@@ -169,19 +162,24 @@ BoardGame >> errorMessageTheGameHasFinished [
 ]
 
 { #category : #private }
-BoardGame >> findNewPositionWhen: playerName hasMoved: aNumberOfFields from: oldPosition [
+BoardGame >> findNewPositionWhen: player hasMoved: aNumberOfFields from: oldPosition [
 	| totalFields newPosition newRoundNumber newFieldNumber |
 	totalFields := oldPosition field + aNumberOfFields.
 	newFieldNumber := self lookUpResultingFieldNumberBasingOn: totalFields.
 	newRoundNumber :=  oldPosition round + (self addOrSubstractOneIfThePlayerHasChangedRound: totalFields).
-	newPosition := Position of: playerName standingOn: newFieldNumber after: newRoundNumber.
+	newPosition := Position of: player standingOn: newFieldNumber after: newRoundNumber.
 	newPosition := self validate: newPosition.
 	^ newPosition
 ]
 
 { #category : #actions }
 BoardGame >> findPlayerNamed: aName [
-	^ players detect: [ :aPlayer | aPlayer name = aName ]
+	^ players detect: [ :aPlayer | (aPlayer name) = aName ].
+]
+
+{ #category : #'actions - cards' }
+BoardGame >> influentialCardsOf: aPlayer [
+	^ aPlayer influentialCards.
 ]
 
 { #category : #initialize }
@@ -229,17 +227,17 @@ BoardGame >> move: player along: result [
 { #category : #actions }
 BoardGame >> move: aPlayer over: aNumberOfFields consideringAnEffectFrom: oldPosition [
 	| newPosition field effect |
-	newPosition := self move: aPlayer name over: aNumberOfFields from: oldPosition.
+	newPosition := self move: aPlayer over: aNumberOfFields from: oldPosition.
 	field := board searchFieldFor: newPosition.
-	effect:=field applyTheEffectOn: newPosition of: self.
-	effectsHistory add:effect.
+	effect := field applyTheEffectOn: newPosition of: self.
+	effectsHistory add: effect.
 	
 ]
 
 { #category : #actions }
-BoardGame >> move: playerName over: aNumberOfFields from: oldPosition [
+BoardGame >> move: player over: aNumberOfFields from: oldPosition [
 	| newPosition |
-	newPosition := self findNewPositionWhen: playerName hasMoved: aNumberOfFields from: oldPosition.
+	newPosition := self findNewPositionWhen: player hasMoved: aNumberOfFields from: oldPosition.
 	self replace: oldPosition with: newPosition.
 	^ newPosition
 ]
@@ -283,7 +281,7 @@ BoardGame >> orderPlayersPosition [
 { #category : #initialize }
 BoardGame >> placePlayersAtTheInitialPosition [
 	^ players
-		collect: [ :aPlayer | Position of: (aPlayer name) standingOn: 1 after: 1 ]
+		collect: [ :aPlayer | Position of: aPlayer standingOn: 1 after: 1 ]
 ]
 
 { #category : #accessing }
