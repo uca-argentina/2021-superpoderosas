@@ -456,7 +456,7 @@ BoardGameTest >> testABoardGameNeedsAtLeastOnePlayer [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testACancellationCardCanAlsoBeUsedByAPlayerIfItIsNotHisTurn [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields speedCard cancellationCard aDeck pau belu |
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields speedCard cancellationCard aDeck pau belu cancellationCardMove |
 	speedCard:= Speed new.
 	cancellationCard := Cancellation new.
 	aDice := DeterministicDice with: #(9 10 7 3).
@@ -473,7 +473,8 @@ BoardGameTest >> testACancellationCardCanAlsoBeUsedByAPlayerIfItIsNotHisTurn [
 	belu:= aBoardGame findPlayerNamed: #belu.
 	aBoardGame a: speedCard wantsToBeThrownTo: belu by: pau.
 	aBoardGame nextTurn.
-	cancellationCard of: speedCard wantsToBeThrownTo: belu by: pau at: aBoardGame.
+	cancellationCardMove:= CancellationCardMove of: speedCard madeBy: pau affecting: { belu }.
+	cancellationCard do: cancellationCardMove at: aBoardGame.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	
@@ -525,7 +526,7 @@ BoardGameTest >> testAPlayerCanNotUseACardHeDoesNotHave [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerCanNotUseADoOverCardWhenTheLastCardPlayedHadASpeedEffectOutsideHisTurn [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields aDeck speedCard doOverCard pau belu |
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields aDeck speedCard doOverCard pau belu speedCardMove doOverCardMove |
 	aDice := DeterministicDice with: #(9 10 7 3).
 	speedCard := Speed new.
 	doOverCard := DoOver new.
@@ -542,13 +543,14 @@ BoardGameTest >> testAPlayerCanNotUseADoOverCardWhenTheLastCardPlayedHadASpeedEf
 	belu:= aBoardGame findPlayerNamed: #belu.
 
 	aBoardGame nextTurn.
-	speedCard wantsToBeThrownTo: pau by: belu at: aBoardGame.
+	speedCardMove := SimpleMove madeBy: belu affecting: {pau}.
+	speedCard do: speedCardMove at: aBoardGame.
 	aBoardGame nextTurn.
 	
-	"fijarnos que la do over usa cosas que ya no se usan"
+	doOverCardMove := SimpleMove madeBy: belu affecting: {pau}.
 	
 	self 
-		should:[doOverCard wantsToBeThrownTo: pau by: pau at: aBoardGame] 
+		should:[doOverCard do: doOverCardMove at: aBoardGame.] 
 		raise: Error 
 		withExceptionDo: [:error | self assert: error messageText equals: 'All permanent cards can only be played when it is the turn of the player' ].
 	
@@ -615,7 +617,7 @@ BoardGameTest >> testAPlayerMustGoThreeTimesAroundTheBoardToWin [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerMustHaveASpeedCardInOrderToBeCancelled [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame  aSpinNumber aBoard fields  speedCard cancellationCard aDeck aGroupOfPlayers pau belu |
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame  aSpinNumber aBoard fields  speedCard cancellationCard aDeck aGroupOfPlayers pau belu cancellationCardMove |
 	speedCard := Speed new.
 	cancellationCard := Cancellation new.
 	aDice := DeterministicDice with: #(9 10 7 3).
@@ -630,9 +632,10 @@ BoardGameTest >> testAPlayerMustHaveASpeedCardInOrderToBeCancelled [
 	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
+	cancellationCardMove:= CancellationCardMove of: speedCard madeBy: pau affecting: { belu }.
 
 	self 
-		should:[cancellationCard of: speedCard wantsToBeThrownTo: belu by: pau at: aBoardGame] 
+		should:[cancellationCard do: cancellationCardMove at: aBoardGame.] 
 		raise: Error 
 		withExceptionDo: [:error | self assert: error messageText equals: 'The player must have the influential card needed to be cancelled' ].
 	
@@ -640,7 +643,7 @@ BoardGameTest >> testAPlayerMustHaveASpeedCardInOrderToBeCancelled [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesACancellationCardAndRemovesASpeedCard [
-	| aGroupOfDices  aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields  speedCard cancellationCard aDeck pau belu |
+	| aGroupOfDices  aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields  speedCard cancellationCard aDeck pau belu cancellationCardMove |
 	speedCard := Speed new.
 	cancellationCard := Cancellation new.
 	aDice := DeterministicDice with: #(9 10 7 3).
@@ -658,7 +661,8 @@ BoardGameTest >> testAPlayerUsesACancellationCardAndRemovesASpeedCard [
 	speedCard wantsToBeThrownTo: pau by: pau at: aBoardGame.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
-	cancellationCard of: speedCard wantsToBeThrownTo: pau by: belu at: aBoardGame.
+	cancellationCardMove:= CancellationCardMove of: speedCard madeBy: belu affecting: { pau }.
+	cancellationCard do: cancellationCardMove at: aBoardGame.
 	aBoardGame nextTurn.
 	
 	self assert: (aBoardGame influentialCardsOf: belu)  equals: (OrderedCollection new).
@@ -667,7 +671,7 @@ BoardGameTest >> testAPlayerUsesACancellationCardAndRemovesASpeedCard [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesACancellationCardAndRemovesAnAccelerationCard [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cancellationCard accelerationCard aDeck pau belu |
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cancellationCard accelerationCard aDeck pau belu cancellationCardMove |
 	cancellationCard := Cancellation new.
 	accelerationCard := Acceleration new.
 	aDice := DeterministicDice with: #(9 10 7 3).
@@ -685,7 +689,8 @@ BoardGameTest >> testAPlayerUsesACancellationCardAndRemovesAnAccelerationCard [
 	aBoardGame a: accelerationCard wantsToBeThrownBy: pau.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
-	cancellationCard of: accelerationCard wantsToBeThrownBy: pau at: aBoardGame.
+	cancellationCardMove:= CancellationCardMove of: accelerationCard madeBy: pau affecting: { pau . belu }.
+	cancellationCard do: cancellationCardMove at: aBoardGame.
 	aBoardGame nextTurn.
 	self assert: (aBoardGame influentialCardsOf: belu) equals: (OrderedCollection new).
 	self assert: (aBoardGame influentialCardsOf: pau) equals: (OrderedCollection new).
@@ -694,7 +699,7 @@ BoardGameTest >> testAPlayerUsesACancellationCardAndRemovesAnAccelerationCard [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesADoOverCardWhenNoDiceHasBeenThrowsThusItHasNoEffect [
-	| aGroupOfDices  aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields doOverCard  pauPosition beluPosition speedCard aDeck pau belu |
+	| aGroupOfDices  aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields doOverCard  pauPosition beluPosition speedCard aDeck pau belu doOverCardMove |
 	aDice := DeterministicDice with: #(9 10 7 3).
 	speedCard:= Speed new.
 	doOverCard := DoOver new.
@@ -711,8 +716,9 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenNoDiceHasBeenThrowsThusItHasNoEff
 	belu:= aBoardGame findPlayerNamed: #belu.
 	pauPosition := Position of: pau  standingOn: 1 after: 1.
 	beluPosition := Position of: belu standingOn: 1 after: 1.
-	
-	doOverCard wantsToBeThrownTo: pau by: pau at: aBoardGame.
+
+	doOverCardMove := SimpleMove madeBy: pau affecting: {pau}.
+	doOverCard do: doOverCardMove at: aBoardGame.
 	
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
 	
@@ -720,7 +726,7 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenNoDiceHasBeenThrowsThusItHasNoEff
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedHadASpeedEffect [
-	| aGroupOfDices  aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields  doOverCard  pauPosition beluPosition speedCard aDeck pau belu |
+	| aGroupOfDices  aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields  doOverCard  pauPosition beluPosition speedCard aDeck pau belu speedCardMove doOverCardMove |
 	aDice := DeterministicDice with: #(9 10 7 3).
 	speedCard:= Speed new.
 	doOverCard := DoOver new.
@@ -738,9 +744,11 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedHadASpeedEffect 
 	pauPosition := Position of: pau standingOn: 20 after: 1.
 	beluPosition := Position of: belu standingOn: 11 after: 1.
 		
-	speedCard wantsToBeThrownTo: pau by: pau at: aBoardGame.
+	speedCardMove := SimpleMove madeBy: pau affecting: {pau}.
+	speedCard do: speedCardMove at: aBoardGame.
 	aBoardGame nextTurn.
-	doOverCard wantsToBeThrownTo: pau by: belu at: aBoardGame.
+	doOverCardMove := SimpleMove madeBy: belu affecting: {pau}.
+	doOverCard do: doOverCardMove at: aBoardGame.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 		
@@ -750,7 +758,7 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedHadASpeedEffect 
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedHadAnAccelerationEffect [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields  doOverCard  pauPosition beluPosition accelerationCard aDeck pau belu |
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields  doOverCard  pauPosition beluPosition accelerationCard aDeck pau belu accelerationCardMove doOverCardMove |
 	aDice := DeterministicDice with: #(9 10 7 3).
 	accelerationCard := Acceleration new.
 	doOverCard := DoOver new.
@@ -765,12 +773,14 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedHadAnAcceleratio
 	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
-	pauPosition := Position of: pau standingOn: 20 after: 1.
+	pauPosition := Position of: pau standingOn: 18 after: 1.
 	beluPosition := Position of: belu standingOn: 13 after: 1.
 		
-	accelerationCard wantsToBeThrownBy: pau at: aBoardGame.
+	accelerationCardMove := SimpleMove madeBy: pau affecting: {belu}.
+	accelerationCard do: accelerationCardMove at: aBoardGame.
 	aBoardGame nextTurn.
-	doOverCard wantsToBeThrownBy: belu at: aBoardGame.
+	doOverCardMove := SimpleMove madeBy: belu affecting: {belu . pau}.
+	doOverCard do: doOverCardMove at: aBoardGame.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 		
@@ -780,7 +790,7 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedHadAnAcceleratio
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedWasACancellationCard [
-	| aGroupOfDices  aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields  doOverCard cancellationCard aDeck speedUpCard pau belu |
+	| aGroupOfDices  aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields  doOverCard cancellationCard aDeck speedUpCard pau belu cancellationCardMove doOverCardMove |
 	aDice := DeterministicDice with: #(9 10 7 3).
 	doOverCard := DoOver new.
 	cancellationCard := Cancellation new.
@@ -792,21 +802,24 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedWasACancellation
 	aSpinNumber:=5.
 	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
 	aBoard:= Board has: fields.
-	aDeck := DeterministicDeck containing: {cancellationCard . doOverCard . speedUpCard}.
+	aDeck := DeterministicDeck containing: {cancellationCard . speedUpCard . doOverCard}.
 	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	aBoardGame nextTurn.
-	speedUpCard wantsToBeThrownTo: belu by: belu at: aBoardGame.
-	cancellationCard of: speedUpCard wantsToBeThrownTo: belu by: pau at: aBoardGame.
 	aBoardGame nextTurn.
-	doOverCard wantsToBeThrownTo: belu by: pau at: aBoardGame.
+	speedUpCard wantsToBeThrownTo: belu by: pau at: aBoardGame.
+	speedUpCard wantsToBeThrownTo: pau by: pau at: aBoardGame.
+	cancellationCardMove := CancellationCardMove of: speedUpCard madeBy: pau affecting: {belu}.
+	cancellationCard do: cancellationCardMove at: aBoardGame.
+	doOverCardMove := CancellationCardMove of: speedUpCard madeBy: belu affecting: {pau}.
+	doOverCard do: doOverCardMove at: aBoardGame.
 	self assert:  (aBoardGame influentialCardsOf: pau)  equals: (OrderedCollection new).
 ]
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedWasARepeatCard [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields doOverCard pauPosition beluPosition repeatCard aDeck pau belu |
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields doOverCard pauPosition beluPosition repeatCard aDeck pau belu repeatCardMove doOverCardMove |
 	doOverCard:= DoOver new.
 	repeatCard := Repetition new.
 	aDice := DeterministicDice with: #(9 10 7 3).
@@ -822,13 +835,15 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedWasARepeatCard [
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	pauPosition := Position of: pau standingOn: 13 after: 1.
-	beluPosition := Position of: belu standingOn: 6 after: 1.
+	beluPosition := Position of: belu standingOn: 10 after: 1.
 		
 	aBoardGame nextTurn.
-	repeatCard wantsToBeThrownTo: pau by:belu at: aBoardGame.
+	repeatCardMove := SimpleMove madeBy: belu affecting: {pau}.
+	repeatCard do: repeatCardMove at: aBoardGame.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
-	doOverCard wantsToBeThrownTo: belu by: pau at: aBoardGame.
+	doOverCardMove := SimpleMove madeBy: pau affecting: {belu}.
+	doOverCard do: doOverCardMove at: aBoardGame.
 	aBoardGame nextTurn.
 		
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
@@ -837,7 +852,7 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedWasARepeatCard [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesARepeatWhenAtomicBombEffecttHasBeenAppliedLast [
-	| aGroupOfDices  aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields  repeatCard  pauPosition beluPosition speedCard malePosition aDeck pau belu male |
+	| aGroupOfDices  aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields  repeatCard  pauPosition beluPosition speedCard malePosition aDeck pau belu male repeatCardMove |
 	aDice := DeterministicDice with: #(60 10 1 44).
 	repeatCard := Repetition new.
 	speedCard := Speed new.
@@ -861,7 +876,8 @@ BoardGameTest >> testAPlayerUsesARepeatWhenAtomicBombEffecttHasBeenAppliedLast [
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
-	repeatCard wantsToBeThrownBy: pau at: aBoardGame.
+	repeatCardMove := SimpleMove madeBy: pau affecting: { pau . belu . male }.
+	repeatCard do: repeatCardMove at: aBoardGame.
 	
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition . malePosition  }).
 	
@@ -869,7 +885,7 @@ BoardGameTest >> testAPlayerUsesARepeatWhenAtomicBombEffecttHasBeenAppliedLast [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesARepeatWhenMoonWalkEffecttHasBeenAppliedLast [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields repeatCard pauPosition beluPosition speedCard malePosition aDeck pau belu male |
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields repeatCard pauPosition beluPosition speedCard malePosition aDeck pau belu male repeatCardMove |
 	repeatCard := Repetition new.
 	speedCard:= Speed new.
 	aDice := DeterministicDice with: #(13 4  22).
@@ -892,7 +908,8 @@ BoardGameTest >> testAPlayerUsesARepeatWhenMoonWalkEffecttHasBeenAppliedLast [
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
-	repeatCard wantsToBeThrownTo: pau by: belu at: aBoardGame.
+	repeatCardMove := SimpleMove madeBy: belu affecting: {pau}.
+	repeatCard do: repeatCardMove at: aBoardGame.
 	
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: { malePosition . pauPosition . beluPosition }).
 	
@@ -900,7 +917,7 @@ BoardGameTest >> testAPlayerUsesARepeatWhenMoonWalkEffecttHasBeenAppliedLast [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesARepeatWhenNoDiceHasBeenThrowsThusItHasNoEffect [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields repeatCard pauPosition beluPosition speedCard aDeck pau belu |
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields repeatCard pauPosition beluPosition speedCard aDeck pau belu repeatCardMove |
 	repeatCard := Repetition new.
 	speedCard:= Speed new.
 	aDice := DeterministicDice with: #(9 10 7 3).
@@ -918,7 +935,8 @@ BoardGameTest >> testAPlayerUsesARepeatWhenNoDiceHasBeenThrowsThusItHasNoEffect 
 	pauPosition := Position of: pau standingOn: 1 after: 1.
 	beluPosition := Position of: belu standingOn: 1 after: 1.
 	
-	repeatCard wantsToBeThrownTo: belu by: belu at: aBoardGame.
+	repeatCardMove := SimpleMove madeBy: belu affecting: {belu}.
+	repeatCard do: repeatCardMove at: aBoardGame.
 	
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
 	
@@ -926,7 +944,7 @@ BoardGameTest >> testAPlayerUsesARepeatWhenNoDiceHasBeenThrowsThusItHasNoEffect 
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesARepeatWhenNoEffectHasBeenAppliedLast [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields repeatCard pauPosition beluPosition speedCard aDeck pau belu |
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields repeatCard pauPosition beluPosition speedCard aDeck pau belu repeatCardMove |
 	repeatCard := Repetition new.
 	speedCard:= Speed new.
 	aDice := DeterministicDice with: #(9 10 7 3).
@@ -945,7 +963,8 @@ BoardGameTest >> testAPlayerUsesARepeatWhenNoEffectHasBeenAppliedLast [
 	beluPosition := Position of: belu standingOn: 1 after: 1.
 		
 	aBoardGame nextTurn.
-	repeatCard wantsToBeThrownTo: belu by: belu at: aBoardGame.
+	repeatCardMove := SimpleMove madeBy: belu affecting: {belu}.
+	repeatCard do: repeatCardMove at: aBoardGame.
 	
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
 	
@@ -953,7 +972,7 @@ BoardGameTest >> testAPlayerUsesARepeatWhenNoEffectHasBeenAppliedLast [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesARepeatWhenSpeedEffecttHasBeenAppliedLast [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields repeatCard pauPosition beluPosition speedCard aDeck pau belu|
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields repeatCard pauPosition beluPosition speedCard aDeck pau belu repeatCardMove |
 	repeatCard := Repetition new.
 	speedCard:= Speed new.
 	aDice := DeterministicDice with: #(29 10 1 10).
@@ -972,7 +991,8 @@ BoardGameTest >> testAPlayerUsesARepeatWhenSpeedEffecttHasBeenAppliedLast [
 	beluPosition := Position of: belu standingOn: 1 after: 1.
 		
 	aBoardGame nextTurn.
-	repeatCard wantsToBeThrownTo: pau by: belu at: aBoardGame.
+	repeatCardMove := SimpleMove madeBy: belu affecting: {pau}.
+	repeatCard do: repeatCardMove at: aBoardGame.
 	
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
 	
@@ -980,7 +1000,7 @@ BoardGameTest >> testAPlayerUsesARepeatWhenSpeedEffecttHasBeenAppliedLast [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesASpeedCardOnHimselfAndItIncrementsInOneTheResultOfThrowingTheDices [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields overloadCard pauPosition beluPosition speedCard aDeck pau belu |
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields overloadCard pauPosition beluPosition speedCard aDeck pau belu speedCardMove |
 	overloadCard := Overload new.
 	speedCard:= Speed new.
 	aDice := DeterministicDice with: #(9 10 7 3).
@@ -998,7 +1018,8 @@ BoardGameTest >> testAPlayerUsesASpeedCardOnHimselfAndItIncrementsInOneTheResult
 	pauPosition := Position of: pau standingOn: 19 after: 1.
 	beluPosition := Position of: belu standingOn: 11 after: 1.
 	
-	speedCard wantsToBeThrownTo: pau by: pau at: aBoardGame.	
+	speedCardMove := SimpleMove madeBy: pau affecting: {pau}.
+	speedCard do: speedCardMove at: aBoardGame.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.	
@@ -1008,7 +1029,7 @@ BoardGameTest >> testAPlayerUsesASpeedCardOnHimselfAndItIncrementsInOneTheResult
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesAnAccelerationCardAndIncrementsInOneTheResultOfAllCurrentPlayers [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields pauPosition beluPosition speedCard accelerationCard aDeck pau belu |
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields pauPosition beluPosition speedCard accelerationCard aDeck pau belu accelerationCardMove |
 	speedCard:= Speed new.
 	accelerationCard:= Acceleration new.
 	aDice := DeterministicDice with: #(9 10 7 3).
@@ -1026,7 +1047,8 @@ BoardGameTest >> testAPlayerUsesAnAccelerationCardAndIncrementsInOneTheResultOfA
 	pauPosition := Position of: pau standingOn: 19 after: 1.
 	beluPosition := Position of: belu standingOn: 12 after: 1.
 	
-	accelerationCard wantsToBeThrownBy: pau at: aBoardGame.	
+	accelerationCardMove := SimpleMove madeBy: pau affecting: { pau . belu }.
+	accelerationCard do: accelerationCardMove at: aBoardGame.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
@@ -1037,7 +1059,7 @@ BoardGameTest >> testAPlayerUsesAnAccelerationCardAndIncrementsInOneTheResultOfA
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesAnOverloadCardOnAnotherPlayerAndItReducesInTwoTheResultOfThrowingADice [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields overloadCard pauPosition beluPosition aDeck pau belu |
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields overloadCard pauPosition beluPosition aDeck pau belu overloadCardMove |
 	overloadCard := Overload new.
 	aDice := DeterministicDice with: #(9 10 7 3).
 	aGroupOfPlayers := {#pau . #belu}.
@@ -1055,7 +1077,8 @@ BoardGameTest >> testAPlayerUsesAnOverloadCardOnAnotherPlayerAndItReducesInTwoTh
 	beluPosition := Position of: belu standingOn: 25 after: 1.
 		
 	1 to: 6 do: [ :n | aBoardGame nextTurn ].
-	overloadCard wantsToBeThrownTo: belu by: pau at: aBoardGame.
+	overloadCardMove := SimpleMove madeBy: pau affecting: {belu}.
+	overloadCard do: overloadCardMove at: aBoardGame.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	

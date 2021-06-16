@@ -15,6 +15,19 @@ Repetition >> actAt: aBoardGame on: aPlayer [
 ]
 
 { #category : #actions }
+Repetition >> apply: aMove at: aBoardGame [
+	aMove playersAffected
+		do: [ :player | aBoardGame repeatlastEffectAppliedOn: player ]
+]
+
+{ #category : #actions }
+Repetition >> do: aMove at: aBoardGame [
+	self apply: aMove at: aBoardGame.
+	aMove currentPlayer lays: self.
+	aBoardGame addToCardsRecord: self
+]
+
+{ #category : #actions }
 Repetition >> wantsToBeThrownBy: currentPlayer at: aBoardGame [ 
 	currentPlayer lays: self.
 	aBoardGame repeatlastEffectApplied.

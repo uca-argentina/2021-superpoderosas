@@ -136,6 +136,11 @@ BoardGame >> detectPositionOf: player [
 	
 ]
 
+{ #category : #actions }
+BoardGame >> do: anOverloadCardMove [ 
+	self shouldBeImplemented.
+]
+
 { #category : #private }
 BoardGame >> endGameIfTheWinnerIs: player [
 	| newPosition |
@@ -204,6 +209,12 @@ BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: 
 { #category : #accessing }
 BoardGame >> isFinished [
 	^ isFinished.
+]
+
+{ #category : #actions }
+BoardGame >> letTheLastCardPlayedDo: aMove [
+	(cardsHistory isEmpty) 
+	ifFalse: [(cardsHistory last) apply: aMove at: self].
 ]
 
 { #category : #private }

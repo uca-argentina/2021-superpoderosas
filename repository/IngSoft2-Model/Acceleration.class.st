@@ -1,6 +1,9 @@
 Class {
 	#name : #Acceleration,
 	#superclass : #Permanent,
+	#instVars : [
+		'currentPlayer'
+	],
 	#category : #'IngSoft2-Model'
 }
 
@@ -12,6 +15,20 @@ Acceleration >> actAt: aBoardGame [
 { #category : #actions }
 Acceleration >> action [
 	^ 1.
+]
+
+{ #category : #actions }
+Acceleration >> apply: aMove at: aBoardGame [
+	aBoardGame verifyIfItIsTheTurnOf: (aMove currentPlayer).
+	aMove playersAffected do: [ :player | player isInfluencedBy: self ]
+]
+
+{ #category : #actions }
+Acceleration >> do: aMove at: aBoardGame [
+	currentPlayer := aMove currentPlayer.
+	self apply: aMove at: aBoardGame.
+	currentPlayer lays: self.
+	aBoardGame addToCardsRecord: self
 ]
 
 { #category : #actions }
