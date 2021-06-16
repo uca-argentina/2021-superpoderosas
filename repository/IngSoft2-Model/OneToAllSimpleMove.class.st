@@ -1,9 +1,6 @@
 Class {
 	#name : #OneToAllSimpleMove,
 	#superclass : #OneToAllMove,
-	#instVars : [
-		'currentPlayer'
-	],
 	#category : #'IngSoft2-Model'
 }
 

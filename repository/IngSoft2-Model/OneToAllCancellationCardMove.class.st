@@ -2,8 +2,7 @@ Class {
 	#name : #OneToAllCancellationCardMove,
 	#superclass : #OneToAllMove,
 	#instVars : [
-		'cardToBeCancelled',
-		'currentPlayer'
+		'cardToBeCancelled'
 	],
 	#category : #'IngSoft2-Model'
 }

@@ -1,10 +1,6 @@
 Class {
 	#name : #OneToOneSimpleMove,
 	#superclass : #OneToOneMove,
-	#instVars : [
-		'currentPlayer',
-		'playerAffected'
-	],
 	#category : #'IngSoft2-Model'
 }
 
