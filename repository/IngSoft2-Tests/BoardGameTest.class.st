@@ -1059,7 +1059,7 @@ BoardGameTest >> testAPlayerUsesAnAccelerationCardAndIncrementsInOneTheResultOfA
 	pauPosition := Position of: pau standingOn: 19 after: 1.
 	beluPosition := Position of: belu standingOn: 12 after: 1.
 	
-	accelerationCardMove := OneToOneSimpleMove madeBy: pau affecting: { pau . belu }.
+	accelerationCardMove := OneToAllSimpleMove madeBy: pau.
 	accelerationCard do: accelerationCardMove at: aBoardGame.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
