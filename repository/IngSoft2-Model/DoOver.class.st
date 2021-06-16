@@ -19,3 +19,18 @@ DoOver >> actAt: aBoardGame on: aPlayer [
 DoOver >> canBePlayedInAnyTurnAt: aBoardGame [
 	^ (aBoardGame theLastCardThrownCanBePlayedInAnyTurn).
 ]
+
+{ #category : #actions }
+DoOver >> wantsToBeThrownBy: currentPlayer at: aBoardGame [ 
+	(aBoardGame theLastCardThrownCanBePlayedInAnyTurn).
+	currentPlayer lays: self.
+	aBoardGame applyLastCardThrownToAllPlayer.
+]
+
+{ #category : #actions }
+DoOver >> wantsToBeThrownTo: player by: currentPlayer at: aBoardGame [ 
+	(aBoardGame theLastCardThrownCanBePlayedInAnyTurn).
+	currentPlayer lays: self.
+	aBoardGame applyLastCardThrownTo: player.
+	aBoardGame repeatlastEffectAppliedOn: player.
+]

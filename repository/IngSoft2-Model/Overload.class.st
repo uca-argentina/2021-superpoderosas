@@ -13,3 +13,11 @@ Overload >> actAt: aBoardGame on: aPlayer [
 Overload >> action [
 	^ -2.
 ]
+
+{ #category : #actions }
+Overload >> wantsToBeThrownTo: player by: currentPlayer at: aBoardGame [ 
+	aBoardGame verifyIfItIsTheTurnOf: currentPlayer.
+	currentPlayer lays: self.
+	player isInfluencedBy: self.
+	aBoardGame addToCardsRecord: self.
+]

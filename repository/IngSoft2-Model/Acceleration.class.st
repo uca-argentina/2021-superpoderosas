@@ -13,3 +13,11 @@ Acceleration >> actAt: aBoardGame [
 Acceleration >> action [
 	^ 1.
 ]
+
+{ #category : #actions }
+Acceleration >> wantsToBeThrownBy: currentPlayer at: aBoardGame [ 
+	aBoardGame verifyIfItIsTheTurnOf: currentPlayer.
+	currentPlayer lays: self.
+	aBoardGame applyToAllPlayers: self.
+	aBoardGame addToCardsRecord: self.
+]

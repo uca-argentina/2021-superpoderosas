@@ -473,7 +473,7 @@ BoardGameTest >> testACancellationCardCanAlsoBeUsedByAPlayerIfItIsNotHisTurn [
 	belu:= aBoardGame findPlayerNamed: #belu.
 	aBoardGame a: speedCard wantsToBeThrownTo: belu by: pau.
 	aBoardGame nextTurn.
-	aBoardGame a: cancellationCard of: speedCard wantsToBeThrownTo: belu by: pau.
+	cancellationCard of: speedCard wantsToBeThrownTo: belu by: pau at: aBoardGame.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	
@@ -542,12 +542,13 @@ BoardGameTest >> testAPlayerCanNotUseADoOverCardWhenTheLastCardPlayedHadASpeedEf
 	belu:= aBoardGame findPlayerNamed: #belu.
 
 	aBoardGame nextTurn.
-	aBoardGame a: speedCard wantsToBeThrownTo: pau by: belu.
+	speedCard wantsToBeThrownTo: pau by: belu at: aBoardGame.
 	aBoardGame nextTurn.
 	
+	"fijarnos que la do over usa cosas que ya no se usan"
 	
 	self 
-		should:[aBoardGame a: doOverCard wantsToBeThrownTo: pau by: belu] 
+		should:[doOverCard wantsToBeThrownTo: pau by: pau at: aBoardGame] 
 		raise: Error 
 		withExceptionDo: [:error | self assert: error messageText equals: 'All permanent cards can only be played when it is the turn of the player' ].
 	
@@ -571,7 +572,7 @@ BoardGameTest >> testAPlayerCanNotUseASpeedUpCardIfItIsNotHisTurn [
 	aBoardGame nextTurn.
 	
 	self 
-		should:[aBoardGame a: speedCard wantsToBeThrownTo: pau by: pau.] 
+		should:[speedCard wantsToBeThrownTo: pau by: pau at: aBoardGame.] 
 		raise: Error 
 		withExceptionDo: [:error | self assert: error messageText equals: 'All permanent cards can only be played when it is the turn of the player' ].
 	
@@ -631,7 +632,7 @@ BoardGameTest >> testAPlayerMustHaveASpeedCardInOrderToBeCancelled [
 	belu:= aBoardGame findPlayerNamed: #belu.
 
 	self 
-		should:[aBoardGame a: cancellationCard of: speedCard wantsToBeThrownTo: belu by: pau] 
+		should:[cancellationCard of: speedCard wantsToBeThrownTo: belu by: pau at: aBoardGame] 
 		raise: Error 
 		withExceptionDo: [:error | self assert: error messageText equals: 'The player must have the influential card needed to be cancelled' ].
 	
@@ -654,10 +655,10 @@ BoardGameTest >> testAPlayerUsesACancellationCardAndRemovesASpeedCard [
 	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
-	aBoardGame a: speedCard wantsToBeThrownTo: belu by: pau.
+	speedCard wantsToBeThrownTo: pau by: pau at: aBoardGame.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
-	aBoardGame a: cancellationCard of: speedCard wantsToBeThrownTo: belu by: pau.
+	cancellationCard of: speedCard wantsToBeThrownTo: pau by: belu at: aBoardGame.
 	aBoardGame nextTurn.
 	
 	self assert: (aBoardGame influentialCardsOf: belu)  equals: (OrderedCollection new).
@@ -684,7 +685,7 @@ BoardGameTest >> testAPlayerUsesACancellationCardAndRemovesAnAccelerationCard [
 	aBoardGame a: accelerationCard wantsToBeThrownBy: pau.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
-	aBoardGame a: cancellationCard of: accelerationCard wantsToBeThrownBy: pau.
+	cancellationCard of: accelerationCard wantsToBeThrownBy: pau at: aBoardGame.
 	aBoardGame nextTurn.
 	self assert: (aBoardGame influentialCardsOf: belu) equals: (OrderedCollection new).
 	self assert: (aBoardGame influentialCardsOf: pau) equals: (OrderedCollection new).
@@ -710,8 +711,8 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenNoDiceHasBeenThrowsThusItHasNoEff
 	belu:= aBoardGame findPlayerNamed: #belu.
 	pauPosition := Position of: pau  standingOn: 1 after: 1.
 	beluPosition := Position of: belu standingOn: 1 after: 1.
-		
-	aBoardGame a: doOverCard wantsToBeThrownTo: pau by: pau.
+	
+	doOverCard wantsToBeThrownTo: pau by: pau at: aBoardGame.
 	
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
 	
@@ -737,9 +738,9 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedHadASpeedEffect 
 	pauPosition := Position of: pau standingOn: 20 after: 1.
 	beluPosition := Position of: belu standingOn: 11 after: 1.
 		
-	aBoardGame a: speedCard wantsToBeThrownTo: pau by: pau.
+	speedCard wantsToBeThrownTo: pau by: pau at: aBoardGame.
 	aBoardGame nextTurn.
-	aBoardGame a: doOverCard wantsToBeThrownTo: pau by: belu.
+	doOverCard wantsToBeThrownTo: pau by: belu at: aBoardGame.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 		
@@ -767,9 +768,9 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedHadAnAcceleratio
 	pauPosition := Position of: pau standingOn: 20 after: 1.
 	beluPosition := Position of: belu standingOn: 13 after: 1.
 		
-	aBoardGame a: accelerationCard wantsToBeThrownBy: pau.
+	accelerationCard wantsToBeThrownBy: pau at: aBoardGame.
 	aBoardGame nextTurn.
-	aBoardGame a: doOverCard wantsToBeThrownBy: belu.
+	doOverCard wantsToBeThrownBy: belu at: aBoardGame.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 		
@@ -796,10 +797,10 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedWasACancellation
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	aBoardGame nextTurn.
-	aBoardGame a: speedUpCard wantsToBeThrownTo: belu by: belu.
-	aBoardGame a: cancellationCard of: speedUpCard wantsToBeThrownTo: belu by: pau.
+	speedUpCard wantsToBeThrownTo: belu by: belu at: aBoardGame.
+	cancellationCard of: speedUpCard wantsToBeThrownTo: belu by: pau at: aBoardGame.
 	aBoardGame nextTurn.
-	aBoardGame a: doOverCard wantsToBeThrownTo: belu by: pau.
+	doOverCard wantsToBeThrownTo: belu by: pau at: aBoardGame.
 	self assert:  (aBoardGame influentialCardsOf: pau)  equals: (OrderedCollection new).
 ]
 
@@ -821,13 +822,13 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedWasARepeatCard [
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	pauPosition := Position of: pau standingOn: 13 after: 1.
-	beluPosition := Position of: belu standingOn: 10 after: 1.
+	beluPosition := Position of: belu standingOn: 6 after: 1.
 		
 	aBoardGame nextTurn.
-	aBoardGame a: repeatCard wantsToBeThrownTo: pau by:belu.
+	repeatCard wantsToBeThrownTo: pau by:belu at: aBoardGame.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
-	aBoardGame a: doOverCard wantsToBeThrownTo: belu by: pau.
+	doOverCard wantsToBeThrownTo: belu by: pau at: aBoardGame.
 	aBoardGame nextTurn.
 		
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
@@ -860,7 +861,7 @@ BoardGameTest >> testAPlayerUsesARepeatWhenAtomicBombEffecttHasBeenAppliedLast [
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
-	aBoardGame a: repeatCard wantsToBeThrownBy: pau.
+	repeatCard wantsToBeThrownBy: pau at: aBoardGame.
 	
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition . malePosition  }).
 	
@@ -891,7 +892,7 @@ BoardGameTest >> testAPlayerUsesARepeatWhenMoonWalkEffecttHasBeenAppliedLast [
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
-	aBoardGame a: repeatCard wantsToBeThrownTo: pau by: belu.
+	repeatCard wantsToBeThrownTo: pau by: belu at: aBoardGame.
 	
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: { malePosition . pauPosition . beluPosition }).
 	
@@ -917,7 +918,7 @@ BoardGameTest >> testAPlayerUsesARepeatWhenNoDiceHasBeenThrowsThusItHasNoEffect 
 	pauPosition := Position of: pau standingOn: 1 after: 1.
 	beluPosition := Position of: belu standingOn: 1 after: 1.
 	
-	aBoardGame a: repeatCard wantsToBeThrownTo: belu by: belu.
+	repeatCard wantsToBeThrownTo: belu by: belu at: aBoardGame.
 	
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
 	
@@ -944,7 +945,7 @@ BoardGameTest >> testAPlayerUsesARepeatWhenNoEffectHasBeenAppliedLast [
 	beluPosition := Position of: belu standingOn: 1 after: 1.
 		
 	aBoardGame nextTurn.
-	aBoardGame a: repeatCard wantsToBeThrownTo: belu by: belu.
+	repeatCard wantsToBeThrownTo: belu by: belu at: aBoardGame.
 	
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
 	
@@ -971,7 +972,7 @@ BoardGameTest >> testAPlayerUsesARepeatWhenSpeedEffecttHasBeenAppliedLast [
 	beluPosition := Position of: belu standingOn: 1 after: 1.
 		
 	aBoardGame nextTurn.
-	aBoardGame a: repeatCard wantsToBeThrownTo: pau by: belu.
+	repeatCard wantsToBeThrownTo: pau by: belu at: aBoardGame.
 	
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
 	
@@ -996,8 +997,8 @@ BoardGameTest >> testAPlayerUsesASpeedCardOnHimselfAndItIncrementsInOneTheResult
 	belu:= aBoardGame findPlayerNamed: #belu.
 	pauPosition := Position of: pau standingOn: 19 after: 1.
 	beluPosition := Position of: belu standingOn: 11 after: 1.
-		
-	aBoardGame a: speedCard wantsToBeThrownTo: pau by: pau.
+	
+	speedCard wantsToBeThrownTo: pau by: pau at: aBoardGame.	
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.	
@@ -1024,8 +1025,8 @@ BoardGameTest >> testAPlayerUsesAnAccelerationCardAndIncrementsInOneTheResultOfA
 	belu:= aBoardGame findPlayerNamed: #belu.
 	pauPosition := Position of: pau standingOn: 19 after: 1.
 	beluPosition := Position of: belu standingOn: 12 after: 1.
-		
-	aBoardGame a: accelerationCard wantsToBeThrownBy: pau.
+	
+	accelerationCard wantsToBeThrownBy: pau at: aBoardGame.	
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
@@ -1054,7 +1055,7 @@ BoardGameTest >> testAPlayerUsesAnOverloadCardOnAnotherPlayerAndItReducesInTwoTh
 	beluPosition := Position of: belu standingOn: 25 after: 1.
 		
 	1 to: 6 do: [ :n | aBoardGame nextTurn ].
-	aBoardGame a: overloadCard wantsToBeThrownTo: belu by: pau.
+	overloadCard wantsToBeThrownTo: belu by: pau at: aBoardGame.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	

@@ -63,6 +63,11 @@ BoardGame >> addOrSubstractOneIfThePlayerHasChangedRound: totalFields [
 
 ]
 
+{ #category : #'actions - cards' }
+BoardGame >> addToCardsRecord: aCard [ 
+	cardsHistory add: aCard.
+]
+
 { #category : #private }
 BoardGame >> apply: aCard on: aPlayer [
 		aPlayer isInfluencedBy: aCard.
@@ -109,10 +114,8 @@ BoardGame >> applyToAllPlayers: aCard [
 ]
 
 { #category : #'actions - cards' }
-BoardGame >> cardsInHandOf: aName [
-	| player |
-	player := self findPlayerNamed: aName.
-	^ player cardsInHand
+BoardGame >> cardsInHandOf: aPlayer [
+	^ aPlayer cardsInHand
 ]
 
 { #category : #private }
@@ -124,7 +127,7 @@ BoardGame >> changeCurrentStateToFinished [
 BoardGame >> dealACardToPlayerOf: aPosition [ 
 	| card |
 	card:= deck pickUp.
-	(self findPlayerNamed: aPosition player) pickUp: card.
+	(aPosition player) pickUp: card.
 ]
 
 { #category : #actions }
