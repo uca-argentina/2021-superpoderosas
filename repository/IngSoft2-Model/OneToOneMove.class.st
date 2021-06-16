@@ -10,7 +10,6 @@ Class {
 
 { #category : #accessing }
 OneToOneMove >> apply: aBlock at: aBoardGame [
-"mirar"
 	aBlock value: self playerAffected.
 ]
 
