@@ -16,8 +16,6 @@ Speed >> action [
 
 { #category : #actions }
 Speed >> wantsToBeThrownTo: player by: currentPlayer at: aBoardGame [ 
-	aBoardGame verifyIfItIsTheTurnOf: currentPlayer.
-	currentPlayer lays: self.
+	self aCardWantsToBeThrownBy: currentPlayer at: aBoardGame .
 	player isInfluencedBy: self.
-	aBoardGame addToCardsRecord: self.
 ]

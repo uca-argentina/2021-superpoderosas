@@ -15,9 +15,7 @@ Acceleration >> action [
 ]
 
 { #category : #actions }
-Acceleration >> wantsToBeThrownBy: currentPlayer at: aBoardGame [ 
-	aBoardGame verifyIfItIsTheTurnOf: currentPlayer.
-	currentPlayer lays: self.
+Acceleration >> wantsToBeThrownBy: currentPlayer at: aBoardGame [
+	self aCardWantsToBeThrownBy: currentPlayer at: aBoardGame.
 	aBoardGame applyToAllPlayers: self.
-	aBoardGame addToCardsRecord: self.
 ]
