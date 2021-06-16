@@ -8,31 +8,18 @@ Class {
 }
 
 { #category : #actions }
-Acceleration >> actAt: aBoardGame [ 
-	aBoardGame applyToAllPlayers: self.
-]
-
-{ #category : #actions }
 Acceleration >> action [
 	^ 1.
 ]
 
 { #category : #actions }
 Acceleration >> apply: aMove at: aBoardGame [
-	aBoardGame verifyIfItIsTheTurnOf: (aMove currentPlayer).
-	aMove playersAffected do: [ :player | player isInfluencedBy: self ]
+	self veryfyIf: aMove canBeDoneAt: aBoardGame.
+	aBoardGame applyToAllPlayers: [ :player | player isInfluencedBy: self ].
 ]
 
 { #category : #actions }
 Acceleration >> do: aMove at: aBoardGame [
-	currentPlayer := aMove currentPlayer.
 	self apply: aMove at: aBoardGame.
-	currentPlayer lays: self.
-	aBoardGame addToCardsRecord: self
-]
-
-{ #category : #actions }
-Acceleration >> wantsToBeThrownBy: currentPlayer at: aBoardGame [
-	self aCardWantsToBeThrownBy: currentPlayer at: aBoardGame.
-	aBoardGame applyToAllPlayers: self.
+	self laysCardOf: aMove andAddsCardToRecordOf: aBoardGame
 ]

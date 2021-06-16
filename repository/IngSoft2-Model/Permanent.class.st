@@ -5,18 +5,6 @@ Class {
 }
 
 { #category : #actions }
-Permanent >> aCardWantsToBeThrownBy: currentPlayer at: aBoardGame [ 
-	aBoardGame verifyIfItIsTheTurnOf: currentPlayer.
-	currentPlayer lays: self.
-	aBoardGame addToCardsRecord: self.
-]
-
-{ #category : #actions }
-Permanent >> canBePlayedInAnyTurn [
-	^false.
-]
-
-{ #category : #actions }
-Permanent >> canBePlayedInAnyTurnAt: aBoardGame [
-	^false.
+Permanent >> veryfyIf: aMove canBeDoneAt: aBoardGame [
+	aBoardGame verifyIfItIsTheTurnOf: aMove currentPlayer
 ]

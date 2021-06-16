@@ -22,41 +22,6 @@ BoardGame class >> playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoa
 		^ self new initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
 ]
 
-{ #category : #'actions - cards' }
-BoardGame >> a: card of: cardToBeCancel wantsToBeThrownBy: currentPlayer [
-
-	currentPlayer lays: card.
-	card actAt: self with: cardToBeCancel .
-	(card class = DoOver) ifFalse:[cardsHistory add: card].
-]
-
-{ #category : #'actions - cards' }
-BoardGame >> a: card of: cardToBeCancel wantsToBeThrownTo: player by: currentPlayer [
-
-	(self verifyIf: card canBePlayedBy: currentPlayer).
-	currentPlayer lays: card.
-	card actAt: self on: player with: cardToBeCancel .
-	(card class = DoOver) ifFalse:[cardsHistory add: card].
-]
-
-{ #category : #'actions - cards' }
-BoardGame >> a: card wantsToBeThrownBy: currentPlayer [
-
-	(self verifyIf: card canBePlayedBy: currentPlayer).
-	currentPlayer lays: card.
-	card actAt: self.
-	(card class = DoOver) ifFalse:[cardsHistory add: card].
-]
-
-{ #category : #'actions - cards' }
-BoardGame >> a: card wantsToBeThrownTo: player by: currentPlayer [
-
-	(self verifyIf: card canBePlayedBy: currentPlayer).
-	currentPlayer lays: card.
-	card actAt: self on: player.
-	(card class = DoOver) ifFalse:[cardsHistory add: card].
-]
-
 { #category : #private }
 BoardGame >> addOrSubstractOneIfThePlayerHasChangedRound: totalFields [
 	^ (totalFields-1) // numberOfFields.
@@ -81,20 +46,6 @@ BoardGame >> applyInfluentialCardsOn: sumOfAllDices of: player [
 	^ result.
 ]
 
-{ #category : #'actions - cards' }
-BoardGame >> applyLastCardThrownTo: aPlayer [
-	(cardsHistory isEmpty) 
-		ifFalse:[ 
-			(cardsHistory last) actAt: self on: aPlayer.].
-]
-
-{ #category : #'actions - cards' }
-BoardGame >> applyLastCardThrownToAllPlayer [
-	(cardsHistory isEmpty) 
-		ifFalse:[ 
-			(cardsHistory last) actAt: self].
-]
-
 { #category : #'actions - effects' }
 BoardGame >> applyLastEffectTo: aPlayer [
 	effectsHistory last applyTheEffectOn: (self detectPositionOf: aPlayer) of: self.
@@ -102,15 +53,9 @@ BoardGame >> applyLastEffectTo: aPlayer [
 	self orderPlayersPosition.
 ]
 
-{ #category : #'actions - effects' }
-BoardGame >> applyLastEffectToAllPlayers [
-	players do: [:player | effectsHistory last applyTheEffectOn: (self detectPositionOf: player) of: self. self endGameIfTheWinnerIs: player].
-	self orderPlayersPosition.
-]
-
-{ #category : #private }
-BoardGame >> applyToAllPlayers: aCard [
-	players do: [:player | player isInfluencedBy: aCard].
+{ #category : #'actions - cards' }
+BoardGame >> applyToAllPlayers: aBlock [
+	(players) do: [ :player | aBlock value: player ]
 ]
 
 { #category : #'actions - cards' }
@@ -211,7 +156,7 @@ BoardGame >> isFinished [
 	^ isFinished.
 ]
 
-{ #category : #actions }
+{ #category : #'actions - cards' }
 BoardGame >> letTheLastCardPlayedDo: aMove [
 	(cardsHistory isEmpty) 
 	ifFalse: [(cardsHistory last) apply: aMove at: self].
@@ -314,13 +259,6 @@ BoardGame >> removesEveryPlayers: card [
 ]
 
 { #category : #'actions - effects' }
-BoardGame >> repeatlastEffectApplied [
-	effectsHistory isEmpty
-		ifFalse:
-			[ self applyLastEffectToAllPlayers ]
-]
-
-{ #category : #'actions - effects' }
 BoardGame >> repeatlastEffectAppliedOn: aPlayer [
 	effectsHistory isEmpty
 		ifFalse:
@@ -333,21 +271,9 @@ BoardGame >> replace: oldPosition with: newPosition [
 	playersPosition add: newPosition
 ]
 
-{ #category : #'actions - cards' }
-BoardGame >> theLastCardThrownCanBePlayedInAnyTurn [
-	^ (cardsHistory isEmpty) 
-	ifTrue: [ true. ]
-	ifFalse: [(cardsHistory last) canBePlayedInAnyTurn].
-]
-
 { #category : #private }
 BoardGame >> validate: aPosition [
  (aPosition round <= 0) ifTrue: [^( Position of: (aPosition player) standingOn: 1 after: 1)] ifFalse:[^aPosition].
-]
-
-{ #category : #validations }
-BoardGame >> verifyIf: card canBePlayedBy: currentPlayer [
-	(card canBePlayedInAnyTurnAt:self) ifFalse:[ self verifyIfItIsTheTurnOf: currentPlayer ]
 ]
 
 { #category : #validations }

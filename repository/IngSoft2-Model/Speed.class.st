@@ -5,30 +5,19 @@ Class {
 }
 
 { #category : #actions }
-Speed >> actAt: aBoardGame on: aPlayer [
-	aBoardGame apply: self on: aPlayer.
-]
-
-{ #category : #actions }
 Speed >> action [
 	^ 1.
 ]
 
 { #category : #actions }
 Speed >> apply: aMove at: aBoardGame [
-	aBoardGame verifyIfItIsTheTurnOf: aMove currentPlayer.
-	aMove playersAffected first isInfluencedBy: self
+	self veryfyIf: aMove canBeDoneAt: aBoardGame.
+	(aMove playerAffected ) isInfluencedBy: self.
+	"aMove apply: [ :player | player isInfluencedBy: self ] at: aBoardGame."
 ]
 
 { #category : #actions }
 Speed >> do: aMove at: aBoardGame [
 	self apply: aMove at: aBoardGame.
-	aMove currentPlayer lays: self.
-	aBoardGame addToCardsRecord: self
-]
-
-{ #category : #actions }
-Speed >> wantsToBeThrownTo: player by: currentPlayer at: aBoardGame [ 
-	self aCardWantsToBeThrownBy: currentPlayer at: aBoardGame .
-	player isInfluencedBy: self.
+	self laysCardOf: aMove andAddsCardToRecordOf: aBoardGame
 ]
