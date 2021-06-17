@@ -1,9 +1,6 @@
 Class {
 	#name : #Acceleration,
 	#superclass : #Permanent,
-	#instVars : [
-		'currentPlayer'
-	],
 	#category : #'IngSoft2-Model'
 }
 

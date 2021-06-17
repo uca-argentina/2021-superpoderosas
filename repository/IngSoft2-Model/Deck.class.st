@@ -4,6 +4,11 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
+{ #category : #initialize }
+Deck >> initializeContaining: arg1 [ 
+	^ self subclassResponsibility
+]
+
 { #category : #actions }
 Deck >> pickUp [ 
 	self subclassResponsibility.

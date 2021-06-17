@@ -1,13 +1,10 @@
 Class {
 	#name : #OneToAllMove,
 	#superclass : #Move,
-	#instVars : [
-		'currentPlayer'
-	],
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #initialization }
+{ #category : #initialize }
 OneToAllMove >> apply: aBlock at: aBoardGame [
 	aBoardGame applyToAllPlayers: aBlock.
 ]

@@ -45,7 +45,7 @@ SequenceSimulator >> updateIndex [
 	index := index + 1.
 ]
 
-{ #category : #private }
+{ #category : #validations }
 SequenceSimulator >> verifyIfThePatternIndexHasToBeTheOriginal [
 	^ index = max.
 ]

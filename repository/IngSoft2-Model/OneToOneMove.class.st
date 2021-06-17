@@ -2,13 +2,12 @@ Class {
 	#name : #OneToOneMove,
 	#superclass : #Move,
 	#instVars : [
-		'playerAffected',
-		'currentPlayer'
+		'playerAffected'
 	],
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #accessing }
+{ #category : #initialize }
 OneToOneMove >> apply: aBlock at: aBoardGame [
 	aBlock value: self playerAffected.
 ]

@@ -24,7 +24,7 @@ ProbabilityEvent >> evaluateIfValid: aProbability [
 		ifTrue: [ Error signal: self errorMessageAProbabilityMustBeANumberBetweenOneAndZero].
 ]
 
-{ #category : #accesing }
+{ #category : #accessing }
 ProbabilityEvent >> event [
 	^event
 ]

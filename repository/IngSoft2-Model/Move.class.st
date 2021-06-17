@@ -1,10 +1,13 @@
 Class {
 	#name : #Move,
 	#superclass : #Object,
+	#instVars : [
+		'currentPlayer'
+	],
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #accessing }
+{ #category : #actions }
 Move >> apply: arg1 at: arg2 [ 
 	^ self subclassResponsibility
 ]

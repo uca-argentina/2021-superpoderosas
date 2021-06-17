@@ -784,7 +784,7 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedHadAnAcceleratio
 	pauPosition := Position of: pau standingOn: 20 after: 1.
 	beluPosition := Position of: belu standingOn: 13 after: 1.
 		
-	accelerationCardMove := OneToOneSimpleMove madeBy: pau affecting: {belu}.
+	accelerationCardMove := OneToAllSimpleMove madeBy: pau.
 	accelerationCard do: accelerationCardMove at: aBoardGame.
 	aBoardGame nextTurn.
 	doOverCardMove := OneToOneSimpleMove madeBy: belu affecting: {belu . pau}.

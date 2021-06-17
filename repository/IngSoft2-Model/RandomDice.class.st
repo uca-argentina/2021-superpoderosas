@@ -7,7 +7,7 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #'instance creation' }
+{ #category : #initialization }
 RandomDice class >> having: aNumberOfFaces [. 
 	^ self new initializeHaving: aNumberOfFaces.
 ]

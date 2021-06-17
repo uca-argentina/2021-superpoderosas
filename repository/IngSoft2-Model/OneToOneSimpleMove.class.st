@@ -4,7 +4,7 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #inicialization }
+{ #category : #initialization }
 OneToOneSimpleMove class >> madeBy: currentPlayer affecting: player [ 
 	^ self new madeBy: currentPlayer affecting: player.
 ]

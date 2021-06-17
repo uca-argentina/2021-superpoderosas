@@ -9,7 +9,7 @@ OneToAllSimpleMove class >> madeBy: currentPlayer [
 	^ self new madeBy: currentPlayer.
 ]
 
-{ #category : #initialize }
+{ #category : #accessing }
 OneToAllSimpleMove >> currentPlayer [
 	^ currentPlayer
 ]

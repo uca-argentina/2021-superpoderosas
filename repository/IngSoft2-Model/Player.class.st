@@ -15,7 +15,7 @@ Player class >> named: aName with: someCards [
 	
 ]
 
-{ #category : #accessing }
+{ #category : #comparing }
 Player >> = anotherPlayer [
 	^ (self name = anotherPlayer name).
 ]

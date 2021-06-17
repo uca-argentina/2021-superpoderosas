@@ -33,11 +33,6 @@ BoardGame >> addToCardsRecord: aCard [
 	cardsHistory add: aCard.
 ]
 
-{ #category : #private }
-BoardGame >> apply: aCard on: aPlayer [
-		aPlayer isInfluencedBy: aCard.
-]
-
 { #category : #'actions - cards' }
 BoardGame >> applyInfluentialCardsOn: sumOfAllDices of: player [
 	| result |
@@ -60,7 +55,7 @@ BoardGame >> applyToAllPlayers: aBlock [
 
 { #category : #'actions - cards' }
 BoardGame >> cardsInHandOf: aPlayer [
-	^ aPlayer cardsInHand
+	^ aPlayer cardsInHand.
 ]
 
 { #category : #private }
@@ -253,16 +248,11 @@ BoardGame >> removes: aCard from: aPlayer [
 	aPlayer cancel: aCard.
 ]
 
-{ #category : #'actions - remove' }
-BoardGame >> removesEveryPlayers: card [ 
-	players do: [:player| player cancel: card].
-]
-
 { #category : #'actions - effects' }
 BoardGame >> repeatlastEffectAppliedOn: aPlayer [
 	effectsHistory isEmpty
 		ifFalse:
-			[ self applyLastEffectTo: aPlayer ]
+			[ self applyLastEffectTo: aPlayer ].
 ]
 
 { #category : #private }

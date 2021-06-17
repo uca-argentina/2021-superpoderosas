@@ -17,12 +17,12 @@ OneToAllCancellationCardMove >> cardToBeCancelled [
 	^ cardToBeCancelled
 ]
 
-{ #category : #initialization }
+{ #category : #accessing }
 OneToAllCancellationCardMove >> currentPlayer [
 	^ currentPlayer
 ]
 
-{ #category : #initialization }
+{ #category : #initialize }
 OneToAllCancellationCardMove >> of: aCardToBeCancelled madeBy: player [
 	cardToBeCancelled := aCardToBeCancelled.
 	currentPlayer := player.
