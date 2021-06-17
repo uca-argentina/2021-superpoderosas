@@ -53,6 +53,26 @@ BoardGameTest >> creationOfBoardGameWithThreePlayers [
 		andA: thirdDice
 ]
 
+{ #category : #playingWithCardsTests }
+BoardGameTest >> generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults [
+	| aDeck aGroupOfDices aDiceCup fields aNumberOfFields aDice aBoard aBoardGame aSpinNumber |
+	aDice := DeterministicDice with: aSequenceOfDiceResults.
+	aGroupOfDices := {aDice}.
+	aNumberOfFields := 61.
+	aDiceCup := DiceCup containing: aGroupOfDices.
+	aSpinNumber := 5.
+	fields := self generateManuallyIncludingCardDealer: aNumberOfFields.
+	aBoard := Board has: fields.
+	aDeck := DeterministicDeck containing: cards.
+	aBoardGame := BoardGame
+		playedBy: aGroupOfPlayers
+		using: aDiceCup
+		and: aDeck
+		on: aBoard
+		winnedWhenReach: aSpinNumber.
+	^ aBoardGame
+]
+
 { #category : #fieldsEffectTests }
 BoardGameTest >> generateDeck [
 	| cards aDeck |
@@ -456,31 +476,31 @@ BoardGameTest >> testABoardGameNeedsAtLeastOnePlayer [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testACancellationCardCanAlsoBeUsedByAPlayerIfItIsNotHisTurn [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields speedCard cancellationCard aDeck pau belu cancellationCardMove speedCardMove |
-	speedCard:= Speed new.
+	| aBoardGame aGroupOfPlayers speedCard cancellationCard pau belu cancellationCardMove speedCardMove aSequenceOfDiceResults cards |
+	speedCard := Speed new.
 	cancellationCard := Cancellation new.
-	aDice := DeterministicDice with: #(9 10 7 3).
 	aGroupOfPlayers := {#pau . #belu}.
-	aGroupOfDices := {aDice}.
-	aNumberOfFields := 61.
-	aDiceCup := DiceCup containing: aGroupOfDices.
-	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
-	aBoard:= Board has: fields.
-	aDeck := DeterministicDeck containing: { speedCard . cancellationCard }.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
-	pau:= aBoardGame findPlayerNamed: #pau.
-	belu:= aBoardGame findPlayerNamed: #belu.
-	speedCardMove:= OneToOneSimpleMove madeBy: pau affecting: belu.
+	aSequenceOfDiceResults := #(9 10 7 3).
+	cards := {speedCard.cancellationCard}.
+	
+	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.
+	
+	pau := aBoardGame findPlayerNamed: #pau.
+	belu := aBoardGame findPlayerNamed: #belu.
+	
+	speedCardMove := OneToOneSimpleMove madeBy: pau affecting: belu.
 	speedCard do: speedCardMove at: aBoardGame.
 	aBoardGame nextTurn.
-	cancellationCardMove:= OneToOneCancellationCardMove of: speedCard madeBy: pau affecting: belu.
+	cancellationCardMove := OneToOneCancellationCardMove
+		of: speedCard
+		madeBy: pau
+		affecting: belu.
 	cancellationCard do: cancellationCardMove at: aBoardGame.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
-	
-	self assert: (aBoardGame influentialCardsOf: belu) equals: (OrderedCollection new).
-	
+	self
+		assert: (aBoardGame influentialCardsOf: belu)
+		equals: OrderedCollection new
 ]
 
 { #category : #fieldsEffectTests }
@@ -505,18 +525,12 @@ BoardGameTest >> testAFieldHasNoEffect [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerCanNotUseACardHeDoesNotHave [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields overloadCard aDeck pau overloadCardMove |
+	| aBoardGame aGroupOfPlayers overloadCard pau overloadCardMove aSequenceOfDiceResults cards |
 	overloadCard := Overload new.
-	aDice := DeterministicDice with: #(10 10 7 3).
 	aGroupOfPlayers := {#pau . #belu}.
-	aGroupOfDices := {aDice}.
-	aNumberOfFields := 61.
-	aDiceCup := DiceCup containing: aGroupOfDices.
-	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
-	aBoard:= Board has: fields.
-	aDeck := DeterministicDeck containing: { Acceleration new . Cancellation  new . DoOver new . Speed new . Repetition new }.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.	
+	aSequenceOfDiceResults := #(10 10 7 3).
+	cards := {Acceleration new . Cancellation  new . DoOver new . Speed new . Repetition new}.
+	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.	
 	pau:= aBoardGame findPlayerNamed: #pau.
 	
 	overloadCardMove := OneToOneSimpleMove madeBy: pau affecting: pau.
@@ -530,19 +544,14 @@ BoardGameTest >> testAPlayerCanNotUseACardHeDoesNotHave [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerCanNotUseADoOverCardWhenTheLastCardPlayedHadASpeedEffectOutsideHisTurn [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields aDeck speedCard doOverCard pau belu speedCardMove doOverCardMove |
-	aDice := DeterministicDice with: #(9 10 7 3).
+	| aBoardGame aGroupOfPlayers  speedCard doOverCard pau belu speedCardMove doOverCardMove aSequenceOfDiceResults cards |
 	speedCard := Speed new.
 	doOverCard := DoOver new.
 	aGroupOfPlayers := {#pau . #belu}.
-	aGroupOfDices := {aDice}.
-	aNumberOfFields := 61.
-	aDiceCup := DiceCup containing: aGroupOfDices.
-	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
-	aBoard:= Board has: fields.
-	aDeck := DeterministicDeck containing: { speedCard . doOverCard }.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	aSequenceOfDiceResults := #(9 10 7 3).
+	cards := { speedCard . doOverCard }.
+	
+	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 
@@ -623,19 +632,14 @@ BoardGameTest >> testAPlayerMustGoThreeTimesAroundTheBoardToWin [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerMustHaveASpeedCardInOrderToBeCancelled [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame  aSpinNumber aBoard fields  speedCard cancellationCard aDeck aGroupOfPlayers pau belu cancellationCardMove |
+	|  aBoardGame   speedCard cancellationCard aGroupOfPlayers pau belu cancellationCardMove aSequenceOfDiceResults cards |
 	speedCard := Speed new.
 	cancellationCard := Cancellation new.
-	aDice := DeterministicDice with: #(9 10 7 3).
 	aGroupOfPlayers := {#pau . #belu}.
-	aGroupOfDices := {aDice}.
-	aNumberOfFields := 61.
-	aDiceCup := DiceCup containing: aGroupOfDices.
-	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
-	aBoard:= Board has: fields.
-	aDeck := DeterministicDeck containing: { speedCard . cancellationCard }.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	aSequenceOfDiceResults := #(9 10 7 3).
+	cards := { speedCard . cancellationCard }.
+	
+	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	cancellationCardMove:= OneToOneCancellationCardMove of: speedCard madeBy: pau affecting:  belu .
@@ -649,19 +653,14 @@ BoardGameTest >> testAPlayerMustHaveASpeedCardInOrderToBeCancelled [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesACancellationCardAndRemovesASpeedCard [
-	| aGroupOfDices  aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields  speedCard cancellationCard aDeck pau belu cancellationCardMove speedCardMove |
+	| aBoardGame aGroupOfPlayers speedCard cancellationCard pau belu cancellationCardMove speedCardMove aSequenceOfDiceResults cards |
 	speedCard := Speed new.
 	cancellationCard := Cancellation new.
-	aDice := DeterministicDice with: #(9 10 7 3).
 	aGroupOfPlayers := {#pau . #belu}.
-	aGroupOfDices := {aDice}.
-	aNumberOfFields := 61.
-	aDiceCup := DiceCup containing: aGroupOfDices.
-	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
-	aBoard:= Board has: fields.
-	aDeck := DeterministicDeck containing: { speedCard . cancellationCard }.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	aSequenceOfDiceResults := #(9 10 7 3).
+	cards := { speedCard . cancellationCard }.
+	
+	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	speedCardMove:= OneToOneSimpleMove madeBy: pau affecting: pau.
@@ -678,19 +677,14 @@ BoardGameTest >> testAPlayerUsesACancellationCardAndRemovesASpeedCard [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesACancellationCardAndRemovesAnAccelerationCard [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields cancellationCard accelerationCard aDeck pau belu cancellationCardMove accelerationCardMove |
-	cancellationCard := Cancellation new.
+	| aBoardGame aGroupOfPlayers cancellationCard accelerationCard pau belu cancellationCardMove accelerationCardMove aSequenceOfDiceResults cards |
 	accelerationCard := Acceleration new.
-	aDice := DeterministicDice with: #(9 10 7 3).
+	cancellationCard := Cancellation new.
 	aGroupOfPlayers := {#pau . #belu}.
-	aGroupOfDices := {aDice}.
-	aNumberOfFields := 61.
-	aDiceCup := DiceCup containing: aGroupOfDices.
-	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
-	aBoard:= Board has: fields.
-	aDeck := DeterministicDeck containing: { cancellationCard . accelerationCard }.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	aSequenceOfDiceResults := #(9 10 7 3).
+	cards := { accelerationCard . cancellationCard }.
+	
+	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	accelerationCardMove:= OneToAllSimpleMove madeBy: pau.
@@ -707,19 +701,14 @@ BoardGameTest >> testAPlayerUsesACancellationCardAndRemovesAnAccelerationCard [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesADoOverCardWhenNoDiceHasBeenThrowsThusItHasNoEffect [
-	| aGroupOfDices  aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields doOverCard  pauPosition beluPosition speedCard aDeck pau belu doOverCardMove |
-	aDice := DeterministicDice with: #(9 10 7 3).
-	speedCard:= Speed new.
+	| aBoardGame aGroupOfPlayers doOverCard  pauPosition beluPosition speedCard pau belu doOverCardMove aSequenceOfDiceResults cards |	
+	speedCard := Speed new.
 	doOverCard := DoOver new.
 	aGroupOfPlayers := {#pau . #belu}.
-	aGroupOfDices := {aDice}.
-	aNumberOfFields := 61.
-	aDiceCup := DiceCup containing: aGroupOfDices.
-	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
-	aBoard:= Board has: fields.
-	aDeck := DeterministicDeck containing: { speedCard . doOverCard }.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	aSequenceOfDiceResults := #(9 10 7 3).
+	cards := { speedCard . doOverCard }.
+	
+	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	pauPosition := Position of: pau  standingOn: 1 after: 1.
@@ -734,19 +723,14 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenNoDiceHasBeenThrowsThusItHasNoEff
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedHadASpeedEffect [
-	| aGroupOfDices  aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields  doOverCard  pauPosition beluPosition speedCard aDeck pau belu speedCardMove doOverCardMove |
-	aDice := DeterministicDice with: #(9 10 7 3).
+	|aBoardGame aGroupOfPlayers doOverCard pauPosition beluPosition speedCard pau belu speedCardMove doOverCardMove aSequenceOfDiceResults cards |
 	speedCard:= Speed new.
 	doOverCard := DoOver new.
 	aGroupOfPlayers := {#pau . #belu}.
-	aGroupOfDices := {aDice}.
-	aNumberOfFields := 61.
-	aDiceCup := DiceCup containing: aGroupOfDices.
-	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
-	aBoard:= Board has: fields.
-	aDeck := DeterministicDeck containing: { speedCard . doOverCard }.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	aSequenceOfDiceResults := #(9 10 7 3).
+	cards := { doOverCard . speedCard }.
+	
+	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	pauPosition := Position of: pau standingOn: 20 after: 1.
@@ -766,19 +750,14 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedHadASpeedEffect 
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedHadAnAccelerationEffect [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields  doOverCard  pauPosition beluPosition accelerationCard aDeck pau belu accelerationCardMove doOverCardMove |
-	aDice := DeterministicDice with: #(9 10 7 3).
+	|aBoardGame aGroupOfPlayers doOverCard pauPosition beluPosition accelerationCard pau belu accelerationCardMove doOverCardMove aSequenceOfDiceResults cards |
 	accelerationCard := Acceleration new.
 	doOverCard := DoOver new.
 	aGroupOfPlayers := {#pau . #belu}.
-	aGroupOfDices := {aDice}.
-	aNumberOfFields := 61.
-	aDiceCup := DiceCup containing: aGroupOfDices.
-	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
-	aBoard:= Board has: fields.
-	aDeck := DeterministicDeck containing: { accelerationCard . doOverCard }.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	aSequenceOfDiceResults := #(9 10 7 3).
+	cards := { doOverCard . accelerationCard }.
+	
+	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	pauPosition := Position of: pau standingOn: 20 after: 1.
@@ -798,20 +777,14 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedHadAnAcceleratio
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedWasACancellationCard [
-	| aGroupOfDices  aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields  doOverCard cancellationCard aDeck pau belu cancellationCardMove doOverCardMove speedCardMove speedCard anotherSpeedCardMove |
-	aDice := DeterministicDice with: #(9 10 7 3).
-	doOverCard := DoOver new.
+	|aBoardGame aGroupOfPlayers doOverCard cancellationCard pau belu cancellationCardMove doOverCardMove speedCardMove speedCard anotherSpeedCardMove aSequenceOfDiceResults cards|
 	cancellationCard := Cancellation new.
 	speedCard:= Speed new.
+	doOverCard := DoOver new.
 	aGroupOfPlayers := {#pau . #belu}.
-	aGroupOfDices := {aDice}.
-	aNumberOfFields := 61.
-	aDiceCup := DiceCup containing: aGroupOfDices.
-	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
-	aBoard:= Board has: fields.
-	aDeck := DeterministicDeck containing: {cancellationCard . speedCard . doOverCard}.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	aSequenceOfDiceResults := #(9 10 7 3).
+	cards := {cancellationCard . speedCard . doOverCard}.
+	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	aBoardGame nextTurn.
@@ -831,19 +804,13 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedWasACancellation
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedWasARepeatCard [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields doOverCard pauPosition beluPosition repeatCard aDeck pau belu repeatCardMove doOverCardMove |
+	|aBoardGame aGroupOfPlayers doOverCard pauPosition beluPosition repeatCard pau belu repeatCardMove doOverCardMove aSequenceOfDiceResults cards |	
 	doOverCard:= DoOver new.
 	repeatCard := Repetition new.
-	aDice := DeterministicDice with: #(9 10 7 3).
 	aGroupOfPlayers := {#pau . #belu}.
-	aGroupOfDices := {aDice}.
-	aNumberOfFields := 61.
-	aDiceCup := DiceCup containing: aGroupOfDices.
-	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
-	aBoard:= Board has: fields.
-	aDeck := DeterministicDeck containing: { doOverCard . repeatCard }.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	aSequenceOfDiceResults := #(9 10 7 3).
+	cards := { doOverCard . repeatCard }.
+	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	pauPosition := Position of: pau standingOn: 13 after: 1.
@@ -864,19 +831,13 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedWasARepeatCard [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesARepeatWhenAtomicBombEffecttHasBeenAppliedLast [
-	| aGroupOfDices  aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields  repeatCard  pauPosition beluPosition speedCard malePosition aDeck pau belu male repeatCardMove |
-	aDice := DeterministicDice with: #(60 10 1 44).
+	| aBoardGame aGroupOfPlayers repeatCard  pauPosition beluPosition speedCard malePosition pau belu male repeatCardMove aSequenceOfDiceResults cards |
 	repeatCard := Repetition new.
 	speedCard := Speed new.
 	aGroupOfPlayers := {#pau . #belu . #male}.
-	aGroupOfDices := {aDice}.
-	aNumberOfFields := 61.
-	aDiceCup := DiceCup containing: aGroupOfDices.
-	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
-	aBoard:= Board has: fields.
-	aDeck := DeterministicDeck containing: { repeatCard . speedCard }.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	aSequenceOfDiceResults := #(60 10 1 44).
+	cards := { repeatCard . speedCard  }.
+	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	male:= aBoardGame findPlayerNamed: #male.
@@ -897,19 +858,13 @@ BoardGameTest >> testAPlayerUsesARepeatWhenAtomicBombEffecttHasBeenAppliedLast [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesARepeatWhenMoonWalkEffecttHasBeenAppliedLast [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields repeatCard pauPosition beluPosition speedCard malePosition aDeck pau belu male repeatCardMove |
+	|aBoardGame aGroupOfPlayers repeatCard pauPosition beluPosition speedCard malePosition pau belu male repeatCardMove aSequenceOfDiceResults cards |
 	repeatCard := Repetition new.
-	speedCard:= Speed new.
-	aDice := DeterministicDice with: #(13 4  22).
+	speedCard := Speed new.
 	aGroupOfPlayers := {#pau . #belu . #male}.
-	aGroupOfDices := {aDice}.
-	aNumberOfFields := 61.
-	aDiceCup := DiceCup containing: aGroupOfDices.
-	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
-	aBoard:= Board has: fields.
-	aDeck := DeterministicDeck containing: { repeatCard . speedCard}.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	aSequenceOfDiceResults := #(13 4 22).
+	cards := { repeatCard . speedCard  }.
+	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	male:= aBoardGame findPlayerNamed: #male.
@@ -929,19 +884,13 @@ BoardGameTest >> testAPlayerUsesARepeatWhenMoonWalkEffecttHasBeenAppliedLast [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesARepeatWhenNoDiceHasBeenThrowsThusItHasNoEffect [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields repeatCard pauPosition beluPosition speedCard aDeck pau belu repeatCardMove |
+	| aBoardGame aGroupOfPlayers repeatCard pauPosition beluPosition speedCard pau belu repeatCardMove aSequenceOfDiceResults cards |
 	repeatCard := Repetition new.
-	speedCard:= Speed new.
-	aDice := DeterministicDice with: #(9 10 7 3).
+	speedCard := Speed new.
 	aGroupOfPlayers := {#pau . #belu}.
-	aGroupOfDices := {aDice}.
-	aNumberOfFields := 61.
-	aDiceCup := DiceCup containing: aGroupOfDices.
-	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
-	aBoard:= Board has: fields.
-	aDeck := DeterministicDeck containing: { repeatCard . speedCard }.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	aSequenceOfDiceResults := #(9 10 7 3).
+	cards := { repeatCard . speedCard  }.
+	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	pauPosition := Position of: pau standingOn: 1 after: 1.
@@ -956,19 +905,13 @@ BoardGameTest >> testAPlayerUsesARepeatWhenNoDiceHasBeenThrowsThusItHasNoEffect 
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesARepeatWhenNoEffectHasBeenAppliedLast [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields repeatCard pauPosition beluPosition speedCard aDeck pau belu repeatCardMove |
+	| aBoardGame aGroupOfPlayers repeatCard pauPosition beluPosition speedCard pau belu repeatCardMove aSequenceOfDiceResults cards |
 	repeatCard := Repetition new.
-	speedCard:= Speed new.
-	aDice := DeterministicDice with: #(9 10 7 3).
+	speedCard := Speed new.
 	aGroupOfPlayers := {#pau . #belu}.
-	aGroupOfDices := {aDice}.
-	aNumberOfFields := 61.
-	aDiceCup := DiceCup containing: aGroupOfDices.
-	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
-	aBoard:= Board has: fields.
-	aDeck := DeterministicDeck containing: { repeatCard . speedCard }.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	aSequenceOfDiceResults := #(9 10 7 3).
+	cards := { repeatCard . speedCard  }.
+	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	pauPosition := Position of: pau standingOn: 10 after: 1.
@@ -984,19 +927,13 @@ BoardGameTest >> testAPlayerUsesARepeatWhenNoEffectHasBeenAppliedLast [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesARepeatWhenSpeedEffecttHasBeenAppliedLast [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields repeatCard pauPosition beluPosition speedCard aDeck pau belu repeatCardMove |
+	| aBoardGame aGroupOfPlayers repeatCard pauPosition beluPosition speedCard pau belu repeatCardMove aSequenceOfDiceResults cards |
 	repeatCard := Repetition new.
-	speedCard:= Speed new.
-	aDice := DeterministicDice with: #(29 10 1 10).
+	speedCard := Speed new.
 	aGroupOfPlayers := {#pau . #belu}.
-	aGroupOfDices := {aDice}.
-	aNumberOfFields := 61.
-	aDiceCup := DiceCup containing: aGroupOfDices.
-	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
-	aBoard:= Board has: fields.
-	aDeck := DeterministicDeck containing: { repeatCard . speedCard  }.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	aSequenceOfDiceResults := #(29 10 1 10).
+	cards := { repeatCard . speedCard  }.
+	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	pauPosition := Position of: pau standingOn: 38 after: 1.
@@ -1012,19 +949,13 @@ BoardGameTest >> testAPlayerUsesARepeatWhenSpeedEffecttHasBeenAppliedLast [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesASpeedCardOnHimselfAndItIncrementsInOneTheResultOfThrowingTheDices [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields overloadCard pauPosition beluPosition speedCard aDeck pau belu speedCardMove |
+	| aBoardGame aGroupOfPlayers overloadCard pauPosition beluPosition speedCard pau belu speedCardMove aSequenceOfDiceResults cards |	
 	overloadCard := Overload new.
 	speedCard:= Speed new.
-	aDice := DeterministicDice with: #(9 10 7 3).
 	aGroupOfPlayers := {#pau . #belu}.
-	aGroupOfDices := {aDice}.
-	aNumberOfFields := 61.
-	aDiceCup := DiceCup containing: aGroupOfDices.
-	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
-	aBoard:= Board has: fields.
-	aDeck := DeterministicDeck containing: { overloadCard . speedCard }.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	aSequenceOfDiceResults := #(9 10 7 3).
+	cards := { overloadCard . speedCard  }.
+	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	pauPosition := Position of: pau standingOn: 19 after: 1.
@@ -1041,19 +972,13 @@ BoardGameTest >> testAPlayerUsesASpeedCardOnHimselfAndItIncrementsInOneTheResult
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesAnAccelerationCardAndIncrementsInOneTheResultOfAllCurrentPlayers [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields pauPosition beluPosition speedCard accelerationCard aDeck pau belu accelerationCardMove |
+	| aBoardGame aGroupOfPlayers pauPosition beluPosition speedCard accelerationCard pau belu accelerationCardMove aSequenceOfDiceResults cards |
 	speedCard:= Speed new.
 	accelerationCard:= Acceleration new.
-	aDice := DeterministicDice with: #(9 10 7 3).
 	aGroupOfPlayers := {#pau . #belu}.
-	aGroupOfDices := {aDice}.
-	aNumberOfFields := 61.
-	aDiceCup := DiceCup containing: aGroupOfDices.
-	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
-	aBoard:= Board has: fields.
-	aDeck := DeterministicDeck containing: { speedCard . accelerationCard }.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	aSequenceOfDiceResults := #(9 10 7 3).
+	cards := { speedCard . accelerationCard  }.
+	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	pauPosition := Position of: pau standingOn: 19 after: 1.
@@ -1071,18 +996,12 @@ BoardGameTest >> testAPlayerUsesAnAccelerationCardAndIncrementsInOneTheResultOfA
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesAnOverloadCardOnAnotherPlayerAndItReducesInTwoTheResultOfThrowingADice [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber aBoard fields overloadCard pauPosition beluPosition aDeck pau belu overloadCardMove |
+	| aBoardGame aGroupOfPlayers overloadCard pauPosition beluPosition pau belu overloadCardMove aSequenceOfDiceResults cards |
 	overloadCard := Overload new.
-	aDice := DeterministicDice with: #(9 10 7 3).
 	aGroupOfPlayers := {#pau . #belu}.
-	aGroupOfDices := {aDice}.
-	aNumberOfFields := 61.
-	aDiceCup := DiceCup containing: aGroupOfDices.
-	aSpinNumber:=5.
-	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
-	aBoard:= Board has: fields.
-	aDeck := DeterministicDeck containing: { overloadCard }.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+	aSequenceOfDiceResults := #(9 10 7 3).
+	cards := { overloadCard   }.
+	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	pauPosition := Position of: pau standingOn: 29 after: 1.
