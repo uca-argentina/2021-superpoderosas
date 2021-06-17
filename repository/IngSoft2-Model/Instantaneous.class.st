@@ -5,11 +5,11 @@ Class {
 }
 
 { #category : #actions }
-Instantaneous >> apply: arg1 at: arg2 [ 
+Instantaneous >> apply: aMove at: aBoardGame [
 	^ self subclassResponsibility
 ]
 
 { #category : #actions }
-Instantaneous >> do: arg1 at: arg2 [ 
+Instantaneous >> do: aMove at: aBoardGame [
 	^ self subclassResponsibility
 ]

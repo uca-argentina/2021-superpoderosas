@@ -5,7 +5,7 @@ Class {
 }
 
 { #category : #initialize }
-Deck >> initializeContaining: arg1 [ 
+Deck >> initializeContaining: someCards [ 
 	^ self subclassResponsibility
 ]
 

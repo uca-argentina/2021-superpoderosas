@@ -10,12 +10,12 @@ Permanent >> action [
 ]
 
 { #category : #actions }
-Permanent >> apply: arg1 at: arg2 [ 
+Permanent >> apply: aMove at: aBoardGame [
 	^ self subclassResponsibility
 ]
 
 { #category : #actions }
-Permanent >> do: arg1 at: arg2 [ 
+Permanent >> do: aMove at: aBoardGame [
 	^ self subclassResponsibility
 ]
 

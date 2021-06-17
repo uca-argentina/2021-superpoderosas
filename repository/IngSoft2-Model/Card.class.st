@@ -5,7 +5,7 @@ Class {
 }
 
 { #category : #accessing }
-Card >> do: arg1 at: arg2 [ 
+Card >> do: aMove at: aBoardGame [
 	^ self subclassResponsibility
 ]
 

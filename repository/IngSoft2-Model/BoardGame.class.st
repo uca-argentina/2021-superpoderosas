@@ -238,7 +238,7 @@ BoardGame >> ranking [
 	^ playersPosition.
 ]
 
-{ #category : #'actions - remove' }
+{ #category : #'actions - cards' }
 BoardGame >> removes: aCard from: aPlayer [ 
 	aPlayer cancel: aCard.
 ]
@@ -256,7 +256,7 @@ BoardGame >> replace: oldPosition with: newPosition [
 	playersPosition add: newPosition
 ]
 
-{ #category : #private }
+{ #category : #validations }
 BoardGame >> validate: aPosition [
  (aPosition round <= 0) ifTrue: [^( Position of: (aPosition player) standingOn: 1 after: 1)] ifFalse:[^aPosition].
 ]
