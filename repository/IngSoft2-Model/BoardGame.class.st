@@ -76,11 +76,6 @@ BoardGame >> detectPositionOf: player [
 	
 ]
 
-{ #category : #actions }
-BoardGame >> do: anOverloadCardMove [ 
-	self shouldBeImplemented.
-]
-
 { #category : #private }
 BoardGame >> endGameIfTheWinnerIs: player [
 	| newPosition |

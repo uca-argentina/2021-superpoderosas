@@ -31,11 +31,6 @@ Position >> >= aPosition [
 ]
 
 { #category : #accesing }
-Position >> description [
-	^ player, ', round: ', round asString, ' field: ', field asString.
-]
-
-{ #category : #accesing }
 Position >> field [
 	^ field
 ]
