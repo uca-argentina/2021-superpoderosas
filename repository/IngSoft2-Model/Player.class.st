@@ -41,6 +41,11 @@ Player >> errorMessageAPlayerMustHaveTheCardToBeRemoved [
 	^'The player must have the influential card needed to be cancelled'.
 ]
 
+{ #category : #comparing }
+Player >> hash [
+	^ name hash.
+]
+
 { #category : #accessing }
 Player >> influentialCards [
 	^ influentialCards

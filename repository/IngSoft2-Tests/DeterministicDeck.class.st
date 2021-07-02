@@ -1,6 +1,6 @@
 Class {
 	#name : #DeterministicDeck,
-	#superclass : #Deck,
+	#superclass : #Object,
 	#instVars : [
 		'sequence',
 		'index'
@@ -22,4 +22,12 @@ DeterministicDeck >> initializeContaining: aCardsSequence [
 { #category : #actions }
 DeterministicDeck >> pickUp [ 
 	^ sequence at: (index findNextIndex).
+]
+
+{ #category : #actions }
+DeterministicDeck >> pickUp: anAmountOfCards [ 
+	| someCards |
+	someCards:= OrderedCollection new.
+	1 to: anAmountOfCards do:[:i | someCards add: (self pickUp )].
+	^someCards.
 ]

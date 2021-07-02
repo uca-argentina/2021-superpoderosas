@@ -10,7 +10,7 @@ Card >> do: aMove at: aBoardGame [
 ]
 
 { #category : #actions }
-Card >> laysCardOf: aMove andAddsCardToRecordOf: aBoardGame [
+Card >> laysFrom: aMove on: aBoardGame [
 	aMove currentPlayer lays: self.
 	aBoardGame addToCardsRecord: self
 ]

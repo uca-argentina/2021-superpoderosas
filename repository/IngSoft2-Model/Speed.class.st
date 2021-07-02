@@ -13,11 +13,10 @@ Speed >> action [
 Speed >> apply: aMove at: aBoardGame [
 	self veryfyIf: aMove canBeDoneAt: aBoardGame.
 	(aMove playerAffected ) isInfluencedBy: self.
-	"aMove apply: [ :player | player isInfluencedBy: self ] at: aBoardGame."
 ]
 
 { #category : #actions }
 Speed >> do: aMove at: aBoardGame [
 	self apply: aMove at: aBoardGame.
-	self laysCardOf: aMove andAddsCardToRecordOf: aBoardGame
+	self laysFrom: aMove on: aBoardGame
 ]

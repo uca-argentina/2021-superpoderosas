@@ -12,5 +12,5 @@ Repetition >> apply: aMove at: aBoardGame [
 { #category : #actions }
 Repetition >> do: aMove at: aBoardGame [
 	self apply: aMove at: aBoardGame.
-	self laysCardOf: aMove andAddsCardToRecordOf: aBoardGame
+	self laysFrom: aMove on: aBoardGame
 ]

@@ -2,23 +2,23 @@ Class {
 	#name : #MoonWalk,
 	#superclass : #Effect,
 	#instVars : [
-		'n'
+		'fieldsToMoveBackwars'
 	],
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #initialization }
-MoonWalk class >> with: anN [
-	^ self new initializeWith: anN.
+MoonWalk class >> with: aNumberOfFildes [ 
+	^ self new initializeWith: aNumberOfFildes.
 ]
 
 { #category : #actions }
 MoonWalk >> applyTheEffectOn: aPosition of: aBoardGame [
-	aBoardGame moveAllPlayers: (n negated) exceptThePlayerOf: aPosition.
+	aBoardGame moveAllPlayers: (fieldsToMoveBackwars negated) exceptThePlayerOf: aPosition.
 	super.
 ]
 
 { #category : #initialize }
-MoonWalk >> initializeWith: anN [
-	n:= anN.
+MoonWalk >> initializeWith: aNumberOfFildes [ 
+	fieldsToMoveBackwars := aNumberOfFildes .
 ]

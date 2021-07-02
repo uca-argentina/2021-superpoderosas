@@ -24,5 +24,5 @@ DiceCupTest >> testWhenThrowingADiceCupWeObtainACertainValue [
 	aGroupOfDices:= { firstDice. secondDice. thirdDice}.
 	aDiceCup:= DiceCup containing: aGroupOfDices.
 		
-	self assert: (aDiceCup throw) identicalTo: 14.
+	self assert: (aDiceCup throw) equals: 14.
 ]

@@ -77,7 +77,7 @@ BoardGameTest >> generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBas
 BoardGameTest >> generateDeck [
 	| cards aDeck |
 	cards := OrderedCollection newFrom: { Cancellation new . Acceleration new . Speed new . DoOver new . Repetition new . Overload new}.
-	aDeck := RandomDeck containing: cards.
+	aDeck := Deck containing: cards.
 	^aDeck.
 ]
 
@@ -500,7 +500,7 @@ BoardGameTest >> testACancellationCardCanAlsoBeUsedByAPlayerIfItIsNotHisTurn [
 	aBoardGame nextTurn.
 	self
 		assert: (aBoardGame influentialCardsOf: belu)
-		equals: OrderedCollection new
+		isEmpty.
 ]
 
 { #category : #fieldsEffectTests }
@@ -1199,5 +1199,5 @@ BoardGameTest >> testWhenAPlayerFellsOnAnAtomicBombAllPlayersMoveToFieldOne [
 		equals:
 			(OrderedCollection
 				newFrom:
-					{pauPosition . malePosition . beluPosition })
+					{beluPosition . malePosition . pauPosition })
 ]

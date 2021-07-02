@@ -33,14 +33,6 @@ BoardGame >> addToCardsRecord: aCard [
 	cardsHistory add: aCard.
 ]
 
-{ #category : #'actions - cards' }
-BoardGame >> applyInfluentialCardsOn: sumOfAllDices of: player [
-	| result |
-	result:= sumOfAllDices.
-	(player influentialCards) do: [ :aCard | result :=(result + aCard action) ].
-	^ result.
-]
-
 { #category : #'actions - effects' }
 BoardGame >> applyLastEffectTo: aPlayer [
 	effectsHistory last applyTheEffectOn: (self detectPositionOf: aPlayer) of: self.
@@ -102,6 +94,14 @@ BoardGame >> errorMessageMustHaveAtLeastAPlayer [
 { #category : #'error messages' }
 BoardGame >> errorMessageTheGameHasFinished [
 	^ 'The board game has already finished, contestants can not play anymore.'.
+]
+
+{ #category : #'actions - cards' }
+BoardGame >> fieldsToMoveAfter: player obtained: sumOfAllDices [
+	| result |
+	result:= sumOfAllDices.
+	(player influentialCards) do: [ :aCard | result :=(result + aCard action) ].
+	^ result.
 ]
 
 { #category : #private }
@@ -213,12 +213,13 @@ BoardGame >> nextTurn [
 	self verifyIfTheGameHasFinished.
 	player := self lookForPlayerWhoseTurnItIs.
 	sumOfAllDices := diceCup throw.
-	sumOfAllDices := self applyInfluentialCardsOn: sumOfAllDices of: player.
+	sumOfAllDices := self
+		fieldsToMoveAfter: player
+		obtained: sumOfAllDices.
 	self move: player along: sumOfAllDices.
 	self endGameIfTheWinnerIs: player.
 	self orderPlayersPosition.
-	^ player.
-
+	^ player
 ]
 
 { #category : #actions }

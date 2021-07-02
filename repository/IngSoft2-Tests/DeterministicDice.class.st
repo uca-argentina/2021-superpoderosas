@@ -1,6 +1,6 @@
 Class {
 	#name : #DeterministicDice,
-	#superclass : #Dice,
+	#superclass : #Object,
 	#instVars : [
 		'pattern',
 		'patternIndex'

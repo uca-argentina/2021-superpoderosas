@@ -18,5 +18,5 @@ Acceleration >> apply: aMove at: aBoardGame [
 { #category : #actions }
 Acceleration >> do: aMove at: aBoardGame [
 	self apply: aMove at: aBoardGame.
-	self laysCardOf: aMove andAddsCardToRecordOf: aBoardGame
+	self laysFrom: aMove on: aBoardGame
 ]

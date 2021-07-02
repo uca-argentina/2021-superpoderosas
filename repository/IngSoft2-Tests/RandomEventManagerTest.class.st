@@ -64,7 +64,7 @@ RandomEventManagerTest >> testARandomManagerCreatesAFarmWhithAllPigglets [
 RandomEventManagerTest >> testProbabilityEqualsTo25PercentInProbabilityEvent [
 	| event |
 	event := ProbabilityEvent with: 0.25 of: #Chanchito.
-	self assert: event probability identicalTo: 0.25
+	self assert: event probability equals: 0.25
 ]
 
 { #category : #tests }
@@ -90,7 +90,7 @@ RandomEventManagerTest >> testTheAdditionOfTheProbabilityOfAllProbabiliyEventsEq
 	eventsDistribution  := self groupProbabilityEventsOfCowsWith: 0.25 piggsWith: 0.05 horsesWith:0.3 andDucksWith: 0.4.
 	eventManager := RandomProbabilityEventManager basedOn: eventsDistribution.
 
-	self assert: (eventManager sumUpEventProbabilitiesOf: eventsDistribution ) = 1.0.
+	self assert: (eventManager sumUpEventProbabilitiesOf: eventsDistribution ) equals: 1.0.
 ]
 
 { #category : #tests }

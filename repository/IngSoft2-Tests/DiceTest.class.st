@@ -7,7 +7,7 @@ Class {
 { #category : #randomDiceTests }
 DiceTest >> testARandomDiceHasAtLeastTwoFaces [	
 	self 
-		should:[(RandomDice having: 0) and:(RandomDice having: 1).] 
+		should:[(Dice having: 0) and:(Dice having: 1).] 
 		raise: Error 
 		withExceptionDo: [:error | self assert: error messageText equals: 'A random dice must have at least three faces'].
 ]
@@ -18,7 +18,7 @@ DiceTest >> testWhenThrowingADeterministicDiceWeGet2 [
 	aPattern:=#(2 3 4 1 1 6 5).
 	aDeterministicDice:= DeterministicDice with: aPattern.
 	obtainedValue:= aDeterministicDice throw.		
-	self assert: obtainedValue identicalTo: 2.
+	self assert: obtainedValue equals: 2.
 ]
 
 { #category : #deterministicDiceTests }
@@ -28,7 +28,7 @@ DiceTest >> testWhenThrowingADeterministicDiceWeGetACertainSequence [
 	aDeterministicDice:= DeterministicDice with: pattern.
 	1 to:8 do:
 			[ :index | obtainedValue:= aDeterministicDice throw. 
-			self assert: obtainedValue identicalTo: (#(2 3 4 1 1 6 5 2) at:index)].
+			self assert: obtainedValue equals: (#(2 3 4 1 1 6 5 2) at:index)].
 	
 	
 
@@ -38,7 +38,7 @@ DiceTest >> testWhenThrowingADeterministicDiceWeGetACertainSequence [
 { #category : #randomDiceTests }
 DiceTest >> testWhenThrowingARandomDiceWith6FacesWeCanGetAValueBetween1and6 [
  	| obtainedValue aRandomDice |
-	aRandomDice:= RandomDice having: 6.
+	aRandomDice:= Dice having: 6.
 	obtainedValue:= aRandomDice throw.		
 	self assert: (obtainedValue between: 1 and:6).
 ]
