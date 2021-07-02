@@ -5,12 +5,12 @@ Class {
 }
 
 { #category : #actions }
-Repetition >> apply: aMove at: aBoardGame [	
-	aMove apply: [ :player | aBoardGame repeatlastEffectAppliedOn: player ] at: aBoardGame.
+Repetition >> apply: aMove at: aBoardGame [
+	aMove apply: [ :player | aBoardGame repeatLastEffectAppliedOn: player ] at: aBoardGame.
 ]
 
 { #category : #actions }
 Repetition >> do: aMove at: aBoardGame [
 	self apply: aMove at: aBoardGame.
-	self laysFrom: aMove on: aBoardGame
+	self laysFrom: aMove on: aBoardGame.
 ]

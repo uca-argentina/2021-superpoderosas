@@ -5,8 +5,15 @@ Class {
 }
 
 { #category : #actions }
-AtomicBomb >> applyTheEffectOn: aPosition of: aBoardGame [
+AtomicBomb >> applyTheEffectOn: aPosition of: aBoard [
 
-	aBoardGame moveAllPlayersTo: 1.
+	aBoard moveAllPlayersTo: 1.
+	super.
+]
+
+{ #category : #actions }
+AtomicBomb >> applyTheEffectOn: newPosition of: aBoard usedAt: aBoardGame [
+
+	aBoard moveAllPlayersTo: 1.
 	super.
 ]

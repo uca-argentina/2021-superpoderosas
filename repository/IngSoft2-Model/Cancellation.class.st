@@ -10,7 +10,7 @@ Cancellation >> apply: aMove at: aBoardGame [
 ]
 
 { #category : #actions }
-Cancellation >> do: aMove at: aBoardGame [
+Cancellation >> do: aMove at: aBoardGame [ 
 	self apply: aMove at: aBoardGame.
-	self laysFrom: aMove on: aBoardGame
+	self laysFrom: aMove on: aBoardGame.
 ]

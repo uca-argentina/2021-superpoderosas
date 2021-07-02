@@ -8,9 +8,7 @@ Class {
 		'diceCup',
 		'spinsNeededToWin',
 		'playersPosition',
-		'numberOfFields',
 		'board',
-		'effectsHistory',
 		'cardsHistory',
 		'deck'
 	],
@@ -24,20 +22,13 @@ BoardGame class >> playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoa
 
 { #category : #private }
 BoardGame >> addOrSubstractOneIfThePlayerHasChangedRound: totalFields [
-	^ (totalFields-1) // numberOfFields.
+	^ (totalFields-1) // (board numberOfFields).
 
 ]
 
 { #category : #'actions - cards' }
 BoardGame >> addToCardsRecord: aCard [ 
 	cardsHistory add: aCard.
-]
-
-{ #category : #'actions - effects' }
-BoardGame >> applyLastEffectTo: aPlayer [
-	effectsHistory last applyTheEffectOn: (self detectPositionOf: aPlayer) of: self.
-	self endGameIfTheWinnerIs: aPlayer.
-	self orderPlayersPosition.
 ]
 
 { #category : #'actions - cards' }
@@ -62,16 +53,10 @@ BoardGame >> dealACardToPlayerOf: aPosition [
 	(aPosition player) pickUp: card.
 ]
 
-{ #category : #actions }
-BoardGame >> detectPositionOf: player [
- ^playersPosition detect: [ :aPosition | aPosition player = player ].
-	
-]
-
 { #category : #private }
 BoardGame >> endGameIfTheWinnerIs: player [
 	| newPosition |
-	newPosition := self detectPositionOf: player.
+	newPosition := board positionOf: player.
 	newPosition round > spinsNeededToWin
 		ifTrue: [ self changeCurrentStateToFinished ]
 ]
@@ -104,17 +89,6 @@ BoardGame >> fieldsToMoveAfter: player obtained: sumOfAllDices [
 	^ result.
 ]
 
-{ #category : #private }
-BoardGame >> findNewPositionWhen: player hasMoved: aNumberOfFields from: oldPosition [
-	| totalFields newPosition newRoundNumber newFieldNumber |
-	totalFields := oldPosition field + aNumberOfFields.
-	newFieldNumber := self lookUpResultingFieldNumberBasingOn: totalFields.
-	newRoundNumber :=  oldPosition round + (self addOrSubstractOneIfThePlayerHasChangedRound: totalFields).
-	newPosition := Position of: player standingOn: newFieldNumber after: newRoundNumber.
-	newPosition := self validate: newPosition.
-	^ newPosition
-]
-
 { #category : #actions }
 BoardGame >> findPlayerNamed: aName [
 	^ players detect: [ :aPlayer | (aPlayer name) = aName ].
@@ -132,12 +106,10 @@ BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: 
 	diceCup := aDiceCup.
 	board:= aBoard.
 	players := OrderedCollection newFrom:(aGroupOfPlayers collect:[:playerName | Player named: playerName with: (aDeck pickUp: 2)]).
+	board placeAtTheBeggining: players.
 	playersTurnIdentificator := SequenceSimulator newFrom: (aGroupOfPlayers size).
 	isFinished := false.
 	spinsNeededToWin := aSpinNumber.
-	numberOfFields := aBoard numberOfFields.
-	playersPosition:= OrderedCollection newFrom: (self placePlayersAtTheInitialPosition).
-	effectsHistory:= OrderedCollection new.
 	cardsHistory:= OrderedCollection new.
 ]
 
@@ -159,52 +131,13 @@ BoardGame >> lookForPlayerWhoseTurnItIs [
 
 { #category : #private }
 BoardGame >> lookUpResultingFieldNumberBasingOn: totalFields [
-	^ totalFields = numberOfFields
-		ifTrue: [ numberOfFields ]
+	| aNumberOfFields |
+	aNumberOfFields := (board numberOfFields).
+	^ totalFields = aNumberOfFields
+		ifTrue: [ aNumberOfFields ]
 		ifFalse: [ totalFields > 0
-				ifTrue: [ totalFields % numberOfFields ]
-				ifFalse: [numberOfFields + totalFields] ]
-]
-
-{ #category : #private }
-BoardGame >> move: player along: result [
-	| oldPosition |
-	oldPosition := self detectPositionOf: player.
-	self move: player over: result consideringAnEffectFrom: oldPosition.
-]
-
-{ #category : #actions }
-BoardGame >> move: aPlayer over: aNumberOfFields consideringAnEffectFrom: oldPosition [
-	| newPosition field effect |
-	newPosition := self move: aPlayer over: aNumberOfFields from: oldPosition.
-	field := board searchFieldFor: newPosition.
-	effect := field applyTheEffectOn: newPosition of: self.
-	effectsHistory add: effect.
-	
-]
-
-{ #category : #actions }
-BoardGame >> move: player over: aNumberOfFields from: oldPosition [
-	| newPosition |
-	newPosition := self findNewPositionWhen: player hasMoved: aNumberOfFields from: oldPosition.
-	self replace: oldPosition with: newPosition.
-	^ newPosition
-]
-
-{ #category : #actions }
-BoardGame >> move: aNumberOfFields thePlayerOf: oldPosition [
-	self move: (oldPosition player) over: aNumberOfFields from: oldPosition.
-]
-
-{ #category : #actions }
-BoardGame >> moveAllPlayers: aNumberOfFields exceptThePlayerOf: aPosition [
-	playersPosition  := playersPosition reject: [ :position | position=aPosition ] thenCollect: [ :position | self findNewPositionWhen: (position player) hasMoved: aNumberOfFields from: position].
-	playersPosition add: aPosition .
-]
-
-{ #category : #accessing }
-BoardGame >> moveAllPlayersTo: aField [
-	playersPosition := playersPosition collect: [ :position | Position of: (position player) standingOn: 1 after: (position round) ]
+				ifTrue: [ totalFields % aNumberOfFields ]
+				ifFalse: [aNumberOfFields + totalFields] ]
 ]
 
 { #category : #actions }
@@ -216,27 +149,20 @@ BoardGame >> nextTurn [
 	sumOfAllDices := self
 		fieldsToMoveAfter: player
 		obtained: sumOfAllDices.
-	self move: player along: sumOfAllDices.
+	board move: player along: sumOfAllDices on: self.
 	self endGameIfTheWinnerIs: player.
-	self orderPlayersPosition.
 	^ player
 ]
 
 { #category : #actions }
-BoardGame >> orderPlayersPosition [
-	playersPosition
-		sort: [ :aPosition :anotherPosition | aPosition >= anotherPosition ]
-]
-
-{ #category : #initialize }
-BoardGame >> placePlayersAtTheInitialPosition [
-	^ players
-		collect: [ :aPlayer | Position of: aPlayer standingOn: 1 after: 1 ]
+BoardGame >> positionOf: player [
+ ^ board positionOf: player.
+	
 ]
 
 { #category : #accessing }
 BoardGame >> ranking [
-	^ playersPosition.
+	^ board playersPosition.
 ]
 
 { #category : #'actions - cards' }
@@ -245,16 +171,10 @@ BoardGame >> removes: aCard from: aPlayer [
 ]
 
 { #category : #'actions - effects' }
-BoardGame >> repeatlastEffectAppliedOn: aPlayer [
-	effectsHistory isEmpty
-		ifFalse:
-			[ self applyLastEffectTo: aPlayer ].
-]
+BoardGame >> repeatLastEffectAppliedOn: aPlayer [
+	board repeatAt: self lastEffectAppliedOn: aPlayer.
+	self endGameIfTheWinnerIs: aPlayer.
 
-{ #category : #private }
-BoardGame >> replace: oldPosition with: newPosition [
-	playersPosition remove: oldPosition.
-	playersPosition add: newPosition
 ]
 
 { #category : #validations }
@@ -288,5 +208,5 @@ BoardGame >> verifyIfTheGameIsInProcess [
 { #category : #actions }
 BoardGame >> winner [
 	self verifyIfTheGameIsInProcess.	
-	^ playersPosition first player.
+	^ board playersPosition first player.
 ]

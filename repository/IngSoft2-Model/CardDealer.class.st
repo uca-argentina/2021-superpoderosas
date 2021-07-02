@@ -9,3 +9,9 @@ CardDealer >> applyTheEffectOn: aPosition of: aBoardGame [
 	aBoardGame dealACardToPlayerOf: aPosition.
 	super.
 ]
+
+{ #category : #actions }
+CardDealer >> applyTheEffectOn: newPosition of: aBoard usedAt: aBoardGame [
+	aBoardGame dealACardToPlayerOf: newPosition.
+	super.
+]

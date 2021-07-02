@@ -256,76 +256,76 @@ BoardGameTest >> testABoardGameHasFinishedAndHasAWinner [
 	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	jorge:= aBoardGame findPlayerNamed: #jorge.
-	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 1.
-	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 1.
-	self assert: ((aBoardGame detectPositionOf: pau) round) equals: 1.
-	self assert: ((aBoardGame detectPositionOf: jorge) round) equals: 1.
+	self assert: ((aBoardGame positionOf: pau) field) equals: 1.
+	self assert: ((aBoardGame positionOf: jorge) field) equals: 1.
+	self assert: ((aBoardGame positionOf: pau) round) equals: 1.
+	self assert: ((aBoardGame positionOf: jorge) round) equals: 1.
 	aBoardGame nextTurn.
 	self deny: aBoardGame isFinished.
-	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 21.
-	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 1.
-	self assert: ((aBoardGame detectPositionOf: pau) round) equals: 1.
-	self assert: ((aBoardGame detectPositionOf: jorge) round) equals: 1.
+	self assert: ((aBoardGame positionOf: pau) field) equals: 21.
+	self assert: ((aBoardGame positionOf: jorge) field) equals: 1.
+	self assert: ((aBoardGame positionOf: pau) round) equals: 1.
+	self assert: ((aBoardGame positionOf: jorge) round) equals: 1.
 	aBoardGame nextTurn.
-	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 21.
-	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 16.
-	self assert: ((aBoardGame detectPositionOf: pau) round) equals: 1.
-	self assert: ((aBoardGame detectPositionOf: jorge) round) equals: 1.
+	self assert: ((aBoardGame positionOf: pau) field) equals: 21.
+	self assert: ((aBoardGame positionOf: jorge) field) equals: 16.
+	self assert: ((aBoardGame positionOf: pau) round) equals: 1.
+	self assert: ((aBoardGame positionOf: jorge) round) equals: 1.
 	aBoardGame nextTurn.
-	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 47.
-	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 16.
-	self assert: ((aBoardGame detectPositionOf: pau) round) equals: 1.
-	self assert: ((aBoardGame detectPositionOf: jorge) round) equals: 1.
+	self assert: ((aBoardGame positionOf: pau) field) equals: 47.
+	self assert: ((aBoardGame positionOf: jorge) field) equals: 16.
+	self assert: ((aBoardGame positionOf: pau) round) equals: 1.
+	self assert: ((aBoardGame positionOf: jorge) round) equals: 1.
 	aBoardGame nextTurn.
-	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 47.
-	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 53.
-	self assert: ((aBoardGame detectPositionOf: pau) round) equals: 1.
-	self assert: ((aBoardGame detectPositionOf: jorge) round) equals: 1.
+	self assert: ((aBoardGame positionOf: pau) field) equals: 47.
+	self assert: ((aBoardGame positionOf: jorge) field) equals: 53.
+	self assert: ((aBoardGame positionOf: pau) round) equals: 1.
+	self assert: ((aBoardGame positionOf: jorge) round) equals: 1.
 	aBoardGame nextTurn.
-	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 13.
-	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 53.
-	self assert: ((aBoardGame detectPositionOf: pau) round) equals: 2.
-	self assert: ((aBoardGame detectPositionOf: jorge) round) equals: 1.
+	self assert: ((aBoardGame positionOf: pau) field) equals: 13.
+	self assert: ((aBoardGame positionOf: jorge) field) equals: 53.
+	self assert: ((aBoardGame positionOf: pau) round) equals: 2.
+	self assert: ((aBoardGame positionOf: jorge) round) equals: 1.
 	aBoardGame nextTurn.
-	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 13.
-	self assert: ((aBoardGame detectPositionOf: jorge)field) equals: 14.
-	self assert: ((aBoardGame detectPositionOf: pau) round) equals: 2.
-	self assert: ((aBoardGame detectPositionOf: jorge) round) equals: 2.
+	self assert: ((aBoardGame positionOf: pau) field) equals: 13.
+	self assert: ((aBoardGame positionOf: jorge)field) equals: 14.
+	self assert: ((aBoardGame positionOf: pau) round) equals: 2.
+	self assert: ((aBoardGame positionOf: jorge) round) equals: 2.
 	aBoardGame nextTurn.
-	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 39.
-	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 14.
-	self assert: ((aBoardGame detectPositionOf: pau) round) equals: 2.
-	self assert: ((aBoardGame detectPositionOf: jorge) round) equals: 2.
+	self assert: ((aBoardGame positionOf: pau) field) equals: 39.
+	self assert: ((aBoardGame positionOf: jorge) field) equals: 14.
+	self assert: ((aBoardGame positionOf: pau) round) equals: 2.
+	self assert: ((aBoardGame positionOf: jorge) round) equals: 2.
 	aBoardGame nextTurn.
-	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 39.
-	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 51.
-	self assert: ((aBoardGame detectPositionOf: pau) round) equals: 2.
-	self assert: ((aBoardGame detectPositionOf: jorge) round) equals: 2.
+	self assert: ((aBoardGame positionOf: pau) field) equals: 39.
+	self assert: ((aBoardGame positionOf: jorge) field) equals: 51.
+	self assert: ((aBoardGame positionOf: pau) round) equals: 2.
+	self assert: ((aBoardGame positionOf: jorge) round) equals: 2.
 	aBoardGame nextTurn.
-	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 5.
-	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 51.
-	self assert: ((aBoardGame detectPositionOf: pau) round) equals: 3.
-	self assert: ((aBoardGame detectPositionOf: jorge) round) equals: 2.
+	self assert: ((aBoardGame positionOf: pau) field) equals: 5.
+	self assert: ((aBoardGame positionOf: jorge) field) equals: 51.
+	self assert: ((aBoardGame positionOf: pau) round) equals: 3.
+	self assert: ((aBoardGame positionOf: jorge) round) equals: 2.
 	aBoardGame nextTurn.
-	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 5.
-	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 12.
-	self assert: ((aBoardGame detectPositionOf: pau) round) equals: 3.
-	self assert: ((aBoardGame detectPositionOf: jorge) round) equals: 3.
+	self assert: ((aBoardGame positionOf: pau) field) equals: 5.
+	self assert: ((aBoardGame positionOf: jorge) field) equals: 12.
+	self assert: ((aBoardGame positionOf: pau) round) equals: 3.
+	self assert: ((aBoardGame positionOf: jorge) round) equals: 3.
 	aBoardGame nextTurn.
-	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 31.
-	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 12.
-	self assert: ((aBoardGame detectPositionOf: pau) round) equals: 3.
-	self assert: ((aBoardGame detectPositionOf: jorge) round) equals: 3.
+	self assert: ((aBoardGame positionOf: pau) field) equals: 31.
+	self assert: ((aBoardGame positionOf: jorge) field) equals: 12.
+	self assert: ((aBoardGame positionOf: pau) round) equals: 3.
+	self assert: ((aBoardGame positionOf: jorge) round) equals: 3.
 	aBoardGame nextTurn.
-	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 31.
-	self assert: ((aBoardGame detectPositionOf: jorge)field) equals: 49.
-	self assert: ((aBoardGame detectPositionOf: pau) round) equals: 3.
-	self assert: ((aBoardGame detectPositionOf: jorge) round) equals: 3.
+	self assert: ((aBoardGame positionOf: pau) field) equals: 31.
+	self assert: ((aBoardGame positionOf: jorge)field) equals: 49.
+	self assert: ((aBoardGame positionOf: pau) round) equals: 3.
+	self assert: ((aBoardGame positionOf: jorge) round) equals: 3.
 	aBoardGame nextTurn.
-	self assert: ((aBoardGame detectPositionOf: pau) field) equals: 51.
-	self assert: ((aBoardGame detectPositionOf: jorge) field) equals: 49.
-	self assert: ((aBoardGame detectPositionOf: pau) round) equals: 3.
-	self assert: ((aBoardGame detectPositionOf: jorge) round) equals: 3.
+	self assert: ((aBoardGame positionOf: pau) field) equals: 51.
+	self assert: ((aBoardGame positionOf: jorge) field) equals: 49.
+	self assert: ((aBoardGame positionOf: pau) round) equals: 3.
+	self assert: ((aBoardGame positionOf: jorge) round) equals: 3.
 	aBoardGame nextTurn.
 	self assert: aBoardGame winner equals: jorge.
 ]
@@ -896,7 +896,7 @@ BoardGameTest >> testAPlayerUsesARepeatWhenNoDiceHasBeenThrowsThusItHasNoEffect 
 	pauPosition := Position of: pau standingOn: 1 after: 1.
 	beluPosition := Position of: belu standingOn: 1 after: 1.
 	
-	repeatCardMove := OneToOneSimpleMove madeBy: belu affecting: {belu}.
+	repeatCardMove := OneToOneSimpleMove madeBy: belu affecting: belu.
 	repeatCard do: repeatCardMove at: aBoardGame.
 	
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).

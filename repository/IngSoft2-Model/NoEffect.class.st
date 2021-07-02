@@ -8,3 +8,8 @@ Class {
 NoEffect >> applyTheEffectOn: aPosition of: aBoard [
 	super.
 ]
+
+{ #category : #actions }
+NoEffect >> applyTheEffectOn: newPosition of: aBoard usedAt: aBoardGame [
+	super.
+]
