@@ -159,10 +159,10 @@ BoardGameTest >> testABoardGameCanDistinguishBetweenWhoseTurnIsIt [
 	belu:= aBoardGame findPlayerNamed: #belu.
 	male:= aBoardGame findPlayerNamed: #male.
 	juli:= aBoardGame findPlayerNamed: #juli.
-	pauPosition := Position of: pau standingOn: 21 after: 1.
-	beluPosition := Position of: belu standingOn: 14 after: 1.
-	juliPosition := Position of: juli standingOn: 13 after: 1.
-	malePosition := Position of: male standingOn: 11 after: 1.
+	pauPosition := Tracker of: pau standingOn: 21 after: 1.
+	beluPosition := Tracker of: belu standingOn: 14 after: 1.
+	juliPosition := Tracker of: juli standingOn: 13 after: 1.
+	malePosition := Tracker of: male standingOn: 11 after: 1.
 	1 to: 5 do: [ :n | aBoardGame nextTurn ].
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition . juliPosition . malePosition }).
 ]
@@ -188,9 +188,9 @@ BoardGameTest >> testABoardGameHasAFinalRanking [
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	male:= aBoardGame findPlayerNamed: #male.
-	pauPosition := Position of: pau standingOn: 46 after: 1.
-	beluPosition := Position of: belu standingOn: 13 after: 1.
-	malePosition := Position of: male standingOn: 21 after: 1.
+	pauPosition := Tracker of: pau standingOn: 46 after: 1.
+	beluPosition := Tracker of: belu standingOn: 13 after: 1.
+	malePosition := Tracker of: male standingOn: 21 after: 1.
 	self
 		assert: aBoardGame ranking
 		equals:
@@ -204,7 +204,7 @@ BoardGameTest >> testABoardGameHasARanking [
 	| aBoardGame pauPosition pau |
 	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
 	pau:= aBoardGame findPlayerNamed: #pau.
-	pauPosition := Position of: pau standingOn: 61 after: 1.
+	pauPosition := Tracker of: pau standingOn: 61 after: 1.
 	1 to: 18 do: [ :n | aBoardGame nextTurn ].
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition}).
 ]
@@ -350,9 +350,9 @@ BoardGameTest >> testABoardGameHasThreePlayersThatChangePositionOvertime [
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	male:= aBoardGame findPlayerNamed: #male.
-	pauPosition := Position of: pau standingOn: 31 after: 1.
-	beluPosition := Position of: belu standingOn: 14 after: 1.
-	malePosition := Position of: male standingOn: 13 after: 1.
+	pauPosition := Tracker of: pau standingOn: 31 after: 1.
+	beluPosition := Tracker of: belu standingOn: 14 after: 1.
+	malePosition := Tracker of: male standingOn: 13 after: 1.
 	1 to: 5 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
@@ -369,9 +369,9 @@ BoardGameTest >> testABoardGameHasThreePlayersThatChangeRoundNumberOvertime [
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	male:= aBoardGame findPlayerNamed: #male.
-	pauPosition := Position of: pau standingOn: 33 after: 2.
-	beluPosition := Position of: belu standingOn: 10 after: 2.
-	malePosition := Position of: male standingOn: 43 after: 1.
+	pauPosition := Tracker of: pau standingOn: 33 after: 2.
+	beluPosition := Tracker of: belu standingOn: 10 after: 2.
+	malePosition := Tracker of: male standingOn: 43 after: 1.
 	1 to: 7 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
@@ -388,9 +388,9 @@ BoardGameTest >> testABoardGameHasThreePlayersWithAnInitialPosition [
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	male:= aBoardGame findPlayerNamed: #male.
-	pauPosition := Position of: pau standingOn: 1 after: 1.
-	beluPosition := Position of: belu standingOn: 1 after: 1.
-	malePosition := Position of: male standingOn: 1 after: 1.
+	pauPosition := Tracker of: pau standingOn: 1 after: 1.
+	beluPosition := Tracker of: belu standingOn: 1 after: 1.
+	malePosition := Tracker of: male standingOn: 1 after: 1.
 
 	self assert: (aBoardGame ranking) equals: (OrderedCollection newFrom: {pauPosition . malePosition . beluPosition }).
 
@@ -412,7 +412,7 @@ BoardGameTest >> testABoardGameKnowsThePlayersInitialPosition [
 	| aBoardGame pauPosition pau |
 	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
 	pau:= aBoardGame findPlayerNamed: #pau.
-	pauPosition := Position of: pau standingOn: 1 after: 1.
+	pauPosition := Tracker of: pau standingOn: 1 after: 1.
 	
 	self assert: (aBoardGame ranking) equals: (OrderedCollection newFrom: {pauPosition}).
 ]
@@ -423,7 +423,7 @@ BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowADiceAndMoveOnThe
 	| aBoardGame pauPosition pau |
 	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
 	pau:= aBoardGame findPlayerNamed: #pau.
-	pauPosition := Position of: pau standingOn: 5 after: 1.
+	pauPosition := Tracker of: pau standingOn: 5 after: 1.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 		
@@ -447,7 +447,7 @@ BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowThreeDicesSimulta
 	aDeck := self generateDeck.
 	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
 	pau:= aBoardGame findPlayerNamed: #pau.
-	pauPosition := Position of: pau standingOn: 25 after: 1.
+	pauPosition := Tracker of: pau standingOn: 25 after: 1.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition}).
@@ -510,9 +510,9 @@ BoardGameTest >> testAFieldHasNoEffect [
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	male:= aBoardGame findPlayerNamed: #male.
-	pauPosition := Position of: pau standingOn: 31 after: 1.
-	beluPosition := Position of: belu standingOn: 14 after: 1.
-	malePosition := Position of: male standingOn: 11 after: 1.
+	pauPosition := Tracker of: pau standingOn: 31 after: 1.
+	beluPosition := Tracker of: belu standingOn: 14 after: 1.
+	malePosition := Tracker of: male standingOn: 11 after: 1.
 	1 to: 4 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
@@ -711,8 +711,8 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenNoDiceHasBeenThrowsThusItHasNoEff
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
-	pauPosition := Position of: pau  standingOn: 1 after: 1.
-	beluPosition := Position of: belu standingOn: 1 after: 1.
+	pauPosition := Tracker of: pau  standingOn: 1 after: 1.
+	beluPosition := Tracker of: belu standingOn: 1 after: 1.
 
 	doOverCardMove := OneToOneSimpleMove madeBy: pau affecting: {pau}.
 	doOverCard do: doOverCardMove at: aBoardGame.
@@ -733,8 +733,8 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedHadASpeedEffect 
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
-	pauPosition := Position of: pau standingOn: 20 after: 1.
-	beluPosition := Position of: belu standingOn: 11 after: 1.
+	pauPosition := Tracker of: pau standingOn: 20 after: 1.
+	beluPosition := Tracker of: belu standingOn: 11 after: 1.
 		
 	speedCardMove := OneToOneSimpleMove madeBy: pau affecting: pau.
 	speedCard do: speedCardMove at: aBoardGame.
@@ -760,8 +760,8 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedHadAnAcceleratio
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
-	pauPosition := Position of: pau standingOn: 20 after: 1.
-	beluPosition := Position of: belu standingOn: 13 after: 1.
+	pauPosition := Tracker of: pau standingOn: 20 after: 1.
+	beluPosition := Tracker of: belu standingOn: 13 after: 1.
 		
 	accelerationCardMove := OneToAllSimpleMove madeBy: pau.
 	accelerationCard do: accelerationCardMove at: aBoardGame.
@@ -799,7 +799,7 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedWasACancellation
 	cancellationCard do: cancellationCardMove at: aBoardGame.
 	doOverCardMove := OneToOneCancellationCardMove of: speedCard madeBy: belu affecting: pau.
 	doOverCard do: doOverCardMove at: aBoardGame.
-	self assert:  (aBoardGame influentialCardsOf: pau)  equals: (OrderedCollection new).
+	self assert:  (aBoardGame influentialCardsOf: pau)  isEmpty.
 ]
 
 { #category : #playingWithCardsTests }
@@ -813,8 +813,8 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedWasARepeatCard [
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
-	pauPosition := Position of: pau standingOn: 13 after: 1.
-	beluPosition := Position of: belu standingOn: 10 after: 1.
+	pauPosition := Tracker of: pau standingOn: 13 after: 1.
+	beluPosition := Tracker of: belu standingOn: 10 after: 1.
 		
 	aBoardGame nextTurn.
 	repeatCardMove := OneToOneSimpleMove madeBy: belu affecting: pau.
@@ -841,9 +841,9 @@ BoardGameTest >> testAPlayerUsesARepeatWhenAtomicBombEffecttHasBeenAppliedLast [
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	male:= aBoardGame findPlayerNamed: #male.
-	pauPosition := Position of: pau standingOn: 1 after: 2.
-	beluPosition := Position of: belu standingOn: 1 after: 1.
-	malePosition := Position of: male standingOn: 1 after: 1.
+	pauPosition := Tracker of: pau standingOn: 1 after: 2.
+	beluPosition := Tracker of: belu standingOn: 1 after: 1.
+	malePosition := Tracker of: male standingOn: 1 after: 1.
 			
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
@@ -868,9 +868,9 @@ BoardGameTest >> testAPlayerUsesARepeatWhenMoonWalkEffecttHasBeenAppliedLast [
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	male:= aBoardGame findPlayerNamed: #male.
-	pauPosition := Position of: pau standingOn: 3 after: 1.
-	beluPosition := Position of: belu standingOn: 1 after: 1.
-	malePosition := Position of: male standingOn: 12 after: 1.
+	pauPosition := Tracker of: pau standingOn: 3 after: 1.
+	beluPosition := Tracker of: belu standingOn: 1 after: 1.
+	malePosition := Tracker of: male standingOn: 12 after: 1.
 		
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
@@ -893,8 +893,8 @@ BoardGameTest >> testAPlayerUsesARepeatWhenNoDiceHasBeenThrowsThusItHasNoEffect 
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
-	pauPosition := Position of: pau standingOn: 1 after: 1.
-	beluPosition := Position of: belu standingOn: 1 after: 1.
+	pauPosition := Tracker of: pau standingOn: 1 after: 1.
+	beluPosition := Tracker of: belu standingOn: 1 after: 1.
 	
 	repeatCardMove := OneToOneSimpleMove madeBy: belu affecting: belu.
 	repeatCard do: repeatCardMove at: aBoardGame.
@@ -914,8 +914,8 @@ BoardGameTest >> testAPlayerUsesARepeatWhenNoEffectHasBeenAppliedLast [
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
-	pauPosition := Position of: pau standingOn: 10 after: 1.
-	beluPosition := Position of: belu standingOn: 1 after: 1.
+	pauPosition := Tracker of: pau standingOn: 10 after: 1.
+	beluPosition := Tracker of: belu standingOn: 1 after: 1.
 		
 	aBoardGame nextTurn.
 	repeatCardMove := OneToOneSimpleMove madeBy: belu affecting: belu.
@@ -936,8 +936,8 @@ BoardGameTest >> testAPlayerUsesARepeatWhenSpeedEffecttHasBeenAppliedLast [
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
-	pauPosition := Position of: pau standingOn: 38 after: 1.
-	beluPosition := Position of: belu standingOn: 1 after: 1.
+	pauPosition := Tracker of: pau standingOn: 38 after: 1.
+	beluPosition := Tracker of: belu standingOn: 1 after: 1.
 		
 	aBoardGame nextTurn.
 	repeatCardMove := OneToOneSimpleMove madeBy: belu affecting: pau.
@@ -958,8 +958,8 @@ BoardGameTest >> testAPlayerUsesASpeedCardOnHimselfAndItIncrementsInOneTheResult
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
-	pauPosition := Position of: pau standingOn: 19 after: 1.
-	beluPosition := Position of: belu standingOn: 11 after: 1.
+	pauPosition := Tracker of: pau standingOn: 19 after: 1.
+	beluPosition := Tracker of: belu standingOn: 11 after: 1.
 	
 	speedCardMove := OneToOneSimpleMove madeBy: pau affecting: pau.
 	speedCard do: speedCardMove at: aBoardGame.
@@ -981,8 +981,8 @@ BoardGameTest >> testAPlayerUsesAnAccelerationCardAndIncrementsInOneTheResultOfA
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
-	pauPosition := Position of: pau standingOn: 19 after: 1.
-	beluPosition := Position of: belu standingOn: 12 after: 1.
+	pauPosition := Tracker of: pau standingOn: 19 after: 1.
+	beluPosition := Tracker of: belu standingOn: 12 after: 1.
 	
 	accelerationCardMove := OneToAllSimpleMove madeBy: pau.
 	accelerationCard do: accelerationCardMove at: aBoardGame.
@@ -1004,8 +1004,8 @@ BoardGameTest >> testAPlayerUsesAnOverloadCardOnAnotherPlayerAndItReducesInTwoTh
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
-	pauPosition := Position of: pau standingOn: 29 after: 1.
-	beluPosition := Position of: belu standingOn: 25 after: 1.
+	pauPosition := Tracker of: pau standingOn: 29 after: 1.
+	beluPosition := Tracker of: belu standingOn: 25 after: 1.
 		
 	1 to: 6 do: [ :n | aBoardGame nextTurn ].
 	overloadCardMove := OneToOneSimpleMove madeBy: pau affecting: belu.
@@ -1053,7 +1053,7 @@ BoardGameTest >> testTheBoardIsCircular [
 	| aBoardGame pauPosition pau |
 	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
 	pau:= aBoardGame findPlayerNamed: #pau.
-	pauPosition := Position of: pau standingOn: 7 after: 2.
+	pauPosition := Tracker of: pau standingOn: 7 after: 2.
 	1 to: 19 do: [ :n | aBoardGame nextTurn ].
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition}).
 ]
@@ -1065,9 +1065,9 @@ BoardGameTest >> testWhenAPlayerFellsOnAMoonWalkFieldTheRestOfThePlayersMustGoBa
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	male:= aBoardGame findPlayerNamed: #male.
-	pauPosition := Position of: pau standingOn: 1 after: 1.
-	beluPosition := Position of: belu standingOn: 32 after: 1.
-	malePosition := Position of: male standingOn: 30 after: 1.
+	pauPosition := Tracker of: pau standingOn: 1 after: 1.
+	beluPosition := Tracker of: belu standingOn: 32 after: 1.
+	malePosition := Tracker of: male standingOn: 30 after: 1.
 	1 to: 15 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
@@ -1087,9 +1087,9 @@ BoardGameTest >> testWhenAPlayerFellsOnAMoonWalkFieldTheRestOfThePlayersMustGoBa
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	male:= aBoardGame findPlayerNamed: #male.
-	pauPosition := Position of: pau standingOn: 23 after: 2.
-	beluPosition := Position of: belu standingOn: 43 after: 1.
-	malePosition := Position of: male standingOn: 34 after: 1.
+	pauPosition := Tracker of: pau standingOn: 23 after: 2.
+	beluPosition := Tracker of: belu standingOn: 43 after: 1.
+	malePosition := Tracker of: male standingOn: 34 after: 1.
 		
 	1 to: 7 do: [ :n | aBoardGame nextTurn ].
 	self
@@ -1107,9 +1107,9 @@ BoardGameTest >> testWhenAPlayerFellsOnASpeedUpFieldHeAdvancesFourMoreFields [
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	male:= aBoardGame findPlayerNamed: #male.
-	pauPosition := Position of: pau standingOn: 31 after: 1.
-	beluPosition := Position of: belu standingOn: 34 after: 1.
-	malePosition := Position of: male standingOn: 13 after: 1.
+	pauPosition := Tracker of: pau standingOn: 31 after: 1.
+	beluPosition := Tracker of: belu standingOn: 34 after: 1.
+	malePosition := Tracker of: male standingOn: 13 after: 1.
 	1 to: 6 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
@@ -1129,9 +1129,9 @@ BoardGameTest >> testWhenAPlayerFellsOnASpeedUpFieldHeAdvancesFourMoreFieldsAndT
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	male:= aBoardGame findPlayerNamed: #male.
-	pauPosition := Position of: pau standingOn: 2 after: 3.
-	beluPosition := Position of: belu standingOn: 37 after: 2.
-	malePosition := Position of: male standingOn: 14 after: 2.
+	pauPosition := Tracker of: pau standingOn: 2 after: 3.
+	beluPosition := Tracker of: belu standingOn: 37 after: 2.
+	malePosition := Tracker of: male standingOn: 14 after: 2.
 	1 to: 13 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
@@ -1148,9 +1148,9 @@ BoardGameTest >> testWhenAPlayerFellsOnAWormHoleFieldHeMovesBackwardsFourFields 
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	male:= aBoardGame findPlayerNamed: #male.
-	pauPosition := Position of: pau standingOn: 31 after: 1.
-	beluPosition := Position of: belu standingOn: 14 after: 1.
-	malePosition := Position of: male standingOn: 13 after: 1.
+	pauPosition := Tracker of: pau standingOn: 31 after: 1.
+	beluPosition := Tracker of: belu standingOn: 14 after: 1.
+	malePosition := Tracker of: male standingOn: 13 after: 1.
 	1 to: 5 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking
@@ -1170,9 +1170,9 @@ BoardGameTest >> testWhenAPlayerFellsOnAWormHoleFieldHeMovesBackwardsFourFieldsA
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	male:= aBoardGame findPlayerNamed: #male.
-	pauPosition := Position of: pau standingOn: 43 after: 1.
-	beluPosition := Position of: belu standingOn: 15 after: 1.
-	malePosition := Position of: male standingOn: 49 after: 1.
+	pauPosition := Tracker of: pau standingOn: 43 after: 1.
+	beluPosition := Tracker of: belu standingOn: 15 after: 1.
+	malePosition := Tracker of: male standingOn: 49 after: 1.
 		
 	1 to: 5 do: [ :n | aBoardGame nextTurn ].
 	self
@@ -1190,9 +1190,9 @@ BoardGameTest >> testWhenAPlayerFellsOnAnAtomicBombAllPlayersMoveToFieldOne [
 	pau:= aBoardGame findPlayerNamed: #pau.
 	belu:= aBoardGame findPlayerNamed: #belu.
 	male:= aBoardGame findPlayerNamed: #male.
-	pauPosition := Position of: pau standingOn: 1 after: 1.
-	beluPosition := Position of: belu standingOn: 1 after: 1.
-	malePosition := Position of: male standingOn: 1 after: 1.
+	pauPosition := Tracker of: pau standingOn: 1 after: 1.
+	beluPosition := Tracker of: belu standingOn: 1 after: 1.
+	malePosition := Tracker of: male standingOn: 1 after: 1.
 	1 to: 7 do: [ :n | aBoardGame nextTurn ].
 	self
 		assert: aBoardGame ranking

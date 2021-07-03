@@ -3,8 +3,8 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'fields',
-		'playersPosition',
-		'effectsHistory'
+		'effectsHistory',
+		'positionsTracker'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -38,7 +38,7 @@ Board >> findNewPositionWhen: player hasMoved: aNumberOfFields from: oldPosition
 	totalFields := oldPosition field + aNumberOfFields.
 	newFieldNumber := self lookUpResultingFieldNumberBasingOn: totalFields.
 	newRoundNumber :=  oldPosition round + (self addOrSubstractOneIfThePlayerHasChangedRound: totalFields).
-	newPosition := Position of: player standingOn: newFieldNumber after: newRoundNumber.
+	newPosition := Tracker of: player standingOn: newFieldNumber after: newRoundNumber.
 	newPosition := self validate: newPosition.
 	^ newPosition
 	
@@ -47,7 +47,7 @@ Board >> findNewPositionWhen: player hasMoved: aNumberOfFields from: oldPosition
 { #category : #initialize }
 Board >> initializeHaving: someFields [ 
 	fields := someFields .
-	playersPosition:= OrderedCollection new.
+	positionsTracker:= OrderedCollection new.
 	effectsHistory:= OrderedCollection new.
 ]
 
@@ -116,13 +116,13 @@ Board >> move: aNumberOfFields thePlayerOf: oldPosition [
 
 { #category : #'actions - move' }
 Board >> moveAllPlayers: aNumberOfFields exceptThePlayerOf: aPosition [
-	playersPosition  := playersPosition reject: [ :position | position=aPosition ] thenCollect: [ :position | self findNewPositionWhen: (position player) hasMoved: aNumberOfFields from: position].
-	playersPosition add: aPosition .
+	positionsTracker  := positionsTracker reject: [ :position | position=aPosition ] thenCollect: [ :position | self findNewPositionWhen: (position player) hasMoved: aNumberOfFields from: position].
+	positionsTracker add: aPosition .
 ]
 
 { #category : #'actions - move' }
 Board >> moveAllPlayersTo: aField [
-	playersPosition := playersPosition collect: [ :position | Position of: (position player) standingOn: 1 after: (position round) ]
+	positionsTracker := positionsTracker collect: [ :position | Tracker of: (position player) standingOn: 1 after: (position round) ]
 	
 ]
 
@@ -133,24 +133,24 @@ Board >> numberOfFields [
 
 { #category : #actions }
 Board >> orderPlayersPosition [
-	playersPosition
+	positionsTracker
 		sort: [ :aPosition :anotherPosition | aPosition >= anotherPosition ]
 	
 ]
 
 { #category : #'actions - move' }
 Board >> placeAtTheBeggining: players [
-	playersPosition := players collect: [ :aPlayer | Position of: aPlayer standingOn: 1 after: 1 ].
+	positionsTracker := players collect: [ :aPlayer | Tracker of: aPlayer standingOn: 1 after: 1 ].
 ]
 
 { #category : #accessing }
 Board >> playersPosition [
-	^ playersPosition
+	^ positionsTracker
 ]
 
 { #category : #accessing }
 Board >> positionOf: aPlayer [
- ^ playersPosition detect: [ :aPosition | aPosition player = aPlayer].
+ ^ positionsTracker detect: [ :aPosition | aPosition player = aPlayer].
 ]
 
 { #category : #'actions - effects' }
@@ -169,8 +169,8 @@ Board >> repeatLastEffectAppliedOn: aPlayer [
 
 { #category : #actions }
 Board >> replace: oldPosition with: newPosition [
-	playersPosition remove: oldPosition.
-	playersPosition add: newPosition
+	positionsTracker remove: oldPosition.
+	positionsTracker add: newPosition
 	
 ]
 
@@ -181,6 +181,6 @@ Board >> searchFieldFor: aPosition [
 
 { #category : #validations }
 Board >> validate: aPosition [
- (aPosition round <= 0) ifTrue: [^( Position of: (aPosition player) standingOn: 1 after: 1)] ifFalse:[^aPosition].
+ (aPosition round <= 0) ifTrue: [^( Tracker of: (aPosition player) standingOn: 1 after: 1)] ifFalse:[^aPosition].
 	
 ]

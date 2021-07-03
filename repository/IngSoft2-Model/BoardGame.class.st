@@ -10,7 +10,8 @@ Class {
 		'playersPosition',
 		'board',
 		'cardsHistory',
-		'deck'
+		'deck',
+		'cardHandler'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -105,6 +106,7 @@ BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: 
 	isFinished := false.
 	spinsNeededToWin := aSpinNumber.
 	cardsHistory:= OrderedCollection new.
+	cardHandler:= CardHandler managing: aDeck for: players. 
 ]
 
 { #category : #accessing }
@@ -162,7 +164,7 @@ BoardGame >> repeatLastEffectAppliedOn: aPlayer [
 
 { #category : #validations }
 BoardGame >> validate: aPosition [
- (aPosition round <= 0) ifTrue: [^( Position of: (aPosition player) standingOn: 1 after: 1)] ifFalse:[^aPosition].
+ (aPosition round <= 0) ifTrue: [^( Tracker of: (aPosition player) standingOn: 1 after: 1)] ifFalse:[^aPosition].
 ]
 
 { #category : #validations }
