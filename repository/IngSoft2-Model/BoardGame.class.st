@@ -27,13 +27,23 @@ BoardGame >> addToCardsRecord: aCard [
 ]
 
 { #category : #'actions - cards' }
+BoardGame >> affect: player with: card [ 
+	cardHandler influence: player with: card
+]
+
+{ #category : #'actions - cards' }
+BoardGame >> affectAllPlayers: card [
+	cardHandler influenceAllPlayer: card
+]
+
+{ #category : #'actions - cards' }
 BoardGame >> applyToAllPlayers: aBlock [
 	(players) do: [ :player | aBlock value: player ]
 ]
 
 { #category : #'actions - cards' }
 BoardGame >> cardsInHandOf: aPlayer [
-	^ aPlayer cardsInHand.
+	^ cardHandler cardsInHandOf: aPlayer.
 ]
 
 { #category : #private }
@@ -43,9 +53,7 @@ BoardGame >> changeCurrentStateToFinished [
 
 { #category : #'actions - cards' }
 BoardGame >> dealACardToPlayerOf: aPosition [ 
-	| card |
-	card:= deck pickUp.
-	(aPosition player) pickUp: card.
+	cardHandler deliverACardTo: (aPosition player).
 ]
 
 { #category : #private }
@@ -80,7 +88,7 @@ BoardGame >> errorMessageTheGameHasFinished [
 BoardGame >> fieldsToMoveAfter: player obtained: sumOfAllDices [
 	| result |
 	result:= sumOfAllDices.
-	(player influentialCards) do: [ :aCard | result :=(result + aCard action) ].
+	(cardHandler influentialCardsOf: player) do: [ :aCard | result :=(result + aCard action) ].
 	^ result.
 ]
 
@@ -91,7 +99,7 @@ BoardGame >> findPlayerNamed: aName [
 
 { #category : #'actions - cards' }
 BoardGame >> influentialCardsOf: aPlayer [
-	^ aPlayer influentialCards.
+	^ cardHandler influentialCardsOf: aPlayer.
 ]
 
 { #category : #initialize }
@@ -100,7 +108,7 @@ BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: 
 	deck:= aDeck.
 	diceCup := aDiceCup.
 	board:= aBoard.
-	players := OrderedCollection newFrom:(aGroupOfPlayers collect:[:playerName | Player named: playerName with: (aDeck pickUp: 2)]).
+	players := aGroupOfPlayers.
 	board placeAtTheBeggining: players.
 	playersTurnIdentificator := SequenceSimulator newFrom: (aGroupOfPlayers size).
 	isFinished := false.
@@ -123,6 +131,11 @@ BoardGame >> letTheLastCardPlayedDo: aMove [
 { #category : #private }
 BoardGame >> lookForPlayerWhoseTurnItIs [
 	^ players at: (playersTurnIdentificator findNextIndex).
+]
+
+{ #category : #'actions - cards' }
+BoardGame >> make: player lay: card [
+	cardHandler make: player lay: card.
 ]
 
 { #category : #actions }
@@ -152,7 +165,7 @@ BoardGame >> ranking [
 
 { #category : #'actions - cards' }
 BoardGame >> removes: aCard from: aPlayer [ 
-	aPlayer cancel: aCard.
+	cardHandler cancel: aCard of: aPlayer.
 ]
 
 { #category : #'actions - effects' }

@@ -140,7 +140,7 @@ Board >> orderPlayersPosition [
 
 { #category : #'actions - move' }
 Board >> placeAtTheBeggining: players [
-	positionsTracker := players collect: [ :aPlayer | Tracker of: aPlayer standingOn: 1 after: 1 ].
+	positionsTracker := OrderedCollection newFrom: (players collect: [ :aPlayer | Tracker of: aPlayer standingOn: 1 after: 1 ]).
 ]
 
 { #category : #accessing }

@@ -11,8 +11,8 @@ Acceleration >> action [
 
 { #category : #actions }
 Acceleration >> apply: aMove at: aBoardGame [
-	self veryfyIf: aMove canBeDoneAt: aBoardGame.
-	aBoardGame applyToAllPlayers: [ :player | player isInfluencedBy: self ].
+	self veryfyIf: aMove canBeDoneAt: aBoardGame. "sacarlo de aqui"
+	aBoardGame affectAllPlayers: self. 
 ]
 
 { #category : #actions }

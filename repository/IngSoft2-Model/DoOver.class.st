@@ -6,6 +6,6 @@ Class {
 
 { #category : #actions }
 DoOver >> do: aMove at: aBoardGame [
-	(aMove currentPlayer) lays: self.
+	aBoardGame make: (aMove currentPlayer) lay: self.
 	aBoardGame letTheLastCardPlayedDo: aMove.
 ]

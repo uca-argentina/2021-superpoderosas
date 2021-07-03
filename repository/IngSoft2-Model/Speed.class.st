@@ -12,7 +12,7 @@ Speed >> action [
 { #category : #actions }
 Speed >> apply: aMove at: aBoardGame [
 	self veryfyIf: aMove canBeDoneAt: aBoardGame.
-	(aMove playerAffected ) isInfluencedBy: self.
+	aBoardGame affect: (aMove playerAffected) with: self.
 ]
 
 { #category : #actions }
