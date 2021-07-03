@@ -5,9 +5,9 @@ Class {
 }
 
 { #category : #actions }
-SpeedUp >> applyTheEffectOn: aPosition of: aBoardGame [
+SpeedUp >> applyTheEffectOn: aPosition of: aBoard [
 
-	aBoardGame move: 4 thePlayerOf: aPosition.
+	aBoard move: 4 thePlayerOf: aPosition.
 	super.
 ]
 

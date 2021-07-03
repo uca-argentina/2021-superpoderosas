@@ -20,12 +20,6 @@ BoardGame class >> playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoa
 		^ self new initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
 ]
 
-{ #category : #private }
-BoardGame >> addOrSubstractOneIfThePlayerHasChangedRound: totalFields [
-	^ (totalFields-1) // (board numberOfFields).
-
-]
-
 { #category : #'actions - cards' }
 BoardGame >> addToCardsRecord: aCard [ 
 	cardsHistory add: aCard.
@@ -127,17 +121,6 @@ BoardGame >> letTheLastCardPlayedDo: aMove [
 { #category : #private }
 BoardGame >> lookForPlayerWhoseTurnItIs [
 	^ players at: (playersTurnIdentificator findNextIndex).
-]
-
-{ #category : #private }
-BoardGame >> lookUpResultingFieldNumberBasingOn: totalFields [
-	| aNumberOfFields |
-	aNumberOfFields := (board numberOfFields).
-	^ totalFields = aNumberOfFields
-		ifTrue: [ aNumberOfFields ]
-		ifFalse: [ totalFields > 0
-				ifTrue: [ totalFields % aNumberOfFields ]
-				ifFalse: [aNumberOfFields + totalFields] ]
 ]
 
 { #category : #actions }

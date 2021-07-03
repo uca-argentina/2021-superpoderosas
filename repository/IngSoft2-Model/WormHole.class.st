@@ -5,9 +5,9 @@ Class {
 }
 
 { #category : #actions }
-WormHole >> applyTheEffectOn: aPosition of: aBoardGame [
+WormHole >> applyTheEffectOn: aPosition of: aBoard [
 
-	aBoardGame move: -4 thePlayerOf: aPosition.
+	aBoard move: -4 thePlayerOf: aPosition.
 	super.
 ]
 

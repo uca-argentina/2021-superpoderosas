@@ -14,25 +14,25 @@ Board class >> has: fields [
 	^self new initializeHaving: fields.
 ]
 
-{ #category : #initialize }
+{ #category : #private }
 Board >> addOrSubstractOneIfThePlayerHasChangedRound: totalFields [
 	^ (totalFields-1) // (self numberOfFields).
 	
 ]
 
-{ #category : #initialize }
+{ #category : #'actions - effects' }
 Board >> applyAt: aBoardGame lastEffectTo: aPlayer [
 	effectsHistory last applyTheEffectOn: (self positionOf: aPlayer) of: self usedAt: aBoardGame.
 	self orderPlayersPosition.
 ]
 
-{ #category : #initialize }
+{ #category : #'actions - effects' }
 Board >> applyLastEffectTo: aPlayer [
 	effectsHistory last applyTheEffectOn: (self positionOf: aPlayer) of: self.
 	self orderPlayersPosition.
 ]
 
-{ #category : #initialize }
+{ #category : #private }
 Board >> findNewPositionWhen: player hasMoved: aNumberOfFields from: oldPosition [
 	| totalFields newPosition newRoundNumber newFieldNumber |
 	totalFields := oldPosition field + aNumberOfFields.
@@ -51,7 +51,7 @@ Board >> initializeHaving: someFields [
 	effectsHistory:= OrderedCollection new.
 ]
 
-{ #category : #initialize }
+{ #category : #private }
 Board >> lookUpResultingFieldNumberBasingOn: totalFields [
 	| aNumberOfFields |
 	aNumberOfFields := self numberOfFields.
@@ -63,7 +63,7 @@ Board >> lookUpResultingFieldNumberBasingOn: totalFields [
 	
 ]
 
-{ #category : #initialize }
+{ #category : #'actions - move' }
 Board >> move: player along: result [
 	| oldPosition |
 	oldPosition := self positionOf: player.
@@ -71,7 +71,7 @@ Board >> move: player along: result [
 	self orderPlayersPosition.
 ]
 
-{ #category : #initialize }
+{ #category : #'actions - move' }
 Board >> move: player along: result on: aBoardGame [
 	| oldPosition |
 	oldPosition := self positionOf: player.
@@ -79,7 +79,7 @@ Board >> move: player along: result on: aBoardGame [
 	self orderPlayersPosition.
 ]
 
-{ #category : #initialize }
+{ #category : #private }
 Board >> move: aPlayer over: aNumberOfFields consideringAnEffectFrom: oldPosition [
 	| newPosition field effect |
 	newPosition := self move: aPlayer over: aNumberOfFields from: oldPosition.
@@ -89,7 +89,7 @@ Board >> move: aPlayer over: aNumberOfFields consideringAnEffectFrom: oldPositio
 	
 ]
 
-{ #category : #initialize }
+{ #category : #private }
 Board >> move: aPlayer over: aNumberOfFields consideringAnEffectFrom: oldPosition on: aBoardGame [
 	| newPosition field effect |
 	newPosition := self move: aPlayer over: aNumberOfFields from: oldPosition.
@@ -99,7 +99,7 @@ Board >> move: aPlayer over: aNumberOfFields consideringAnEffectFrom: oldPositio
 	
 ]
 
-{ #category : #initialize }
+{ #category : #private }
 Board >> move: player over: aNumberOfFields from: oldPosition [
 	| newPosition |
 	newPosition := self findNewPositionWhen: player hasMoved: aNumberOfFields from: oldPosition.
@@ -108,19 +108,19 @@ Board >> move: player over: aNumberOfFields from: oldPosition [
 	
 ]
 
-{ #category : #initialize }
+{ #category : #'actions - move' }
 Board >> move: aNumberOfFields thePlayerOf: oldPosition [
 	self move: (oldPosition player) over: aNumberOfFields from: oldPosition.
 	
 ]
 
-{ #category : #initialize }
+{ #category : #'actions - move' }
 Board >> moveAllPlayers: aNumberOfFields exceptThePlayerOf: aPosition [
 	playersPosition  := playersPosition reject: [ :position | position=aPosition ] thenCollect: [ :position | self findNewPositionWhen: (position player) hasMoved: aNumberOfFields from: position].
 	playersPosition add: aPosition .
 ]
 
-{ #category : #initialize }
+{ #category : #'actions - move' }
 Board >> moveAllPlayersTo: aField [
 	playersPosition := playersPosition collect: [ :position | Position of: (position player) standingOn: 1 after: (position round) ]
 	
@@ -131,14 +131,14 @@ Board >> numberOfFields [
 	 ^ fields size.
 ]
 
-{ #category : #initialize }
+{ #category : #actions }
 Board >> orderPlayersPosition [
 	playersPosition
 		sort: [ :aPosition :anotherPosition | aPosition >= anotherPosition ]
 	
 ]
 
-{ #category : #initialize }
+{ #category : #'actions - move' }
 Board >> placeAtTheBeggining: players [
 	playersPosition := players collect: [ :aPlayer | Position of: aPlayer standingOn: 1 after: 1 ].
 ]
@@ -148,38 +148,38 @@ Board >> playersPosition [
 	^ playersPosition
 ]
 
-{ #category : #initialize }
+{ #category : #accessing }
 Board >> positionOf: aPlayer [
  ^ playersPosition detect: [ :aPosition | aPosition player = aPlayer].
 ]
 
-{ #category : #initialize }
+{ #category : #'actions - effects' }
 Board >> repeatAt: aBoardGame lastEffectAppliedOn: aPlayer [
 	effectsHistory isEmpty
 		ifFalse:
 			[ self applyAt: aBoardGame lastEffectTo: aPlayer].
 ]
 
-{ #category : #initialize }
+{ #category : #'actions - effects' }
 Board >> repeatLastEffectAppliedOn: aPlayer [
 	effectsHistory isEmpty
 		ifFalse:
 			[ self applyLastEffectTo: aPlayer ].
 ]
 
-{ #category : #initialize }
+{ #category : #actions }
 Board >> replace: oldPosition with: newPosition [
 	playersPosition remove: oldPosition.
 	playersPosition add: newPosition
 	
 ]
 
-{ #category : #initialize }
+{ #category : #actions }
 Board >> searchFieldFor: aPosition [
 	^ fields at: aPosition field
 ]
 
-{ #category : #initialize }
+{ #category : #validations }
 Board >> validate: aPosition [
  (aPosition round <= 0) ifTrue: [^( Position of: (aPosition player) standingOn: 1 after: 1)] ifFalse:[^aPosition].
 	
