@@ -13,14 +13,14 @@ MoonWalk class >> with: aNumberOfFildes [
 ]
 
 { #category : #actions }
-MoonWalk >> applyTheEffectOn: aPosition of: aBoard [
-	aBoard moveAllPlayers: (fieldsToMoveBackwars negated) exceptThePlayerOf: aPosition.
+MoonWalk >> effectTriggeredBy: player on: aBoard [
+	aBoard moveAllPlayers: (fieldsToMoveBackwars negated) except: player.
 	super.
 ]
 
 { #category : #actions }
-MoonWalk >> applyTheEffectOn: newPosition of: aBoard usedAt: aBoardGame [
-	aBoard moveAllPlayers: (fieldsToMoveBackwars negated) exceptThePlayerOf: newPosition.
+MoonWalk >> effectTriggeredBy: player on: aBoard of: aBoardGame [
+	aBoard moveAllPlayers: (fieldsToMoveBackwars negated) except: player.
 	super.
 ]
 

@@ -5,11 +5,11 @@ Class {
 }
 
 { #category : #actions }
-NoEffect >> applyTheEffectOn: aPosition of: aBoard [
+NoEffect >> effectTriggeredBy: player on: aBoard [
 	super.
 ]
 
 { #category : #actions }
-NoEffect >> applyTheEffectOn: newPosition of: aBoard usedAt: aBoardGame [
+NoEffect >> effectTriggeredBy: player on: aBoard of: aBoardGame [
 	super.
 ]

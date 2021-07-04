@@ -5,14 +5,13 @@ Class {
 }
 
 { #category : #actions }
-WormHole >> applyTheEffectOn: aPosition of: aBoard [
-
-	aBoard move: -4 thePlayerOf: aPosition.
-	super.
+WormHole >> effectTriggeredBy: aPosition on: aBoard [
+	aBoard move: aPosition over: -4.
+	super
 ]
 
 { #category : #actions }
-WormHole >> applyTheEffectOn: newPosition of: aBoard usedAt: aBoardGame [
-	aBoard move: -4 thePlayerOf: newPosition.
-	super.
+WormHole >> effectTriggeredBy: newPosition on: aBoard of: aBoardGame [
+	aBoard move: newPosition over: -4.
+	super
 ]

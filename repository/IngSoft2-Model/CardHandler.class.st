@@ -46,6 +46,7 @@ CardHandler >> influence: player with: card [
 	playerInfluentialCards := influentialCards at:player.
 	playerInfluentialCards add: card.
 	influentialCards at: player put: playerInfluentialCards.
+	"(influentialCards at: player) add:Card"
 ]
 
 { #category : #'actions - cards' }
@@ -60,9 +61,11 @@ CardHandler >> influentialCardsOf: player [
 
 { #category : #initialize }
 CardHandler >> initializeManaging: aDeck for: players [ 
+	| values |
 	deck:= aDeck.
 	cardsInHand:= OrderedDictionary newFromKeys: players andValues:(players collect:[:player |(aDeck pickUp:2)]).
-	influentialCards:= OrderedDictionary newFromKeys: players andValues: (OrderedCollection new: players size withAll: OrderedCollection new).
+	values:= players collect: [ :player | OrderedCollection new ].
+	influentialCards:= OrderedDictionary newFromKeys: players andValues: values.
 
 ]
 

@@ -5,13 +5,13 @@ Class {
 }
 
 { #category : #actions }
-CardDealer >> applyTheEffectOn: aPosition of: aBoardGame [ 
-	aBoardGame dealACardToPlayerOf: aPosition.
+CardDealer >> effectTriggeredBy: player on: aBoardGame [ 
+	aBoardGame dealACardTo: player.
 	super.
 ]
 
 { #category : #actions }
-CardDealer >> applyTheEffectOn: newPosition of: aBoard usedAt: aBoardGame [
-	aBoardGame dealACardToPlayerOf: newPosition.
+CardDealer >> effectTriggeredBy: player on: aBoard of: aBoardGame [
+	aBoardGame dealACardTo: player.
 	super.
 ]

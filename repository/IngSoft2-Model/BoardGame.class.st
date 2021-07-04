@@ -52,8 +52,8 @@ BoardGame >> changeCurrentStateToFinished [
 ]
 
 { #category : #'actions - cards' }
-BoardGame >> dealACardToPlayerOf: aPosition [ 
-	cardHandler deliverACardTo: (aPosition player).
+BoardGame >> dealACardTo: player [ 
+	cardHandler deliverACardTo:player.
 ]
 
 { #category : #private }

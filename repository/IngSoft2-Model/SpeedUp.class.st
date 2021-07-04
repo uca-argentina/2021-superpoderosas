@@ -5,14 +5,13 @@ Class {
 }
 
 { #category : #actions }
-SpeedUp >> applyTheEffectOn: aPosition of: aBoard [
-
-	aBoard move: 4 thePlayerOf: aPosition.
-	super.
+SpeedUp >> effectTriggeredBy: player on: aBoard [
+	aBoard move: player over: 4.
+	super
 ]
 
 { #category : #actions }
-SpeedUp >> applyTheEffectOn: newPosition of: aBoard usedAt: aBoardGame [
-	aBoard move: 4 thePlayerOf: newPosition.
-	super.
+SpeedUp >> effectTriggeredBy: newPosition on: aBoard of: aBoardGame [
+	aBoard move: newPosition over: 4.
+	super
 ]

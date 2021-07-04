@@ -5,11 +5,11 @@ Class {
 }
 
 { #category : #actions }
-Effect >> applyTheEffectOn: aPosition of: aBoardGame [ 
+Effect >> effectTriggeredBy: aPosition on: aBoardGame [ 
 	^self subclassResponsibility.
 ]
 
 { #category : #actions }
-Effect >> applyTheEffectOn: newPosition of: aBoard usedAt: aBoardGame [
+Effect >> effectTriggeredBy: newPosition on: aBoard of: aBoardGame [
 	^self subclassResponsibility.
 ]

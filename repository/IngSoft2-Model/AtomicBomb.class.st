@@ -5,15 +5,14 @@ Class {
 }
 
 { #category : #actions }
-AtomicBomb >> applyTheEffectOn: aPosition of: aBoard [
+AtomicBomb >> effectTriggeredBy: player on: aBoard [
 
 	aBoard moveAllPlayersTo: 1.
 	super.
 ]
 
 { #category : #actions }
-AtomicBomb >> applyTheEffectOn: newPosition of: aBoard usedAt: aBoardGame [
-
+AtomicBomb >> effectTriggeredBy: player on: aBoard of: aBoardGame [
 	aBoard moveAllPlayersTo: 1.
 	super.
 ]
