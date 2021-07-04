@@ -34,7 +34,7 @@ CardHandler >> cancel: cardToBeCancelled with: aCard [
 
 { #category : #accessing }
 CardHandler >> cardsInHandOf: player [
-	^ cardsInHand at:player.
+	^ cardsInHand at: player.
 ]
 
 { #category : #'actions - cards' }

@@ -503,6 +503,40 @@ BoardGameTest >> testACancellationCardCanAlsoBeUsedByAPlayerIfItIsNotHisTurn [
 		isEmpty.
 ]
 
+{ #category : #playingWithCardsTests }
+BoardGameTest >> testACardDealearGivesAPlayerACard [
+	|aBoardGame aGroupOfPlayers repeatCard aSequenceOfDiceResults cards speedCard |	
+	speedCard:= Speed new.
+	repeatCard := Repetition new.
+	aGroupOfPlayers := {#pau . #belu}.
+	aSequenceOfDiceResults := #(9 10 7 3).
+	cards := { speedCard . repeatCard }.
+	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
+		
+	self assert: (aBoardGame cardsInHandOf: #pau) equals: (OrderedCollection newFrom: { speedCard . repeatCard }).
+	aBoardGame nextTurn.	
+	self assert: (aBoardGame cardsInHandOf: #pau) equals: (OrderedCollection newFrom: { speedCard . repeatCard . speedCard }).
+	
+]
+
+{ #category : #playingWithCardsTests }
+BoardGameTest >> testACardDealearGivesAPlayerACardAndHeUsesItInmediately [
+	|aBoardGame aGroupOfPlayers repeatCard aSequenceOfDiceResults cards speedCard |	
+	speedCard:= Speed new.
+	repeatCard := Repetition new.
+	aGroupOfPlayers := {#pau . #belu}.
+	aSequenceOfDiceResults := #(9 10 7 3).
+	cards := { speedCard . repeatCard }.
+	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
+		
+	aBoardGame nextTurn.
+	aBoardGame nextTurn.
+	aBoardGame affect: #pau using: speedCard by: #pau.
+		
+	self assert: (aBoardGame influentialCardsOf: #pau) equals: (OrderedCollection newFrom: { speedCard }).
+	
+]
+
 { #category : #fieldsEffectTests }
 BoardGameTest >> testAFieldHasNoEffect [
 	| aBoardGame pauPosition beluPosition malePosition |
@@ -605,6 +639,22 @@ BoardGameTest >> testAPlayerMustGoThreeTimesAroundTheBoardToWin [
 	aBoardGame := self newBoardGameWithASinglePlayerAndASingleRound.
 	1 to: 19 do: [ :n | aBoardGame nextTurn ].
 	self assert: aBoardGame winner equals: #pau.	
+]
+
+{ #category : #playingWithCardsTests }
+BoardGameTest >> testAPlayerThrowsACardAndItIsNoLongerInHand [
+	|aBoardGame aGroupOfPlayers repeatCard aSequenceOfDiceResults cards speedCard |	
+	speedCard:= Speed new.
+	repeatCard := Repetition new.
+	aGroupOfPlayers := {#pau . #belu}.
+	aSequenceOfDiceResults := #(9 10 7 3).
+	cards := { speedCard . repeatCard }.
+	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
+		
+	self assert: (aBoardGame cardsInHandOf: #pau) equals: (OrderedCollection newFrom: { speedCard . repeatCard }).
+	aBoardGame affect: #pau using: speedCard by: #pau.	
+	self assert: (aBoardGame cardsInHandOf: #pau) equals: (OrderedCollection newFrom: { repeatCard }).
+	
 ]
 
 { #category : #playingWithCardsTests }
