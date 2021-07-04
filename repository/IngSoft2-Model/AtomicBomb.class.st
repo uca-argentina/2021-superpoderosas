@@ -6,7 +6,6 @@ Class {
 
 { #category : #actions }
 AtomicBomb >> effectTriggeredBy: player on: aBoard [
-
 	aBoard moveAllPlayersTo: 1.
 	super.
 ]
