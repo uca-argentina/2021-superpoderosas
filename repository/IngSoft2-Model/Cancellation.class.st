@@ -1,16 +1,10 @@
 Class {
 	#name : #Cancellation,
-	#superclass : #Instantaneous,
+	#superclass : #Card,
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #actions }
-Cancellation >> apply: aMove at: aBoardGame [
-	aMove apply: [ :player | aBoardGame removes: (aMove cardToBeCancelled) from: player ] at: aBoardGame.
-]
-
-{ #category : #actions }
-Cancellation >> do: aMove at: aBoardGame [ 
-	self apply: aMove at: aBoardGame.
-	self laysFrom: aMove on: aBoardGame.
+Cancellation >> thrownBy: aPlayer aims: aTarget on: aBoardGame handledBy: cardHandler [ 
+	cardHandler cancel: aTarget with: self.
 ]

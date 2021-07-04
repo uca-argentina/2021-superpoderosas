@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'deck',
 		'cardsInHand',
-		'influentialCards'
+		'influentialCards',
+		'cardsHistory'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -14,10 +15,21 @@ CardHandler class >> managing: aDeck for: players [
 	^ self new initializeManaging: aDeck for: players
 ]
 
+{ #category : #'error messages' }
+CardHandler >> addToCardsRecord: aCard [ 
+	cardsHistory add: aCard.
+]
+
 { #category : #'actions - cards' }
-CardHandler >> cancel: aCard of: player [
-	(influentialCards at: player) remove: aCard
-											ifAbsent: [ Error signal: self errorMessageAPlayerMustHaveTheCardToBeRemoved ]
+CardHandler >> affect: aTarget using: aCard by: aPlayer on: aBoardGame [
+	self make: aPlayer lay: aCard.
+	aCard thrownBy: aPlayer aims: aTarget on: aBoardGame handledBy: self.
+]
+
+{ #category : #'actions - cards' }
+CardHandler >> cancel: cardToBeCancelled with: aCard [
+	(influentialCards) valuesDo: [ :playerInfluentialCards | ( playerInfluentialCards remove: cardToBeCancelled ifAbsent:[])].
+	self addToCardsRecord: aCard.
 ]
 
 { #category : #accessing }
@@ -46,12 +58,13 @@ CardHandler >> influence: player with: card [
 	playerInfluentialCards := influentialCards at:player.
 	playerInfluentialCards add: card.
 	influentialCards at: player put: playerInfluentialCards.
-	"(influentialCards at: player) add:Card"
+	self addToCardsRecord: card.
 ]
 
 { #category : #'actions - cards' }
-CardHandler >> influenceAllPlayer: card [ 
-	influentialCards do: [ :playerInfluentialCards | playerInfluentialCards add: card ]
+CardHandler >> influenceAllPlayers: card [ 
+	influentialCards do: [ :playerInfluentialCards | playerInfluentialCards add: card ].
+	self addToCardsRecord: card 
 ]
 
 { #category : #accessing }
@@ -61,15 +74,28 @@ CardHandler >> influentialCardsOf: player [
 
 { #category : #initialize }
 CardHandler >> initializeManaging: aDeck for: players [ 
-	| values |
+	| playersInfluentialCards |
 	deck:= aDeck.
 	cardsInHand:= OrderedDictionary newFromKeys: players andValues:(players collect:[:player |(aDeck pickUp:2)]).
-	values:= players collect: [ :player | OrderedCollection new ].
-	influentialCards:= OrderedDictionary newFromKeys: players andValues: values.
+	playersInfluentialCards:= players collect: [ :player | OrderedCollection new ].
+	influentialCards:= OrderedDictionary newFromKeys: players andValues: playersInfluentialCards.
+	cardsHistory:= OrderedCollection new.
 
 ]
 
 { #category : #'actions - cards' }
 CardHandler >> make: player lay: aCard [
-	(cardsInHand at:player) remove: aCard ifAbsent: [Error signal: self errorMessageAPlayerMustHaveTheCardInHand ].
+	(cardsInHand at:player) remove: aCard ifAbsent: [Error signal: self errorMessageAPlayerMustHaveTheCardInHand].
+]
+
+{ #category : #'actions - cards' }
+CardHandler >> repeatLastCardThrownBy: aPlayer affecting: aTarget on: aBoardGame [
+	(cardsHistory isEmpty) 
+	ifFalse: [ (cardsHistory last) thrownBy: aPlayer aims: aTarget on: aBoardGame handledBy: self].
+]
+
+{ #category : #'actions - cards' }
+CardHandler >> with: aCard repeatLastEffectAppliedOn: aBoardGame targeting: aPlayer [
+	aBoardGame repeatLastEffectAppliedOn: aPlayer.
+	self addToCardsRecord: aCard.
 ]

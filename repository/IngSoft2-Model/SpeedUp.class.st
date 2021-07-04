@@ -5,13 +5,7 @@ Class {
 }
 
 { #category : #actions }
-SpeedUp >> effectTriggeredBy: player on: aBoard [
-	aBoard move: player over: 4.
-	super
-]
+SpeedUp >> effectTriggeredBy: aPlayer on: aBoard of: aBoardGame [
+	aBoard move: aPlayer over: 4.
 
-{ #category : #actions }
-SpeedUp >> effectTriggeredBy: newPosition on: aBoard of: aBoardGame [
-	aBoard move: newPosition over: 4.
-	super
 ]

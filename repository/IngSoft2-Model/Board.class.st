@@ -26,21 +26,9 @@ Board class >> verifyIfItHasAtLeastTwoFields: numberOfFields [.
 		ifTrue: [ Error signal: self errorMessageNumberOfFieldsMustBeGreaterThanOne ] .
 ]
 
-{ #category : #private }
-Board >> addOrSubstractOneIfThePlayerHasChangedRound: totalFields [
-	^ (totalFields-1) // (self numberOfFields).
-	
-]
-
 { #category : #'actions - effects' }
 Board >> applyAt: aBoardGame lastEffectTo: aPlayer [
 	effectsHistory last effectTriggeredBy: aPlayer on: self of: aBoardGame.
-	self orderPlayersPosition.
-]
-
-{ #category : #'actions - effects' }
-Board >> applyLastEffectTo: aPlayer [
-	effectsHistory last effectTriggeredBy: (self positionOf: aPlayer) on: self.
 	self orderPlayersPosition.
 ]
 
@@ -52,11 +40,17 @@ Board >> considerEffecrOf: field on: aBoardGame for: player [
 ]
 
 { #category : #private }
+Board >> determinateAdditionalRoundsBasingOn: totalFields [
+	^ (totalFields-1) // (self numberOfFields).
+	
+]
+
+{ #category : #private }
 Board >> findNewPositionWhen: player hasMoved: aNumberOfFields from: oldPosition [
 	| totalFields newPosition newRoundNumber newFieldNumber |
 	totalFields := oldPosition field + aNumberOfFields.
 	newFieldNumber := self lookUpResultingFieldNumberBasingOn: totalFields.
-	newRoundNumber :=  oldPosition round + (self addOrSubstractOneIfThePlayerHasChangedRound: totalFields).
+	newRoundNumber :=  oldPosition round + (self determinateAdditionalRoundsBasingOn: totalFields).
 	newPosition := Tracker of: player standingOn: newFieldNumber after: newRoundNumber.
 	newPosition := self validate: newPosition.
 	^ newPosition
@@ -83,7 +77,7 @@ Board >> lookUpResultingFieldNumberBasingOn: totalFields [
 ]
 
 { #category : #'actions - move' }
-Board >> move: player along: result on: aBoardGame [
+Board >> move: player along: result on: aBoardGame [ 
 	| newPosition field |
 	newPosition := self move: player over: result.
 	field := self searchFieldFor: newPosition.
@@ -99,11 +93,10 @@ Board >> move: player over: aNumberOfFields [
 	positionsTracker removeAllSuchThat:[:position | position player = player].
 	self replaceOldPositioOf: player with: newPosition.
 	^ newPosition
-	
 ]
 
 { #category : #'actions - move' }
-Board >> moveAllPlayers: aNumberOfFields except: aPlayer [
+Board >> moveAllPlayers: aNumberOfFields except: aPlayer [ 
 	| playerPosition |
 	playerPosition := positionsTracker detect:[:position | position player = aPlayer].
 	positionsTracker  := positionsTracker reject: [ :position | position player = aPlayer ] thenCollect: [ :position | self findNewPositionWhen: (position player) hasMoved: aNumberOfFields from: position].
@@ -148,13 +141,6 @@ Board >> repeatAt: aBoardGame lastEffectAppliedOn: aPlayer [
 	effectsHistory isEmpty
 		ifFalse:
 			[ self applyAt: aBoardGame lastEffectTo: aPlayer].
-]
-
-{ #category : #'actions - effects' }
-Board >> repeatLastEffectAppliedOn: aPlayer [
-	effectsHistory isEmpty
-		ifFalse:
-			[ self applyLastEffectTo: aPlayer ].
 ]
 
 { #category : #actions }

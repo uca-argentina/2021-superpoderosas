@@ -5,11 +5,5 @@ Class {
 }
 
 { #category : #actions }
-NoEffect >> effectTriggeredBy: player on: aBoard [
-	super.
-]
-
-{ #category : #actions }
-NoEffect >> effectTriggeredBy: player on: aBoard of: aBoardGame [
-	super.
+NoEffect >> effectTriggeredBy: aPlayer on: aBoard of: aBoardGame [
 ]

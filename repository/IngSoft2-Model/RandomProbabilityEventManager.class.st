@@ -25,7 +25,7 @@ RandomProbabilityEventManager class >> errorMessageToBeInstancedItMustNotHaceAnE
 
 { #category : #validations }
 RandomProbabilityEventManager class >> evaluateIdAdditionOfEventsProbabilitiesIsOne: aGroupOfEvents [
-	(self sumUpEventProbabilitiesOf: aGroupOfEvents) = 1.0
+	(self sumUpEventsProbabilitiesOf: aGroupOfEvents) = 1
 		ifFalse: [ Error
 				signal: self errorMessageTheAdditionOfTheEventsProbabilitiesMustBeOne ]
 ]
@@ -44,7 +44,7 @@ RandomProbabilityEventManager class >> evaluateIfValid: aGroupOfEvents [
 ]
 
 { #category : #actions }
-RandomProbabilityEventManager class >> sumUpEventProbabilitiesOf: aGroupOfEvents [ 
+RandomProbabilityEventManager class >> sumUpEventsProbabilitiesOf: aGroupOfEvents [ 
 	^ aGroupOfEvents sumNumbers: [ :event | event probability ].
 ]
 

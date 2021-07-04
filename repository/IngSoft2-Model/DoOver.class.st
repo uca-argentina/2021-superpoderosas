@@ -5,7 +5,6 @@ Class {
 }
 
 { #category : #actions }
-DoOver >> do: aMove at: aBoardGame [
-	aBoardGame make: (aMove currentPlayer) lay: self.
-	aBoardGame letTheLastCardPlayedDo: aMove.
+DoOver >> thrownBy: aPlayer aims: aTarget on: aBoardGame handledBy: cardHandler [ 
+	cardHandler repeatLastCardThrownBy: aPlayer affecting: aTarget on: aBoardGame.
 ]

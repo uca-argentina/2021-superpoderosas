@@ -1,22 +1,10 @@
 Class {
 	#name : #Speed,
-	#superclass : #Permanent,
+	#superclass : #ExtraFields,
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #actions }
 Speed >> action [
 	^ 1.
-]
-
-{ #category : #actions }
-Speed >> apply: aMove at: aBoardGame [
-	self veryfyIf: aMove canBeDoneAt: aBoardGame.
-	aBoardGame affect: (aMove playerAffected) with: self.
-]
-
-{ #category : #actions }
-Speed >> do: aMove at: aBoardGame [
-	self apply: aMove at: aBoardGame.
-	self laysFrom: aMove on: aBoardGame
 ]

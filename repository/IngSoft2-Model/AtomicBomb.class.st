@@ -5,13 +5,7 @@ Class {
 }
 
 { #category : #actions }
-AtomicBomb >> effectTriggeredBy: player on: aBoard [
+AtomicBomb >> effectTriggeredBy: aPlayer on: aBoard of: aBoardGame [
 	aBoard moveAllPlayersTo: 1.
-	super.
-]
 
-{ #category : #actions }
-AtomicBomb >> effectTriggeredBy: player on: aBoard of: aBoardGame [
-	aBoard moveAllPlayersTo: 1.
-	super.
 ]

@@ -7,10 +7,7 @@ Class {
 		'playersTurnIdentificator',
 		'diceCup',
 		'spinsNeededToWin',
-		'playersPosition',
 		'board',
-		'cardsHistory',
-		'deck',
 		'cardHandler'
 	],
 	#category : #'IngSoft2-Model'
@@ -46,18 +43,17 @@ BoardGame class >> verifySpinNumberIsGreaterThanCero: aSpinNumber [.
 ]
 
 { #category : #'actions - cards' }
-BoardGame >> addToCardsRecord: aCard [ 
-	cardsHistory add:aCard.
+BoardGame >> affect: aTarget using: aCard by: aPlayer [
+	cardHandler
+		affect: aTarget
+		using: aCard
+		by: aPlayer
+		on: self
 ]
 
 { #category : #'actions - cards' }
 BoardGame >> affect: player with: card [ 
 	cardHandler influence: player with: card
-]
-
-{ #category : #'actions - cards' }
-BoardGame >> affectAllPlayers: card [
-	cardHandler influenceAllPlayer: card
 ]
 
 { #category : #'actions - cards' }
@@ -123,7 +119,6 @@ BoardGame >> influentialCardsOf: aPlayer [
 
 { #category : #initialize }
 BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber [
-	deck:= aDeck.
 	diceCup := aDiceCup.
 	board:= aBoard.
 	players := aGroupOfPlayers.
@@ -131,19 +126,12 @@ BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: 
 	playersTurnIdentificator := SequenceSimulator newFrom: (aGroupOfPlayers size).
 	isFinished := false.
 	spinsNeededToWin := aSpinNumber.
-	cardsHistory:= OrderedCollection new.
 	cardHandler:= CardHandler managing: aDeck for: players. 
 ]
 
 { #category : #accessing }
 BoardGame >> isFinished [
 	^ isFinished.
-]
-
-{ #category : #'actions - cards' }
-BoardGame >> letTheLastCardPlayedDo: aMove [
-	(cardsHistory isEmpty) 
-	ifFalse: [(cardsHistory last) apply: aMove at: self].
 ]
 
 { #category : #private }
@@ -181,11 +169,6 @@ BoardGame >> ranking [
 	^ board playersPosition.
 ]
 
-{ #category : #'actions - cards' }
-BoardGame >> removes: aCard from: aPlayer [ 
-	cardHandler cancel: aCard of: aPlayer.
-]
-
 { #category : #'actions - effects' }
 BoardGame >> repeatLastEffectAppliedOn: aPlayer [
 	board repeatAt: self lastEffectAppliedOn: aPlayer.
@@ -196,6 +179,12 @@ BoardGame >> repeatLastEffectAppliedOn: aPlayer [
 { #category : #validations }
 BoardGame >> validate: aPosition [
  (aPosition round <= 0) ifTrue: [^( Tracker of: (aPosition player) standingOn: 1 after: 1)] ifFalse:[^aPosition].
+]
+
+{ #category : #validations }
+BoardGame >> validateThrowOfAPermanent: aCard by: aPlayer [
+	self verifyIfItIsTheTurnOf: aPlayer.
+
 ]
 
 { #category : #validations }

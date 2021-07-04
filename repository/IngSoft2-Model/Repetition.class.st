@@ -1,16 +1,10 @@
 Class {
 	#name : #Repetition,
-	#superclass : #Instantaneous,
+	#superclass : #Card,
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #actions }
-Repetition >> apply: aMove at: aBoardGame [
-	aMove apply: [ :player | aBoardGame repeatLastEffectAppliedOn: player ] at: aBoardGame.
-]
-
-{ #category : #actions }
-Repetition >> do: aMove at: aBoardGame [
-	self apply: aMove at: aBoardGame.
-	self laysFrom: aMove on: aBoardGame.
+Repetition >> thrownBy: aPlayer aims: aTarget on: aBoardGame handledBy: cardHandler [ 
+	cardHandler with: self repeatLastEffectAppliedOn: aBoardGame targeting: aTarget.
 ]

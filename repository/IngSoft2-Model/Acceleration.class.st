@@ -1,6 +1,6 @@
 Class {
 	#name : #Acceleration,
-	#superclass : #Permanent,
+	#superclass : #ExtraFields,
 	#category : #'IngSoft2-Model'
 }
 
@@ -10,13 +10,8 @@ Acceleration >> action [
 ]
 
 { #category : #actions }
-Acceleration >> apply: aMove at: aBoardGame [
-	self veryfyIf: aMove canBeDoneAt: aBoardGame. "sacarlo de aqui"
-	aBoardGame affectAllPlayers: self. 
-]
-
-{ #category : #actions }
-Acceleration >> do: aMove at: aBoardGame [
-	self apply: aMove at: aBoardGame.
-	self laysFrom: aMove on: aBoardGame
+Acceleration >> thrownBy: aPlayer aims: aTarget on: aBoardGame handledBy: cardHandler [ 
+	aBoardGame validateThrowOfAPermanent: self by: aPlayer.
+	cardHandler influenceAllPlayers: self.
+	
 ]
