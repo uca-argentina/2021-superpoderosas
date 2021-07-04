@@ -47,11 +47,6 @@ CardHandler >> errorMessageAPlayerMustHaveTheCardInHand [
 	^ 'A player must have a card in hand in order to use it'
 ]
 
-{ #category : #'error messages' }
-CardHandler >> errorMessageAPlayerMustHaveTheCardToBeRemoved [ 
-	^'The player must have the influential card needed to be cancelled'.
-]
-
 { #category : #'actions - cards' }
 CardHandler >> influence: player with: card [
 	| playerInfluentialCards |

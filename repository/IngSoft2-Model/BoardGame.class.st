@@ -52,16 +52,6 @@ BoardGame >> affect: aTarget using: aCard by: aPlayer [
 ]
 
 { #category : #'actions - cards' }
-BoardGame >> affect: player with: card [ 
-	cardHandler influence: player with: card
-]
-
-{ #category : #'actions - cards' }
-BoardGame >> applyToAllPlayers: aBlock [
-	(players) do: [ :player | aBlock value: player ]
-]
-
-{ #category : #'actions - cards' }
 BoardGame >> cardsInHandOf: aPlayer [
 	^ cardHandler cardsInHandOf: aPlayer.
 ]
@@ -107,11 +97,6 @@ BoardGame >> fieldsToMoveAfter: player obtained: sumOfAllDices [
 	^ result.
 ]
 
-{ #category : #actions }
-BoardGame >> findPlayerNamed: aName [
-	^ players detect: [ :aPlayer | (aPlayer name) = aName ].
-]
-
 { #category : #'actions - cards' }
 BoardGame >> influentialCardsOf: aPlayer [
 	^ cardHandler influentialCardsOf: aPlayer.
@@ -137,11 +122,6 @@ BoardGame >> isFinished [
 { #category : #private }
 BoardGame >> lookForPlayerWhoseTurnItIs [
 	^ players at: (playersTurnIdentificator findNextIndex).
-]
-
-{ #category : #'actions - cards' }
-BoardGame >> make: player lay: card [
-	cardHandler make: player lay: card.
 ]
 
 { #category : #actions }
@@ -174,11 +154,6 @@ BoardGame >> repeatLastEffectAppliedOn: aPlayer [
 	board repeatAt: self lastEffectAppliedOn: aPlayer.
 	self endGameIfTheWinnerIs: aPlayer.
 
-]
-
-{ #category : #validations }
-BoardGame >> validate: aPosition [
- (aPosition round <= 0) ifTrue: [^( Tracker of: (aPosition player) standingOn: 1 after: 1)] ifFalse:[^aPosition].
 ]
 
 { #category : #validations }
