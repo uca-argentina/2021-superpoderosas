@@ -47,7 +47,7 @@ BoardGame class >> verifySpinNumberIsGreaterThanCero: aSpinNumber [.
 
 { #category : #'actions - cards' }
 BoardGame >> addToCardsRecord: aCard [ 
-	cardsHistory add: aCard.
+	cardsHistory add:aCard.
 ]
 
 { #category : #'actions - cards' }
