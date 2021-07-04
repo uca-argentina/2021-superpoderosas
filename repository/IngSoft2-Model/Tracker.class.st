@@ -18,15 +18,14 @@ Tracker class >> of: aPlayer standingOn: aField after: aNumberOfRound [
 ]
 
 { #category : #comparing }
-Tracker >> = aPosition [
-	^ ((self round = aPosition round) and: [(self field = aPosition field  )and:[self player = aPosition player]])
+Tracker >> = anotherTracker [
+	^ ((self round = anotherTracker round) and: [(self field = anotherTracker field  )and:[self player = anotherTracker player]])
 
 ]
 
 { #category : #comparing }
-Tracker >> >= aPosition [
-		
-	^ ((self round > aPosition round) or: [(self field >= aPosition field  )and:[self round = aPosition round]])
+Tracker >> >= anotherTracker [		
+	^ ((self round > anotherTracker round) or: [(self field >= anotherTracker field  )and:[self round = anotherTracker round]])
 ]
 
 { #category : #accesing }

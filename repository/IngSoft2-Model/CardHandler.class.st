@@ -14,49 +14,46 @@ CardHandler class >> managing: aDeck for: players [
 	^ self new initializeManaging: aDeck for: players
 ]
 
-{ #category : #initialize }
-CardHandler >> cancel: aCard [
-	influentialCards remove: aCard
-		ifAbsent: [ Error signal: self errorMessageAPlayerMustHaveTheCardToBeRemoved ]
-]
-
-{ #category : #initialize }
+{ #category : #'actions - cards' }
 CardHandler >> cancel: aCard of: player [
 	(influentialCards at: player) remove: aCard
 											ifAbsent: [ Error signal: self errorMessageAPlayerMustHaveTheCardToBeRemoved ]
 ]
 
-{ #category : #initialize }
+{ #category : #accessing }
 CardHandler >> cardsInHandOf: player [
 	^ cardsInHand at:player.
 ]
 
-{ #category : #initialize }
+{ #category : #'actions - cards' }
 CardHandler >> deliverACardTo: player [
 	(cardsInHand at:player) add: (deck pickUp).
 ]
 
-{ #category : #initialize }
+{ #category : #'error messages' }
 CardHandler >> errorMessageAPlayerMustHaveTheCardInHand [
 	^ 'A player must have a card in hand in order to use it'
 ]
 
-{ #category : #initialize }
+{ #category : #'error messages' }
 CardHandler >> errorMessageAPlayerMustHaveTheCardToBeRemoved [ 
 	^'The player must have the influential card needed to be cancelled'.
 ]
 
-{ #category : #initialize }
+{ #category : #'actions - cards' }
 CardHandler >> influence: player with: card [
-	(influentialCards at: player ) add:card.
+	| playerInfluentialCards |
+	playerInfluentialCards := influentialCards at:player.
+	playerInfluentialCards add: card.
+	influentialCards at: player put: playerInfluentialCards.
 ]
 
-{ #category : #initialize }
+{ #category : #'actions - cards' }
 CardHandler >> influenceAllPlayer: card [ 
 	influentialCards do: [ :playerInfluentialCards | playerInfluentialCards add: card ]
 ]
 
-{ #category : #initialize }
+{ #category : #accessing }
 CardHandler >> influentialCardsOf: player [
 	^ influentialCards at: player
 ]
@@ -69,12 +66,7 @@ CardHandler >> initializeManaging: aDeck for: players [
 
 ]
 
-{ #category : #initialize }
+{ #category : #'actions - cards' }
 CardHandler >> make: player lay: aCard [
 	(cardsInHand at:player) remove: aCard ifAbsent: [Error signal: self errorMessageAPlayerMustHaveTheCardInHand ].
-]
-
-{ #category : #initialize }
-CardHandler >> throw: aCard to: player [ 
-	(influentialCards at:player) add: aCard.
 ]
