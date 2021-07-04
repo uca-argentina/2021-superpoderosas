@@ -9,17 +9,23 @@ Class {
 
 { #category : #initialization }
 DiceCup class >> containing: aGroupOfDices [ 
+	self verifyIfThereIsAtLeastOnePlayerOn: aGroupOfDices.
 	^self new initializeContaining: aGroupOfDices.
 ]
 
 { #category : #'error messages' }
-DiceCup >> errorMessageMustHaveAtLeastOneDice [
+DiceCup class >> errorMessageMustHaveAtLeastOneDice [
 	^ 'A dice cup must contain at leaste ONE dice'
+]
+
+{ #category : #validations }
+DiceCup class >> verifyIfThereIsAtLeastOnePlayerOn: aGroupOfDices [
+	(aGroupOfDices  isEmpty ) 
+		ifTrue: [ Error signal: self errorMessageMustHaveAtLeastOneDice ] .
 ]
 
 { #category : #initialize }
 DiceCup >> initializeContaining: aGroupOfDices [  
-	self verifyIfItIsNotEmpty: aGroupOfDices.
 	dices:= aGroupOfDices.
 ]
 
@@ -29,10 +35,4 @@ DiceCup >> throw [
 	resultOfThrowingAGroupOfDices :=0.
 	dices do: [ :aDice | resultOfThrowingAGroupOfDices := resultOfThrowingAGroupOfDices + (aDice throw) ].
 	^resultOfThrowingAGroupOfDices.
-]
-
-{ #category : #validations }
-DiceCup >> verifyIfItIsNotEmpty: aGroupOfDices [
-	(aGroupOfDices  isEmpty ) 
-		ifTrue: [ Error signal: self errorMessageMustHaveAtLeastOneDice ] .
 ]

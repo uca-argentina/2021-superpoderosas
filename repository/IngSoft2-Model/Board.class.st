@@ -9,9 +9,21 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
+{ #category : #'error messages' }
+Board class >> errorMessageNumberOfFieldsMustBeGreaterThanOne [
+ ^ 'There must be al least two fields'
+]
+
 { #category : #initialization }
 Board class >> has: fields [ 
+	self verifyIfItHasAtLeastTwoFields: fields.
 	^self new initializeHaving: fields.
+]
+
+{ #category : #validations }
+Board class >> verifyIfItHasAtLeastTwoFields: numberOfFields [.
+	(numberOfFields size < 3 ) 
+		ifTrue: [ Error signal: self errorMessageNumberOfFieldsMustBeGreaterThanOne ] .
 ]
 
 { #category : #private }

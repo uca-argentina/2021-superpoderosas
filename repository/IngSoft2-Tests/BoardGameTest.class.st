@@ -432,6 +432,26 @@ BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowThreeDicesSimulta
 ]
 
 { #category : #validationTests }
+BoardGameTest >> testABoardGameMustHaveAtLeastOneLap [
+ 		
+	|aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup aSpinNumber aBoard fields aDeck |
+	aDice:= DeterministicDice with:#(2 4 7 3).
+	aGroupOfPlayers:= {#pau . #male . #belu}.
+	aGroupOfDices := { aDice }.
+	aNumberOfFields:= 49.
+	aDiceCup:= DiceCup containing: aGroupOfDices.
+	aSpinNumber:=0.
+	fields:= self generateManually: aNumberOfFields.
+	aBoard:= Board has: fields.
+	aDeck := self generateDeck.
+
+	self 
+		should:[BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.] 
+		raise: Error 
+		withExceptionDo: [:error | self assert: error messageText equals: 'The board game must have at leaste one lap'].
+]
+
+{ #category : #validationTests }
 BoardGameTest >> testABoardGameNeedsAtLeastOnePlayer [
  		
 	|aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup aSpinNumber aBoard fields aDeck |
@@ -449,6 +469,21 @@ BoardGameTest >> testABoardGameNeedsAtLeastOnePlayer [
 		should:[BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.] 
 		raise: Error 
 		withExceptionDo: [:error | self assert: error messageText equals: 'The board game must have at leaste ONE player'].
+]
+
+{ #category : #validationTests }
+BoardGameTest >> testABoardMustAtLeastTwoFields [
+ 		
+	| fields eventManager speedUpEvent |
+	speedUpEvent:= ProbabilityEvent with: 1.0 of: SpeedUp new.
+	eventsDistribution := OrderedCollection newFrom: {speedUpEvent}.
+	eventManager := RandomProbabilityEventManager basedOn: eventsDistribution.
+	fields := eventManager generate: 1.
+
+	self 
+		should:[Board has: fields.] 
+		raise: Error 
+		withExceptionDo: [:error | self assert: error messageText equals: 'There must be al least two fields'].
 ]
 
 { #category : #playingWithCardsTests }

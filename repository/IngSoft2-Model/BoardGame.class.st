@@ -16,9 +16,33 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
+{ #category : #'error messages' }
+BoardGame class >> errorMessageMustHaveAtLeastAPlayer [
+	^ 'The board game must have at leaste ONE player'
+]
+
+{ #category : #'error messages' }
+BoardGame class >> errorMessageSpinNumberMustBeGreaterThanCero [
+	^ 'The board game must have at leaste one lap'
+]
+
 { #category : #initialization }
 BoardGame class >> playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber [
+		self verifyIfThereIsAtLeastOnePlayerOn: aGroupOfPlayers .
+		self verifySpinNumberIsGreaterThanCero: aSpinNumber.
 		^ self new initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+]
+
+{ #category : #validations }
+BoardGame class >> verifyIfThereIsAtLeastOnePlayerOn: aGroupOfPlayers [ 
+	(aGroupOfPlayers isEmpty ) 
+		ifTrue: [ Error signal: self errorMessageMustHaveAtLeastAPlayer ] .
+]
+
+{ #category : #validations }
+BoardGame class >> verifySpinNumberIsGreaterThanCero: aSpinNumber [.
+	(aSpinNumber <1 ) 
+		ifTrue: [ Error signal: self errorMessageSpinNumberMustBeGreaterThanCero ] .
 ]
 
 { #category : #'actions - cards' }
@@ -75,11 +99,6 @@ BoardGame >> errorMessageDoesNotHaveAWinnerYet [
 ]
 
 { #category : #'error messages' }
-BoardGame >> errorMessageMustHaveAtLeastAPlayer [
-	^ 'The board game must have at leaste ONE player'
-]
-
-{ #category : #'error messages' }
 BoardGame >> errorMessageTheGameHasFinished [
 	^ 'The board game has already finished, contestants can not play anymore.'.
 ]
@@ -104,7 +123,6 @@ BoardGame >> influentialCardsOf: aPlayer [
 
 { #category : #initialize }
 BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber [
-	self verifyIfItIsNotEmpty: aGroupOfPlayers .
 	deck:= aDeck.
 	diceCup := aDiceCup.
 	board:= aBoard.
@@ -178,12 +196,6 @@ BoardGame >> repeatLastEffectAppliedOn: aPlayer [
 { #category : #validations }
 BoardGame >> validate: aPosition [
  (aPosition round <= 0) ifTrue: [^( Tracker of: (aPosition player) standingOn: 1 after: 1)] ifFalse:[^aPosition].
-]
-
-{ #category : #validations }
-BoardGame >> verifyIfItIsNotEmpty: aGroupOfPlayers [ 
-	(aGroupOfPlayers isEmpty ) 
-		ifTrue: [ Error signal: self errorMessageMustHaveAtLeastAPlayer ] .
 ]
 
 { #category : #validations }

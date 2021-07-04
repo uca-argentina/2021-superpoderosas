@@ -9,37 +9,43 @@ Class {
 
 { #category : #initialization }
 RandomProbabilityEventManager class >> basedOn: eventsDistribution [ 
+	self evaluateIfValid: eventsDistribution.
 	^self new initializeBasedOn: eventsDistribution.
 ]
 
 { #category : #'error messages' }
-RandomProbabilityEventManager >> errorMessageTheAdditionOfTheEventsProbabilitiesMustBeOne [
+RandomProbabilityEventManager class >> errorMessageTheAdditionOfTheEventsProbabilitiesMustBeOne [
 	^ 'The addition of the probabilities of the events must be one'
 ]
 
 { #category : #'error messages' }
-RandomProbabilityEventManager >> errorMessageToBeInstancedItMustNotHaceAnEmptyCollection [ 
+RandomProbabilityEventManager class >> errorMessageToBeInstancedItMustNotHaceAnEmptyCollection [ 
 	^'The Event Manager can not be instanced with an empty collection of events'
 ]
 
 { #category : #validations }
-RandomProbabilityEventManager >> evaluateIdAdditionOfEventsProbabilitiesIsOne: aGroupOfEvents [
+RandomProbabilityEventManager class >> evaluateIdAdditionOfEventsProbabilitiesIsOne: aGroupOfEvents [
 	(self sumUpEventProbabilitiesOf: aGroupOfEvents) = 1.0
 		ifFalse: [ Error
 				signal: self errorMessageTheAdditionOfTheEventsProbabilitiesMustBeOne ]
 ]
 
 { #category : #validations }
-RandomProbabilityEventManager >> evaluateIfEventsIsNotEmpty: aGroupOfEvents [
+RandomProbabilityEventManager class >> evaluateIfEventsIsNotEmpty: aGroupOfEvents [
 	aGroupOfEvents isEmpty
 		ifTrue: [ Error
 				signal: self errorMessageToBeInstancedItMustNotHaceAnEmptyCollection ]
 ]
 
 { #category : #validations }
-RandomProbabilityEventManager >> evaluateIfValid: aGroupOfEvents [
+RandomProbabilityEventManager class >> evaluateIfValid: aGroupOfEvents [
 	self evaluateIfEventsIsNotEmpty: aGroupOfEvents.
 	self evaluateIdAdditionOfEventsProbabilitiesIsOne: aGroupOfEvents.
+]
+
+{ #category : #actions }
+RandomProbabilityEventManager class >> sumUpEventProbabilitiesOf: aGroupOfEvents [ 
+	^ aGroupOfEvents sumNumbers: [ :event | event probability ].
 ]
 
 { #category : #actions }
@@ -52,14 +58,8 @@ RandomProbabilityEventManager >> generate: size [
 
 { #category : #initialize }
 RandomProbabilityEventManager >> initializeBasedOn: eventDistribution [
-	self evaluateIfValid: eventDistribution.
 	poolOfEvents := OrderedCollection new.
 	eventDistribution do: [:event | poolOfEvents add: (event event) withOccurrences: (event probability * 100) asInteger].
 	poolOfEvents := poolOfEvents shuffle.
 
-]
-
-{ #category : #actions }
-RandomProbabilityEventManager >> sumUpEventProbabilitiesOf: aGroupOfEvents [ 
-	^ aGroupOfEvents sumNumbers: [ :event | event probability ].
 ]
