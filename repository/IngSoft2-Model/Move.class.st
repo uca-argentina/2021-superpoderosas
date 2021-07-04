@@ -8,7 +8,7 @@ Class {
 }
 
 { #category : #actions }
-Move >> apply: arg1 at: arg2 [ 
+Move >> apply: aBlock at: aBoardGame [ 
 	^ self subclassResponsibility
 ]
 

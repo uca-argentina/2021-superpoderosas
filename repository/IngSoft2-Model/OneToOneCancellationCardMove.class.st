@@ -8,8 +8,8 @@ Class {
 }
 
 { #category : #initialization }
-OneToOneCancellationCardMove class >> of: aCardToBeCancelled madeBy: player affecting: allPlayersAffected [ 
-	^self new of: aCardToBeCancelled madeBy: player affecting: allPlayersAffected.
+OneToOneCancellationCardMove class >> of: aCardToBeCancelled madeBy: aPlayer affecting: anotherPlayer [ 
+	^ self new initializeOf: aCardToBeCancelled madeBy: aPlayer affecting: anotherPlayer.
 ]
 
 { #category : #accessing }
@@ -23,7 +23,7 @@ OneToOneCancellationCardMove >> currentPlayer [
 ]
 
 { #category : #initialize }
-OneToOneCancellationCardMove >> of: aCardToBeCancelled madeBy: player affecting: allPlayersAffected [ 
+OneToOneCancellationCardMove >> initializeOf: aCardToBeCancelled madeBy: player affecting: allPlayersAffected [ 
 	cardToBeCancelled := aCardToBeCancelled.
 	currentPlayer := player.
 	playerAffected := allPlayersAffected.

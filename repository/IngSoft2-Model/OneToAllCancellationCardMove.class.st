@@ -9,7 +9,7 @@ Class {
 
 { #category : #initialization }
 OneToAllCancellationCardMove class >> of: aCardToBeCancelled madeBy: player [ 
-	^self new of: aCardToBeCancelled madeBy: player.
+	^ self new initializeOf: aCardToBeCancelled  madeBy: player.
 ]
 
 { #category : #actions }
@@ -23,7 +23,7 @@ OneToAllCancellationCardMove >> currentPlayer [
 ]
 
 { #category : #initialize }
-OneToAllCancellationCardMove >> of: aCardToBeCancelled madeBy: player [
+OneToAllCancellationCardMove >> initializeOf: aCardToBeCancelled madeBy: player [
 	cardToBeCancelled := aCardToBeCancelled.
 	currentPlayer := player.
 ]

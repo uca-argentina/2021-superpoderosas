@@ -6,7 +6,7 @@ Class {
 
 { #category : #initialization }
 OneToOneSimpleMove class >> madeBy: currentPlayer affecting: player [ 
-	^ self new madeBy: currentPlayer affecting: player.
+	^ self new initializeMadeBy: currentPlayer affecting: player.
 ]
 
 { #category : #accessing }
@@ -15,7 +15,7 @@ OneToOneSimpleMove >> currentPlayer [
 ]
 
 { #category : #initialize }
-OneToOneSimpleMove >> madeBy: aCurrentPlayer affecting: aPlayer [ 
+OneToOneSimpleMove >> initializeMadeBy: aCurrentPlayer affecting: aPlayer [ 
 	playerAffected:= aPlayer.
 	currentPlayer := aCurrentPlayer.
 	
