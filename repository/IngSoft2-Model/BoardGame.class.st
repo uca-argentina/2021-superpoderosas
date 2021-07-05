@@ -91,10 +91,9 @@ BoardGame >> errorMessageTheGameHasFinished [
 
 { #category : #'actions - cards' }
 BoardGame >> fieldsToMoveAfter: player obtained: sumOfAllDices [
-	| result |
-	result:= sumOfAllDices.
-	(cardHandler influentialCardsOf: player) do: [ :aCard | result :=(result + aCard action) ].
-	^ result.
+	| cardsEffect |
+	cardsEffect := (cardHandler influentialCardsOf: player) sum: [ :aCard | aCard action ]. "extract Method"
+	^ sumOfAllDices + cardsEffect.
 ]
 
 { #category : #'actions - cards' }
@@ -105,10 +104,7 @@ BoardGame >> influentialCardsOf: aPlayer [
 { #category : #initialize }
 BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber [
 	diceCup := aDiceCup.
-	board:= aBoard.
-	players := aGroupOfPlayers.
-	board placeAtTheBeggining: players.
-	playersTurnIdentificator := SequenceSimulator newFrom: (aGroupOfPlayers size).
+	self startPlayingOn: aBoard with: aGroupOfPlayers.
 	isFinished := false.
 	spinsNeededToWin := aSpinNumber.
 	cardHandler:= CardHandler managing: aDeck for: players. 
@@ -154,6 +150,14 @@ BoardGame >> repeatLastEffectAppliedOn: aPlayer [
 	board repeatAt: self lastEffectAppliedOn: aPlayer.
 	self endGameIfTheWinnerIs: aPlayer.
 
+]
+
+{ #category : #initialize }
+BoardGame >> startPlayingOn: aBoard with: aGroupOfPlayers [
+	players:= aGroupOfPlayers.
+	playersTurnIdentificator := SequenceSimulator newFrom: (aGroupOfPlayers size).
+	board := aBoard.
+	board placeAtTheBeggining: players.
 ]
 
 { #category : #validations }
