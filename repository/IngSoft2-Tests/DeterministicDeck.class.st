@@ -16,12 +16,13 @@ DeterministicDeck class >> containing: aCardsSequence [
 { #category : #inirialize }
 DeterministicDeck >> initializeContaining: aCardsSequence [  
 	sequence := aCardsSequence.
-	index := SequenceSimulator newFrom: (aCardsSequence size ).
+	index := 0.
 ]
 
 { #category : #actions }
 DeterministicDeck >> pickUp [ 
-	^ sequence at: (index findNextIndex).
+	index := index + 1. 
+	^ sequence at: index.
 ]
 
 { #category : #actions }
