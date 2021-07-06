@@ -560,16 +560,33 @@ BoardGameTest >> testAFieldHasNoEffect [
 ]
 
 { #category : #playingWithCardsTests }
-BoardGameTest >> testAPlayerCanNotUseACardHeDoesNotHave [
-	| aBoardGame aGroupOfPlayers overloadCard aSequenceOfDiceResults cards speedCard repeatCard aSecondSpeedCard |
+BoardGameTest >> testAPlayerCanNotCancelACardAPlayerDoesNotHave [
+	| aBoardGame aGroupOfPlayers overloadCard aSequenceOfDiceResults cards speedCard repeatCard aSecondSpeedCard cancellationCard accelerationCard |
 	overloadCard := Overload new.
+	cancellationCard := Cancellation new.
 	speedCard:= Speed new.
 	repeatCard := Repetition new.
 	aSecondSpeedCard:= Speed new.
-	cards := { overloadCard . speedCard . repeatCard . aSecondSpeedCard }.
+	accelerationCard:= Acceleration new.
+	cards := { overloadCard . cancellationCard .  speedCard . repeatCard . aSecondSpeedCard . accelerationCard  }.
 	aGroupOfPlayers := {#pau . #belu}.
 	aSequenceOfDiceResults := #(10 10 7 3).
-	cards := {Acceleration new . Cancellation  new . DoOver new . Speed new . Repetition new}.
+	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.	
+	
+	self 
+		should:[aBoardGame affect: speedCard using: cancellationCard by: #pau] 
+		raise: Error 
+		withExceptionDo: [:error | self assert: error messageText equals: 'The player does not have the card to be cancelled.' ].
+	
+]
+
+{ #category : #playingWithCardsTests }
+BoardGameTest >> testAPlayerCanNotUseACardHeDoesNotHave [
+	| aBoardGame aGroupOfPlayers overloadCard aSequenceOfDiceResults cards  |
+	overloadCard := Overload new.
+	aGroupOfPlayers := {#pau . #belu}.
+	aSequenceOfDiceResults := #(10 10 7 3).
+	cards := {Acceleration new . Cancellation  new . DoOver new . Speed new . Repetition new . overloadCard }.
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.	
 	
 	self 

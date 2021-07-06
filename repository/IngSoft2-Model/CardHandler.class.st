@@ -15,7 +15,7 @@ CardHandler class >> managing: aDeck for: players [
 	^ self new initializeManaging: aDeck for: players
 ]
 
-{ #category : #'error messages' }
+{ #category : #'actions - cards' }
 CardHandler >> addToCardsRecord: aCard [ 
 	cardsHistory add: aCard.
 ]
@@ -28,8 +28,15 @@ CardHandler >> affect: aTarget using: aCard by: aPlayer on: aBoardGame [
 
 { #category : #'actions - cards' }
 CardHandler >> cancel: cardToBeCancelled with: aCard [
-	(influentialCards) valuesDo: [ :playerInfluentialCards | ( playerInfluentialCards remove: cardToBeCancelled ifAbsent:[])].
-	self addToCardsRecord: aCard.
+	| notFoundValues |
+	notFoundValues := OrderedCollection new.
+	influentialCards
+		valuesDo: [ :playerInfluentialCards | 
+			playerInfluentialCards
+				remove: cardToBeCancelled
+				ifAbsent: [ notFoundValues add: 'notFound' ] ].
+	self validateIfAnyCardWasCancelledWith: notFoundValues.
+	self addToCardsRecord: aCard
 ]
 
 { #category : #accessing }
@@ -45,6 +52,11 @@ CardHandler >> deliverACardTo: player [
 { #category : #'error messages' }
 CardHandler >> errorMessageAPlayerMustHaveTheCardInHand [
 	^ 'A player must have a card in hand in order to use it'
+]
+
+{ #category : #'error messages' }
+CardHandler >> errorMessageThePlayerDoesNotHaveTheCardToBeCancel [
+ ^'The player does not have the card to be cancelled.'
 ]
 
 { #category : #'actions - cards' }
@@ -67,7 +79,7 @@ CardHandler >> influentialCardsOf: player [
 	^ influentialCards at: player
 ]
 
-{ #category : #initialize }
+{ #category : #validations }
 CardHandler >> initializeManaging: aDeck for: players [ 
 	| playersInfluentialCards |
 	deck:= aDeck.
@@ -87,6 +99,13 @@ CardHandler >> make: player lay: aCard [
 CardHandler >> repeatLastCardThrownBy: aPlayer affecting: aTarget on: aBoardGame [
 	(cardsHistory isEmpty) 
 	ifFalse: [ (cardsHistory last) thrownBy: aPlayer aims: aTarget on: aBoardGame handledBy: self].
+]
+
+{ #category : #validations }
+CardHandler >> validateIfAnyCardWasCancelledWith: notFoundValues [
+	notFoundValues size = influentialCards size
+		ifTrue:
+			[ Error signal: self errorMessageThePlayerDoesNotHaveTheCardToBeCancel ]
 ]
 
 { #category : #'actions - cards' }
