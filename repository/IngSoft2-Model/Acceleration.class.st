@@ -1,6 +1,6 @@
 Class {
 	#name : #Acceleration,
-	#superclass : #ExtraFields,
+	#superclass : #Card,
 	#category : #'IngSoft2-Model'
 }
 

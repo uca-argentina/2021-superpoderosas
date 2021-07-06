@@ -24,10 +24,10 @@ BoardGame class >> errorMessageSpinNumberMustBeGreaterThanCero [
 ]
 
 { #category : #initialization }
-BoardGame class >> playedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber [
+BoardGame class >> playedBy: aGroupOfPlayers using: aDiceCup and: aDeck onABoardWith: fields wonWhenReach: aSpinNumber [
 		self verifyIfThereIsAtLeastOnePlayerOn: aGroupOfPlayers .
 		self verifySpinNumberIsGreaterThanCero: aSpinNumber.
-		^ self new initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber.
+		^ self new initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck onBoardWith: fields wonWhenReach: aSpinNumber.
 ]
 
 { #category : #validations }
@@ -91,9 +91,17 @@ BoardGame >> errorMessageTheGameHasFinished [
 
 { #category : #'actions - cards' }
 BoardGame >> fieldsToMoveAfter: player obtained: sumOfAllDices [
-	| cardsEffect |
-	cardsEffect := (cardHandler influentialCardsOf: player) sum: [ :aCard | aCard action ]. "extract Method"
-	^ sumOfAllDices + cardsEffect.
+	^ sumOfAllDices
+		+ (self fieldsToMoveIndicatedByInfluentialCardsOf: player)
+]
+
+{ #category : #'actions - cards' }
+BoardGame >> fieldsToMoveIndicatedByInfluentialCardsOf: player [
+	| playerInfluentialCards |
+	playerInfluentialCards:= cardHandler influentialCardsOf: player.
+	(playerInfluentialCards isEmpty) 
+			ifTrue:[^0]
+			ifFalse:[ ^ playerInfluentialCards sum: [ :aCard | aCard action ]].
 ]
 
 { #category : #'actions - cards' }
@@ -102,9 +110,9 @@ BoardGame >> influentialCardsOf: aPlayer [
 ]
 
 { #category : #initialize }
-BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck on: aBoard winnedWhenReach: aSpinNumber [
+BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck onBoardWith: fields wonWhenReach: aSpinNumber [
 	diceCup := aDiceCup.
-	self startPlayingOn: aBoard with: aGroupOfPlayers.
+	self startPlayingOnABoardWith: fields with: aGroupOfPlayers.
 	isFinished := false.
 	spinsNeededToWin := aSpinNumber.
 	cardHandler:= CardHandler managing: aDeck for: players. 
@@ -142,7 +150,7 @@ BoardGame >> positionOf: player [
 
 { #category : #accessing }
 BoardGame >> ranking [
-	^ board playersPosition.
+	^ board orderPlayersPosition.
 ]
 
 { #category : #'actions - effects' }
@@ -153,10 +161,10 @@ BoardGame >> repeatLastEffectAppliedOn: aPlayer [
 ]
 
 { #category : #initialize }
-BoardGame >> startPlayingOn: aBoard with: aGroupOfPlayers [
+BoardGame >> startPlayingOnABoardWith: fields with: aGroupOfPlayers [
 	players:= aGroupOfPlayers.
 	playersTurnIdentificator := SequenceSimulator newFrom: (aGroupOfPlayers size).
-	board := aBoard.
+	board := Board has: fields.
 	board placeAtTheBeggining: players.
 ]
 
@@ -186,5 +194,5 @@ BoardGame >> verifyIfTheGameIsInProcess [
 { #category : #actions }
 BoardGame >> winner [
 	self verifyIfTheGameIsInProcess.	
-	^ board playersPosition first player.
+	^ (board orderPlayersPosition) first player.
 ]

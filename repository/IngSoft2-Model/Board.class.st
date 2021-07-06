@@ -33,7 +33,7 @@ Board >> applyAt: aBoardGame lastEffectTo: aPlayer [
 ]
 
 { #category : #private }
-Board >> considerEffecrOf: field on: aBoardGame for: player [
+Board >> considerEffectOf: field on: aBoardGame for: player [
 	| effect |
 	effect := field effectTriggeredBy: player on: self of: aBoardGame.
 	effectsHistory add: effect
@@ -81,8 +81,7 @@ Board >> move: player along: result on: aBoardGame [
 	| newPosition field |
 	newPosition := self move: player over: result.
 	field := self searchFieldFor: newPosition.
-	self considerEffecrOf: field on: aBoardGame for: player.
-	self orderPlayersPosition
+	self considerEffectOf: field on: aBoardGame for: player.
 ]
 
 { #category : #'actions - move' }
@@ -116,7 +115,7 @@ Board >> numberOfFields [
 
 { #category : #actions }
 Board >> orderPlayersPosition [
-	positionsTracker
+	^positionsTracker
 		sort: [ :aPosition :anotherPosition | aPosition >= anotherPosition ]
 	
 ]
@@ -124,11 +123,6 @@ Board >> orderPlayersPosition [
 { #category : #'actions - move' }
 Board >> placeAtTheBeggining: players [
 	positionsTracker := OrderedCollection newFrom: (players collect: [ :aPlayer | Tracker of: aPlayer standingOn: 1 after: 1 ]).
-]
-
-{ #category : #accessing }
-Board >> playersPosition [
-	^ positionsTracker
 ]
 
 { #category : #accessing }
