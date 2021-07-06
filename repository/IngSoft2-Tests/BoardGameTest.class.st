@@ -674,6 +674,39 @@ BoardGameTest >> testAPlayerMustGoThreeTimesAroundTheBoardToWin [
 ]
 
 { #category : #playingWithCardsTests }
+BoardGameTest >> testAPlayerParticipatesInABoardGameWhithCardsAndEffects [
+	| aBoardGame aGroupOfPlayers overloadCard pauPosition beluPosition aSequenceOfDiceResults cards speedCard doOverCard acceleratioCard repetitionCard |
+	overloadCard := Overload new.
+	speedCard := Speed new.
+	doOverCard := DoOver new.
+	acceleratioCard := Acceleration new.
+	repetitionCard := Repetition new.
+	aGroupOfPlayers := {#pau . #belu}.
+	aSequenceOfDiceResults := #(9 10 7 3).
+	cards := { overloadCard . speedCard . doOverCard . acceleratioCard . repetitionCard}.
+	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
+
+	pauPosition := Tracker of: #pau standingOn: 39 after: 1.
+	beluPosition := Tracker of: #belu standingOn: 35 after: 1.
+		
+	1 to: 6 do: [ :n | aBoardGame nextTurn ].
+	
+	aBoardGame affect: #belu using: overloadCard by: #pau.
+	aBoardGame nextTurn.
+	aBoardGame affect: #belu using: acceleratioCard by: #belu.
+	aBoardGame nextTurn.
+	aBoardGame affect: #belu using: repetitionCard  by: #pau.
+	aBoardGame nextTurn.
+	aBoardGame nextTurn.
+	aBoardGame affect: #belu using: speedCard by:#pau.
+
+	
+	
+	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
+	
+]
+
+{ #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerThrowsACardAndItIsNoLongerInHand [
 	|aBoardGame aGroupOfPlayers repeatCard aSequenceOfDiceResults cards speedCard aSecondSpeedCard aSecondRepeatCard aThirdSpeedCard aThirdRepeatCard |	
 	speedCard:= Speed new.
