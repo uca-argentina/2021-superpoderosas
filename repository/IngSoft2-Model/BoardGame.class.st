@@ -99,9 +99,7 @@ BoardGame >> fieldsToMoveAfter: player obtained: sumOfAllDices [
 BoardGame >> fieldsToMoveIndicatedByInfluentialCardsOf: player [
 	| playerInfluentialCards |
 	playerInfluentialCards:= cardHandler influentialCardsOf: player.
-	(playerInfluentialCards isEmpty) 
-			ifTrue:[^0]
-			ifFalse:[ ^ playerInfluentialCards sum: [ :aCard | aCard action ]].
+	^(playerInfluentialCards sumNumbers: [ :aCard | aCard action ])
 ]
 
 { #category : #'actions - cards' }

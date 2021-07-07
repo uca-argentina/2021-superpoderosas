@@ -29,12 +29,12 @@ CardHandler >> affect: aTarget using: aCard by: aPlayer on: aBoardGame [
 { #category : #'actions - cards' }
 CardHandler >> cancel: cardToBeCancelled with: aCard [
 	| notFoundValues |
-	notFoundValues := OrderedCollection new.
+	notFoundValues:= OrderedCollection new.
 	influentialCards
 		valuesDo: [ :playerInfluentialCards | 
 			playerInfluentialCards
 				remove: cardToBeCancelled
-				ifAbsent: [ notFoundValues add: 'notFound' ] ].
+				ifAbsent: [notFoundValues add:'notFound' ] ].
 	self validateIfAnyCardWasCancelledWith: notFoundValues.
 	self addToCardsRecord: aCard
 ]
