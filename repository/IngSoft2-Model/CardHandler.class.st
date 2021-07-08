@@ -15,7 +15,7 @@ CardHandler class >> managing: aDeck for: players [
 	^ self new initializeManaging: aDeck for: players
 ]
 
-{ #category : #'actions - cards' }
+{ #category : #private }
 CardHandler >> addToCardsRecord: aCard [ 
 	cardsHistory add: aCard.
 ]
@@ -28,14 +28,8 @@ CardHandler >> affect: aTarget using: aCard by: aPlayer on: aBoardGame [
 
 { #category : #'actions - cards' }
 CardHandler >> cancel: cardToBeCancelled with: aCard [
-	| notFoundValues |
-	notFoundValues:= OrderedCollection new.
-	influentialCards
-		valuesDo: [ :playerInfluentialCards | 
-			playerInfluentialCards
-				remove: cardToBeCancelled
-				ifAbsent: [notFoundValues add:'notFound' ] ].
-	self validateIfAnyCardWasCancelledWith: notFoundValues.
+	self validateIfAnyPlayerHas: cardToBeCancelled.
+	self removeFromInfluentialCards: cardToBeCancelled.
 	self addToCardsRecord: aCard
 ]
 
@@ -95,15 +89,30 @@ CardHandler >> make: player lay: aCard [
 	(cardsInHand at:player) remove: aCard ifAbsent: [Error signal: self errorMessageAPlayerMustHaveTheCardInHand].
 ]
 
+{ #category : #private }
+CardHandler >> removeFromInfluentialCards: cardToBeCancelled [
+	influentialCards
+		do:
+			[ :playerInfluentialCards | playerInfluentialCards remove: cardToBeCancelled ifAbsent: [  ] ]
+]
+
 { #category : #'actions - cards' }
 CardHandler >> repeatLastCardThrownBy: aPlayer affecting: aTarget on: aBoardGame [
 	(cardsHistory isEmpty) 
 	ifFalse: [ (cardsHistory last) thrownBy: aPlayer aims: aTarget on: aBoardGame handledBy: self].
 ]
 
+{ #category : #private }
+CardHandler >> selectAssociationsContaining: cardToBeCancelled [
+	^ influentialCards
+		select: [ :playerInfluentialCards | 
+			playerInfluentialCards
+				anySatisfy: [ :card | card = cardToBeCancelled ] ]
+]
+
 { #category : #validations }
-CardHandler >> validateIfAnyCardWasCancelledWith: notFoundValues [
-	notFoundValues size = influentialCards size
+CardHandler >> validateIfAnyPlayerHas: cardToBeCancelled [
+	(self selectAssociationsContaining: cardToBeCancelled) isEmpty
 		ifTrue:
 			[ Error signal: self errorMessageThePlayerDoesNotHaveTheCardToBeCancel ]
 ]
