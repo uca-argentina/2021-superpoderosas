@@ -29,10 +29,19 @@ Sequence >> initializeNewFrom: elementsSequence [
 Sequence >> nextElement [
 	| oldIndex |
 	oldIndex:= index.
+	"self updateIndex.
+	(self verifyIfThePatternIndexHasToBeTheOriginal) 
+		ifTrue:[self replaceIndexWithTheOriginalOne]."
 	(self verifyIfThePatternIndexHasToBeTheOriginal) 
 		ifTrue:[self replaceIndexWithTheOriginalOne]
 		ifFalse:[self updateIndex].
 	^elements at: oldIndex.
+]
+
+{ #category : #actions }
+Sequence >> remove: anElement [
+	elements remove: anElement.
+	index:= index - 1.
 ]
 
 { #category : #private }
@@ -47,5 +56,5 @@ Sequence >> updateIndex [
 
 { #category : #validations }
 Sequence >> verifyIfThePatternIndexHasToBeTheOriginal [
-	^ index = elements size.
+	^ index >= (elements size).
 ]

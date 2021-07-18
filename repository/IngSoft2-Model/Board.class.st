@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'fields',
 		'effectsHistory',
-		'positionsTracker'
+		'inactiveTrackers',
+		'activeTrackers'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -69,10 +70,18 @@ Board >> generateValidTrackerFor: newFieldNumber standingOn: newRoundNumber afte
 	^ newPosition
 ]
 
+{ #category : #actions }
+Board >> inactiveTrackerOF: aPlayer [
+	| playerTracker |
+	playerTracker:= (self positionOf: aPlayer).
+	inactiveTrackers add: playerTracker.
+	activeTrackers remove:playerTracker. 
+]
+
 { #category : #initialize }
 Board >> initializeHaving: someFields usedBy:players [.
 	fields := someFields .
-	positionsTracker:= OrderedCollection new.
+	inactiveTrackers:=OrderedCollection new.
 	effectsHistory:= OrderedCollection new.
 	self placeAtTheBeggining: players.
 ]
@@ -109,14 +118,14 @@ Board >> move: player over: aNumberOfFields [
 { #category : #'actions - move' }
 Board >> moveAllPlayers: aNumberOfFields except: aPlayer [ 
 	| playerPosition |
-	playerPosition := positionsTracker detect:[:position | position player = aPlayer].
-	positionsTracker  := positionsTracker reject: [ :position | position player = aPlayer ] thenCollect: [ :position | self findNewPositionWhen: (position player) hasMoved: aNumberOfFields from: position].
-	positionsTracker add: playerPosition .
+	playerPosition := activeTrackers detect:[:position | position player = aPlayer].
+	activeTrackers  := activeTrackers reject: [ :position | position player = aPlayer ] thenCollect: [ :position | self findNewPositionWhen: (position player) hasMoved: aNumberOfFields from: position].
+	activeTrackers add: playerPosition .
 ]
 
 { #category : #'actions - move' }
 Board >> moveAllPlayersToTheBeginningOfLap [
-	positionsTracker := positionsTracker collect: [ :position | Tracker of: (position player) standingOn: 1 after: (position round) ]
+	activeTrackers := activeTrackers collect: [ :position | Tracker of: (position player) standingOn: 1 after: (position round) ]
 ]
 
 { #category : #accessing }
@@ -126,25 +135,27 @@ Board >> numberOfFields [
 
 { #category : #actions }
 Board >> orderPlayersPosition [
-	^positionsTracker
-		sort: [ :aPosition :anotherPosition | aPosition >= anotherPosition ]
+	| playersTracker |
+	playersTracker:= OrderedCollection newFrom: activeTrackers.
+	playersTracker addAll:inactiveTrackers.
+	^ playersTracker	sort: [ :aPosition :anotherPosition | aPosition >= anotherPosition ]
 	
 ]
 
 { #category : #'actions - move' }
 Board >> oveAllPlayersToTheBeginningOfLap [
-	positionsTracker := positionsTracker collect: [ :position | Tracker of: (position player) standingOn: 1 after: (position round) ]
+	activeTrackers := activeTrackers collect: [ :position | Tracker of: (position player) standingOn: 1 after: (position round) ]
 	
 ]
 
 { #category : #private }
 Board >> placeAtTheBeggining: players [
-	positionsTracker := OrderedCollection newFrom: (players collect: [ :aPlayer | Tracker of: aPlayer standingOn: 1 after: 1 ]).
+	activeTrackers := OrderedCollection newFrom: (players collect: [ :aPlayer | Tracker of: aPlayer standingOn: 1 after: 1 ]).
 ]
 
 { #category : #accessing }
 Board >> positionOf: aPlayer [
- ^ positionsTracker detect: [ :aPosition | aPosition player = aPlayer].
+ ^ activeTrackers detect: [ :aPosition | aPosition player = aPlayer] ifNone: [Tracker of: aPlayer standingOn:1  after:1 ].
 ]
 
 { #category : #'actions - effects' }
@@ -156,8 +167,8 @@ Board >> repeatAt: aBoardGame lastEffectAppliedOn: aPlayer [
 
 { #category : #actions }
 Board >> replaceOldPositioOf: player with: newPosition [
-	positionsTracker removeAllSuchThat:[:position | position player = player].
-	positionsTracker add: newPosition
+	activeTrackers removeAllSuchThat:[:position | position player = player].
+	activeTrackers add: newPosition
 	
 ]
 

@@ -28,7 +28,7 @@ BoardGameTest >> creationOfAnotherBoardGameWithThreePlayers [
 { #category : #positionTests }
 BoardGameTest >> creationOfBoardGameWithThatUsesA: firstDice a: secondDice andA: thirdDice [
 	| aGroupOfDices aDiceCup laps aNumberOfFields aBoardGame aGroupOfPlayers fields aDeck |
-	aGroupOfPlayers := {#pau . #male . #belu}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #male . #belu}.
 	aGroupOfDices := {firstDice. secondDice. thirdDice}.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aNumberOfFields := 50.
@@ -70,6 +70,25 @@ BoardGameTest >> generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBas
 	^ aBoardGame
 ]
 
+{ #category : #playingWithCardsTests }
+BoardGameTest >> generateABoardWithPrisonGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults [
+	| aDeck aGroupOfDices aDiceCup fields aNumberOfFields aDice aBoardGame laps |
+	aDice := DeterministicDice with: aSequenceOfDiceResults.
+	aGroupOfDices := {aDice}.
+	aNumberOfFields := 61.
+	aDiceCup := DiceCup containing: aGroupOfDices.
+	laps := 5.
+	fields := self generateManuallyIncludingCardDealerAndPrison: aNumberOfFields.
+	aDeck := DeterministicDeck containing: cards.
+	aBoardGame := BoardGame
+		playedBy: aGroupOfPlayers
+		using: aDiceCup
+		and: aDeck
+		onABoardWith: fields
+		wonWhenReach: laps.
+	^ aBoardGame
+]
+
 { #category : #fieldsEffectTests }
 BoardGameTest >> generateDeck [
 	| cards aDeck |
@@ -82,7 +101,7 @@ BoardGameTest >> generateDeck [
 BoardGameTest >> generateManually: aNumberOfFields [ 
 	|  fields  effectDistributionFields effectToDistribute |
 	fields:= OrderedCollection new: aNumberOfFields withAll: NoEffect new.
-	effectToDistribute := {WormHole new. SpeedUp new.AtomicBomb new.MoonWalk with: 16. MoonWalk with: 11 }.
+	effectToDistribute := {WormHole new. SpeedUp new.AtomicBomb new.MoonWalk with: 16. MoonWalk with: 11}.
 	effectDistributionFields := {{3 . 17}.{30 . 48}.{44}.{32}.{23}}.
 	effectToDistribute with: effectDistributionFields do:[ :effect :effectFields | 
 						effectFields do: 
@@ -94,8 +113,20 @@ BoardGameTest >> generateManually: aNumberOfFields [
 BoardGameTest >> generateManuallyIncludingCardDealer: aNumberOfFields [ 
 	|  fields effectDistributionFields effectToDistribute |
 	fields:= OrderedCollection new: aNumberOfFields withAll: NoEffect new.
-	effectToDistribute := {WormHole new. SpeedUp new.AtomicBomb new.MoonWalk with: 16. MoonWalk with: 11. CardDealer new}.
+	effectToDistribute := {WormHole new. SpeedUp new.AtomicBomb new.MoonWalk with: 16. MoonWalk with: 11. CardDealer new }.
 	effectDistributionFields := {{3 . 17}.{30 . 48}.{44}.{32}.{23}.{10}}.
+	effectToDistribute with: effectDistributionFields do:[ :effect :effectFields | 
+						effectFields do: 
+								[ :fieldNumber | fields at: fieldNumber put: effect ]].
+	^fields.
+]
+
+{ #category : #playingWithCardsTests }
+BoardGameTest >> generateManuallyIncludingCardDealerAndPrison: aNumberOfFields [ 
+	|  fields effectDistributionFields effectToDistribute |
+	fields:= OrderedCollection new: aNumberOfFields withAll: NoEffect new.
+	effectToDistribute := {WormHole new. SpeedUp new.AtomicBomb new.MoonWalk with: 16. MoonWalk with: 11. CardDealer new . Prison new.}.
+	effectDistributionFields := {{3 . 17}.{30 . 48}.{44}.{32}.{23}.{10}.{15}}.
 	effectToDistribute with: effectDistributionFields do:[ :effect :effectFields | 
 						effectFields do: 
 								[ :fieldNumber | fields at: fieldNumber put: effect ]].
@@ -106,7 +137,7 @@ BoardGameTest >> generateManuallyIncludingCardDealer: aNumberOfFields [
 BoardGameTest >> newBoardGameWithASinglePlayerAndASingleRound [
 	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers laps fields aDeck |
 	aDice := DeterministicDice with: #(2 4 7 3).
-	aGroupOfPlayers := {#pau}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
@@ -123,7 +154,7 @@ BoardGameTest >> newBoardGameWithMultiplePlayers [
 	firstDice := DeterministicDice with: #(2 4 7 2).
 	secondDice := DeterministicDice with: #(8 5 4 7 2).
 	thirdDice := DeterministicDice with: #(4 1 2 7 2).
-	aGroupOfPlayers := {#pau . #male . #belu . #juli}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #male . #belu . #juli}.
 	aGroupOfDices := {firstDice. secondDice. thirdDice}.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aNumberOfFields := 50.
@@ -230,7 +261,7 @@ BoardGameTest >> testABoardGameHasFinished [
 BoardGameTest >> testABoardGameHasFinishedAndHasAWinner [
 	| aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup laps fields aDeck |
 	aDice := DeterministicDice with: #(20 15 26 37).
-	aGroupOfPlayers := {#pau. #jorge}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau. #jorge}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 54.
 	aDiceCup := DiceCup containing: aGroupOfDices.
@@ -428,7 +459,7 @@ BoardGameTest >> testABoardGameMustHaveAtLeastOneLap [
  		
 	|aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup laps fields aDeck |
 	aDice:= DeterministicDice with:#(2 4 7 3).
-	aGroupOfPlayers:= {#pau . #male . #belu}.
+	aGroupOfPlayers:= OrderedCollection newFrom: {#pau . #male . #belu}.
 	aGroupOfDices := { aDice }.
 	aNumberOfFields:= 49.
 	aDiceCup:= DiceCup containing: aGroupOfDices.
@@ -469,7 +500,7 @@ BoardGameTest >> testABoardMustAtLeastTwoFields [
 	eventsDistribution := OrderedCollection newFrom: {speedUpEvent}.
 	eventManager := RandomProbabilityEventManager basedOn: eventsDistribution.
 	fields := eventManager generate: 1.
-	players:= { #male . #belu }.
+	players:= OrderedCollection newFrom: { #male . #belu }.
 
 	self 
 		should:[Board has: fields usedBy: players] 
@@ -485,7 +516,7 @@ BoardGameTest >> testACancellationCardCanAlsoBeUsedByAPlayerIfItIsNotHisTurn [
 	anotherSpeedCard := Speed new.
 	anotherCancellationCard := Cancellation new.
 	overloadCard:= Overload new.
-	aGroupOfPlayers := {#pau . #belu}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
 	aSequenceOfDiceResults := #(9 10 7 3).
 	cards := {speedCard.cancellationCard.anotherSpeedCard.anotherCancellationCard.overloadCard}.
 	
@@ -510,7 +541,7 @@ BoardGameTest >> testACardDealearGivesAPlayerACard [
 	aSecondRepeatCard := Repetition new.
 	aThirdSpeedCard:= Speed new.
 	aThirdRepeatCard := Repetition new.
-	aGroupOfPlayers := {#pau . #belu}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
 	aSequenceOfDiceResults := #(9 10 7 3).
 	cards := { speedCard . repeatCard . aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard . aThirdRepeatCard }.
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
@@ -531,7 +562,7 @@ BoardGameTest >> testACardDealearGivesAPlayerACardAndHeUsesItInmediately [
 	aThirdSpeedCard:= Speed new.
 	aThirdRepeatCard := Repetition new.
 	cards := { speedCard . repeatCard . aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard . aThirdRepeatCard }.
-	aGroupOfPlayers := {#pau . #belu}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
 	aSequenceOfDiceResults := #(9 10 7 3).
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
 		
@@ -570,7 +601,7 @@ BoardGameTest >> testAPlayerCanNotCancelACardAPlayerDoesNotHave [
 	aSecondSpeedCard:= Speed new.
 	accelerationCard:= Acceleration new.
 	cards := { overloadCard . cancellationCard .  speedCard . repeatCard . aSecondSpeedCard . accelerationCard  }.
-	aGroupOfPlayers := {#pau . #belu}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
 	aSequenceOfDiceResults := #(10 10 7 3).
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.	
 	
@@ -585,7 +616,7 @@ BoardGameTest >> testAPlayerCanNotCancelACardAPlayerDoesNotHave [
 BoardGameTest >> testAPlayerCanNotUseACardHeDoesNotHave [
 	| aBoardGame aGroupOfPlayers overloadCard aSequenceOfDiceResults cards  |
 	overloadCard := Overload new.
-	aGroupOfPlayers := {#pau . #belu}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
 	aSequenceOfDiceResults := #(10 10 7 3).
 	cards := {Acceleration new . Cancellation  new . DoOver new . Speed new . Repetition new . overloadCard }.
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.	
@@ -605,7 +636,7 @@ BoardGameTest >> testAPlayerCanNotUseADoOverCardWhenTheLastCardPlayedHadASpeedEf
 	anotherSpeedCard := Speed new.
 	anotherDoOverCard:= DoOver new.
 	overloadCard:= Overload new.
-	aGroupOfPlayers := {#pau . #belu}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
 	aSequenceOfDiceResults := #(9 10 7 3).
 	cards := { speedCard . doOverCard . anotherSpeedCard . anotherDoOverCard . overloadCard }.
 	
@@ -632,7 +663,7 @@ BoardGameTest >> testAPlayerCanNotUseASpeedUpCardIfItIsNotHisTurn [
 	anotherDoOverCard:= DoOver new.
 	overloadCard:= Overload new.
 	cards :={speedCard . doOverCard . anotherSpeedCard .anotherDoOverCard . overloadCard}.
-	aGroupOfPlayers := {#pau . #belu}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.
 	aBoardGame nextTurn.
 
@@ -654,7 +685,7 @@ BoardGameTest >> testAPlayerHas2CardsAtTheBegginingOfTheGame [
 BoardGameTest >> testAPlayerHasThreeCardsAfterLandingOnAFieldWithACardDealerEffect [
 	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers laps fields aDeck |
 	aDice := DeterministicDice with: #(9 10 7 3).
-	aGroupOfPlayers := {#pau}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
@@ -682,7 +713,7 @@ BoardGameTest >> testAPlayerParticipatesInABoardGameWhithCardsAndEffects [
 	doOverCard := DoOver new.
 	acceleratioCard := Acceleration new.
 	repetitionCard := Repetition new.
-	aGroupOfPlayers := {#pau . #belu}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
 	aSequenceOfDiceResults := #(9 10 7 3).
 	cards := { overloadCard . speedCard . doOverCard . acceleratioCard . repetitionCard}.
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
@@ -694,7 +725,7 @@ BoardGameTest >> testAPlayerParticipatesInABoardGameWhithCardsAndEffects [
 	
 	aBoardGame affect: #belu using: overloadCard by: #pau.
 	aBoardGame nextTurn.
-	aBoardGame affect: #belu using: acceleratioCard by: #belu.
+	aBoardGame affect: aGroupOfPlayers using: acceleratioCard by: #belu.
 	aBoardGame nextTurn.
 	aBoardGame affect: #belu using: repetitionCard  by: #pau.
 	aBoardGame nextTurn.
@@ -717,7 +748,7 @@ BoardGameTest >> testAPlayerThrowsACardAndItIsNoLongerInHand [
 	aThirdSpeedCard:= Speed new.
 	aThirdRepeatCard := Repetition new.
 	cards := { speedCard . repeatCard . aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard . aThirdRepeatCard }.
-	aGroupOfPlayers := {#pau . #belu}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
 	aSequenceOfDiceResults := #(9 10 7 3).
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
 		
@@ -735,7 +766,7 @@ BoardGameTest >> testAPlayerUsesACancellationCardAndRemovesASpeedCard [
 	anotherSpeedCard := Speed new.
 	anotherCancellationCard := Cancellation new.
 	aThirdSpeedCard:= Speed new.
-	aGroupOfPlayers := {#pau . #belu}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
 	aSequenceOfDiceResults := #(9 10 7 3).
 	cards := { speedCard . cancellationCard . anotherSpeedCard . anotherCancellationCard . aThirdSpeedCard}.
 	
@@ -759,13 +790,13 @@ BoardGameTest >> testAPlayerUsesACancellationCardAndRemovesAnAccelerationCard [
 	anotherAccelerationCard := Acceleration new.
 	anotherCancellationCard := Cancellation new.
 	aThirdAccelerationCard := Acceleration new.
-	aGroupOfPlayers := {#pau . #belu}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
 	aSequenceOfDiceResults := #(9 10 7 3).
 	cards := { accelerationCard . cancellationCard . anotherAccelerationCard . anotherCancellationCard . aThirdAccelerationCard }.
 	
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.
 
-	aBoardGame affect: #pau using: accelerationCard by: #pau.
+	aBoardGame affect: aGroupOfPlayers using: accelerationCard by: #pau.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	aBoardGame affect: accelerationCard using: cancellationCard by: #pau.
@@ -783,7 +814,7 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenNoDiceHasBeenThrowsThusItHasNoEff
 	anotherSpeedCard := Speed new.
 	anotherDoOverCard := DoOver new.
 	aThirdSpeedCard := Speed new.
-	aGroupOfPlayers := {#pau . #belu}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
 	aSequenceOfDiceResults := #(9 10 7 3).
 	cards := { speedCard . doOverCard . anotherSpeedCard . anotherDoOverCard . aThirdSpeedCard }.
 	
@@ -806,7 +837,7 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedHadASpeedEffect 
 	accelerarionCard := Acceleration new.
 	repetitionCard := Repetition new.
 	overloadCard:= Overload new.
-	aGroupOfPlayers := {#pau . #belu}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
 	aSequenceOfDiceResults := #(9 10 7 3).
 	cards := { doOverCard . speedCard . accelerarionCard . repetitionCard . overloadCard }.
 	
@@ -833,7 +864,7 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedHadAnAcceleratio
 	speedCard := Speed new.
 	repetitionCard := Repetition new.
 	overloadCard:= Overload new.
-	aGroupOfPlayers := {#pau . #belu}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
 	aSequenceOfDiceResults := #(9 10 7 3).
 	cards := { doOverCard . accelerationCard . speedCard . overloadCard . repetitionCard }.
 	
@@ -842,10 +873,10 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedHadAnAcceleratio
 	pauPosition := Tracker of: #pau standingOn: 20 after: 1.
 	beluPosition := Tracker of: #belu standingOn: 12 after: 1.
 		
-	aBoardGame affect: #pau using: accelerationCard by: #pau.
+	aBoardGame affect: aGroupOfPlayers using: accelerationCard by: #pau.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
-	aBoardGame affect: #pau using: doOverCard by: #pau.
+	aBoardGame affect: aGroupOfPlayers  using: doOverCard by: #pau.
 	aBoardGame nextTurn.
 		
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
@@ -864,7 +895,7 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedWasACancellation
 	aThirdCancellationCard := Cancellation new.
 	aThirdSpeedCard:= Speed new.
 	aThirdDoOverCard := DoOver new.
-	aGroupOfPlayers := {#pau . #belu}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
 	aSequenceOfDiceResults := #(9 10 7 3).
 	cards := {cancellationCard . speedCard . doOverCard . aSecondCancellationCard . aSecondSpeedCard . aSecondDoOverCard . aThirdCancellationCard . aThirdDoOverCard . aThirdSpeedCard }.
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
@@ -890,7 +921,7 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedWasARepeatCard [
 	aThirdRepeatCard := Repetition new.
 	aFourthRepearCard := Repetition new.
 	cards := { repeatCard . doOverCard . aSecondRepeatCard . aSecondDoOverCard . aThirdRepeatCard . aThirdDoOverCard . aFourthRepearCard }.
-	aGroupOfPlayers := {#pau . #belu}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
 	aSequenceOfDiceResults := #(9 10 7 3).
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
 
@@ -918,7 +949,7 @@ BoardGameTest >> testAPlayerUsesARepeatWhenAtomicBombEffecttHasBeenAppliedLast [
 	aThirdSpeedCard:= Speed new.
 	aThirdRepeatCard := Repetition new.
 	cards := { repeatCard . speedCard . aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard . aThirdRepeatCard }.
-	aGroupOfPlayers := {#pau . #belu . #male}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu . #male}.
 	aSequenceOfDiceResults := #(60 10 1 44).
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
 	pauPosition := Tracker of: #pau standingOn: 1 after: 2.
@@ -946,7 +977,7 @@ BoardGameTest >> testAPlayerUsesARepeatWhenMoonWalkEffecttHasBeenAppliedLast [
 	aThirdSpeedCard:= Speed new.
 	aThirdRepeatCard := Repetition new.
 	cards := { repeatCard . speedCard . aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard . aThirdRepeatCard }.
-	aGroupOfPlayers := {#pau . #belu . #male}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu . #male}.
 	aSequenceOfDiceResults := #(13 4 22).
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
 
@@ -972,7 +1003,7 @@ BoardGameTest >> testAPlayerUsesARepeatWhenNoDiceHasBeenThrowsThusItHasNoEffect 
 	aSecondSpeedCard:= Speed new.
 	aSecondRepeatCard := Repetition new.
 	aThirdSpeedCard:= Speed new.
-	aGroupOfPlayers := {#pau . #belu}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
 	aSequenceOfDiceResults := #(9 10 7 3).
 	cards := { repeatCard . speedCard . aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard }.
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
@@ -993,7 +1024,7 @@ BoardGameTest >> testAPlayerUsesARepeatWhenNoEffectHasBeenAppliedLast [
 	aSecondRepeatCard := Repetition new.
 	aThirdSpeedCard:= Speed new.
 	aThirdRepeatCard:= Repetition new.
-	aGroupOfPlayers := {#pau . #belu}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
 	aSequenceOfDiceResults := #(9 10 7 3).
 	cards := { repeatCard . speedCard . aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard . aThirdRepeatCard }.
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
@@ -1017,7 +1048,7 @@ BoardGameTest >> testAPlayerUsesARepeatWhenSpeedEffecttHasBeenAppliedLast [
 	aSecondSpeedCard:= Speed new.
 	aSecondRepeatCard := Repetition new.
 	aThirdSpeedCard:= Speed new.
-	aGroupOfPlayers := {#pau . #belu}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
 	aSequenceOfDiceResults := #(29 10 1 10).
 	cards := { repeatCard . speedCard . aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard }.
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
@@ -1041,7 +1072,7 @@ BoardGameTest >> testAPlayerUsesASpeedCardOnHimselfAndItIncrementsInOneTheResult
 	anotherOverloadCard := Overload new.
 	anotherSpeedCard := Speed new.
 	repetitionCard:= Repetition new.
-	aGroupOfPlayers := {#pau . #belu}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
 	aSequenceOfDiceResults := #(9 10 7 3).
 	cards := { overloadCard . speedCard  . anotherOverloadCard . anotherSpeedCard . repetitionCard }.
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
@@ -1064,7 +1095,7 @@ BoardGameTest >> testAPlayerUsesAnAccelerationCardAndIncrementsInOneTheResultOfA
 	anotherSpeedCard:= Speed new.
 	anotherAaccelerationCard:= Acceleration new.
 	aThirdSpeedCard:= Speed new.
-	aGroupOfPlayers := {#pau . #belu}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
 	aSequenceOfDiceResults := #(9 10 7 3).
 	cards := { speedCard . accelerationCard . anotherSpeedCard . anotherAaccelerationCard . aThirdSpeedCard  }.
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
@@ -1089,7 +1120,7 @@ BoardGameTest >> testAPlayerUsesAnOverloadCardOnAnotherPlayerAndItReducesInTwoTh
 	doOverCard := DoOver new.
 	acceleratioCard := Acceleration new.
 	repetitionCard := Repetition new.
-	aGroupOfPlayers := {#pau . #belu}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
 	aSequenceOfDiceResults := #(9 10 7 3).
 	cards := { overloadCard . speedCard . doOverCard . acceleratioCard . repetitionCard}.
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
@@ -1275,4 +1306,46 @@ BoardGameTest >> testWhenAPlayerFellsOnAnAtomicBombAllPlayersMoveToFieldOne [
 			(OrderedCollection
 				newFrom:
 					{malePosition . beluPosition . pauPosition })
+]
+
+{ #category : #fieldsEffectTests }
+BoardGameTest >> testWhenAPlayerFellsOnAnAtomicBombFieldIfAnotherPlayerIsOnPrisionHeIsNotAffected [
+	| aBoardGame pauPosition beluPosition malePosition aSequenceOfDiceResults speedCard cards aGroupOfPlayers |
+	aSequenceOfDiceResults := #(9 14 43 3).
+	speedCard:= Speed new.
+	cards :={speedCard }.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu .#male}.
+	aBoardGame := self generateABoardWithPrisonGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.
+
+	pauPosition := Tracker of: #pau standingOn: 1 after: 1.
+	beluPosition := Tracker of: #belu standingOn: 15 after: 1.
+	malePosition := Tracker of: #male standingOn: 1 after: 1.
+	1 to: 3 do: [ :n | aBoardGame nextTurn ].
+	self
+		assert: aBoardGame ranking
+		equals:
+			(OrderedCollection
+				newFrom:
+					{beluPosition . pauPosition . malePosition })
+]
+
+{ #category : #fieldsEffectTests }
+BoardGameTest >> testWhenAPlayerFellsOnThePrisonFieldHeLoosesTurns [
+	| aBoardGame pauPosition beluPosition malePosition aSequenceOfDiceResults speedCard cards aGroupOfPlayers |
+	aSequenceOfDiceResults := #(9 14 7 3).
+	speedCard:= Speed new.
+	cards :={speedCard }.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu .#male}.
+	aBoardGame := self generateABoardWithPrisonGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.
+
+	pauPosition := Tracker of: #pau standingOn: 34 after: 1.
+	beluPosition := Tracker of: #belu standingOn: 15 after: 1.
+	malePosition := Tracker of: #male standingOn: 20 after: 1.
+	1 to: 8 do: [ :n | aBoardGame nextTurn ].
+	self
+		assert: aBoardGame ranking
+		equals:
+			(OrderedCollection
+				newFrom:
+					{pauPosition . malePosition . beluPosition })
 ]

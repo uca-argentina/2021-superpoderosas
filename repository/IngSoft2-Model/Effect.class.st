@@ -6,5 +6,5 @@ Class {
 
 { #category : #actions }
 Effect >> effectTriggeredBy: aPlayer on: aBoard of: aBoardGame [
-	^self subclassResponsibility.
+	^ self subclassResponsibility
 ]

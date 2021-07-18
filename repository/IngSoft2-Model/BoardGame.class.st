@@ -7,7 +7,8 @@ Class {
 		'board',
 		'cardHandler',
 		'lapsNeededToWin',
-		'playerWhoseTurnItIsSpotter'
+		'playersManager',
+		'blockedPlayers'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -48,6 +49,14 @@ BoardGame >> affect: aTarget using: aCard by: aPlayer [
 		using: aCard
 		by: aPlayer
 		on: self
+]
+
+{ #category : #actions }
+BoardGame >> blockPermanently: aPlayer [
+	playersManager remove: aPlayer.
+	blockedPlayers add: aPlayer.
+	board inactiveTrackerOF: aPlayer.
+	
 ]
 
 { #category : #'actions - cards' }
@@ -113,6 +122,7 @@ BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck onBo
 	isFinished := false.
 	lapsNeededToWin := laps.
 	cardHandler:= CardHandler managing: aDeck for: aGroupOfPlayers. 
+	blockedPlayers:= OrderedCollection new.
 ]
 
 { #category : #accessing }
@@ -122,7 +132,7 @@ BoardGame >> isFinished [
 
 { #category : #private }
 BoardGame >> lookForPlayerWhoseTurnItIs [
-	^ playerWhoseTurnItIsSpotter nextElement.
+	^ playersManager nextElement.
 ]
 
 { #category : #actions }
@@ -158,13 +168,13 @@ BoardGame >> repeatLastEffectAppliedOn: aPlayer [
 
 { #category : #initialize }
 BoardGame >> startPlayingOnABoardWith: fields with: aGroupOfPlayers [
-	playerWhoseTurnItIsSpotter := Sequence newFrom: aGroupOfPlayers.
+	playersManager := Sequence newFrom: aGroupOfPlayers.
 	board := Board has: fields usedBy: aGroupOfPlayers.
 ]
 
 { #category : #validations }
 BoardGame >> verifyIfItIsTheTurnOf: currentPlayer [
-	(currentPlayer = (playerWhoseTurnItIsSpotter actualElement)) ifFalse:[Error signal: self errorMessageCardCanNotBePlayedOutsidePlayersTurn]
+	(currentPlayer = (playersManager actualElement)) ifFalse:[Error signal: self errorMessageCardCanNotBePlayedOutsidePlayersTurn]
 ]
 
 { #category : #validations }
