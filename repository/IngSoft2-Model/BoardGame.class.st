@@ -137,7 +137,6 @@ BoardGame >> nextTurn [
 		obtained: sumOfAllDices.
 	board move: player along: sumOfAllDices on: self.
 	self endGameIfTheWinnerIs: player.
-	^ player
 ]
 
 { #category : #actions }
