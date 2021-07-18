@@ -47,14 +47,26 @@ Board >> determinateAdditionalRoundsBasingOn: totalFields [
 
 { #category : #private }
 Board >> findNewPositionWhen: player hasMoved: aNumberOfFields from: oldPosition [
-	| totalFields newPosition newRoundNumber newFieldNumber |
+	| totalFields newRoundNumber newFieldNumber |
 	totalFields := oldPosition field + aNumberOfFields.
 	newFieldNumber := self lookUpResultingFieldNumberBasingOn: totalFields.
-	newRoundNumber :=  oldPosition round + (self determinateAdditionalRoundsBasingOn: totalFields).
-	newPosition := Tracker of: player standingOn: newFieldNumber after: newRoundNumber.
-	newPosition := self validate: newPosition.
+	newRoundNumber := oldPosition round + (self determinateAdditionalRoundsBasingOn: totalFields).
+	^ self
+		generateValidTrackerFor: newFieldNumber
+		standingOn: newRoundNumber
+		after: player
+]
+
+{ #category : #private }
+Board >> generateValidTrackerFor: newFieldNumber standingOn: newRoundNumber after: player [
+	| newPosition |
+	newPosition := Tracker
+		of: player
+		standingOn: newFieldNumber
+		after: newRoundNumber.
+	newPosition := self
+		validateIfPlayerShouldBeAtTheBeginningBasingOn: newPosition.
 	^ newPosition
-	
 ]
 
 { #category : #initialize }
@@ -89,7 +101,6 @@ Board >> move: player over: aNumberOfFields [
 	| newPosition oldPosition |
 	oldPosition := self positionOf: player.
 	newPosition := self findNewPositionWhen: player hasMoved: aNumberOfFields from: oldPosition.
-	positionsTracker removeAllSuchThat:[:position | position player = player].
 	self replaceOldPositioOf: player with: newPosition.
 	^ newPosition
 ]
@@ -103,9 +114,8 @@ Board >> moveAllPlayers: aNumberOfFields except: aPlayer [
 ]
 
 { #category : #'actions - move' }
-Board >> moveAllPlayersTo: aSpecificField [
-	positionsTracker := positionsTracker collect: [ :position | Tracker of: (position player) standingOn: aSpecificField after: (position round) ]
-	
+Board >> moveAllPlayersToTheBeginningOfLap [
+	positionsTracker := positionsTracker collect: [ :position | Tracker of: (position player) standingOn: 1 after: (position round) ]
 ]
 
 { #category : #accessing }
@@ -117,6 +127,12 @@ Board >> numberOfFields [
 Board >> orderPlayersPosition [
 	^positionsTracker
 		sort: [ :aPosition :anotherPosition | aPosition >= anotherPosition ]
+	
+]
+
+{ #category : #'actions - move' }
+Board >> oveAllPlayersToTheBeginningOfLap [
+	positionsTracker := positionsTracker collect: [ :position | Tracker of: (position player) standingOn: 1 after: (position round) ]
 	
 ]
 
@@ -150,7 +166,7 @@ Board >> searchFieldFor: aPosition [
 ]
 
 { #category : #validations }
-Board >> validate: aPosition [
+Board >> validateIfPlayerShouldBeAtTheBeginningBasingOn: aPosition [
  (aPosition round <= 0) ifTrue: [^( Tracker of: (aPosition player) standingOn: 1 after: 1)] ifFalse:[^aPosition].
 	
 ]

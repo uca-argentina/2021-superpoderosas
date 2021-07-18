@@ -5,6 +5,6 @@ Class {
 }
 
 { #category : #accessing }
-Card >> thrownBy: arg1 aims: arg2 on: arg3 handledBy: arg4 [ 
+Card >> thrownBy: aPlayer aims: aTarget on: aBoardGame handledBy: cardHandler [
 	^ self subclassResponsibility
 ]
