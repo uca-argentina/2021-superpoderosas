@@ -2,13 +2,12 @@ Class {
 	#name : #BoardGame,
 	#superclass : #Object,
 	#instVars : [
-		'players',
 		'isFinished',
-		'playersTurnIdentificator',
 		'diceCup',
-		'spinsNeededToWin',
 		'board',
-		'cardHandler'
+		'cardHandler',
+		'lapsNeededToWin',
+		'playerWhoseTurnItIsSpotter'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -19,27 +18,27 @@ BoardGame class >> errorMessageMustHaveAtLeastAPlayer [
 ]
 
 { #category : #'error messages' }
-BoardGame class >> errorMessageSpinNumberMustBeGreaterThanCero [
-	^ 'The board game must have at leaste one lap'
+BoardGame class >> errorMessageTheAmountOfLapsMustBeGreaterThanCero [
+	^ 'The board game must have at least one lap'
 ]
 
 { #category : #initialization }
-BoardGame class >> playedBy: aGroupOfPlayers using: aDiceCup and: aDeck onABoardWith: fields wonWhenReach: aSpinNumber [
+BoardGame class >> playedBy: aGroupOfPlayers using: aDiceCup and: aDeck onABoardWith: fields wonWhenReach: laps [
 		self verifyIfThereIsAtLeastOnePlayerOn: aGroupOfPlayers .
-		self verifySpinNumberIsGreaterThanCero: aSpinNumber.
-		^ self new initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck onBoardWith: fields wonWhenReach: aSpinNumber.
+		self verifyIfLapsAreMoreThanCero: laps.
+		^ self new initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck onBoardWith: fields wonWhenReach: laps.
+]
+
+{ #category : #validations }
+BoardGame class >> verifyIfLapsAreMoreThanCero: laps [.
+	(laps <1 ) 
+		ifTrue: [ Error signal: self errorMessageTheAmountOfLapsMustBeGreaterThanCero ] .
 ]
 
 { #category : #validations }
 BoardGame class >> verifyIfThereIsAtLeastOnePlayerOn: aGroupOfPlayers [ 
 	(aGroupOfPlayers isEmpty ) 
 		ifTrue: [ Error signal: self errorMessageMustHaveAtLeastAPlayer ] .
-]
-
-{ #category : #validations }
-BoardGame class >> verifySpinNumberIsGreaterThanCero: aSpinNumber [.
-	(aSpinNumber <1 ) 
-		ifTrue: [ Error signal: self errorMessageSpinNumberMustBeGreaterThanCero ] .
 ]
 
 { #category : #'actions - cards' }
@@ -70,7 +69,7 @@ BoardGame >> dealACardTo: player [
 BoardGame >> endGameIfTheWinnerIs: player [
 	| newPosition |
 	newPosition := board positionOf: player.
-	newPosition round > spinsNeededToWin
+	newPosition round > lapsNeededToWin
 		ifTrue: [ self changeCurrentStateToFinished ]
 ]
 
@@ -108,12 +107,12 @@ BoardGame >> influentialCardsOf: aPlayer [
 ]
 
 { #category : #initialize }
-BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck onBoardWith: fields wonWhenReach: aSpinNumber [
+BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck onBoardWith: fields wonWhenReach: laps [
 	diceCup := aDiceCup.
 	self startPlayingOnABoardWith: fields with: aGroupOfPlayers.
 	isFinished := false.
-	spinsNeededToWin := aSpinNumber.
-	cardHandler:= CardHandler managing: aDeck for: players. 
+	lapsNeededToWin := laps.
+	cardHandler:= CardHandler managing: aDeck for: aGroupOfPlayers. 
 ]
 
 { #category : #accessing }
@@ -123,7 +122,7 @@ BoardGame >> isFinished [
 
 { #category : #private }
 BoardGame >> lookForPlayerWhoseTurnItIs [
-	^ players at: (playersTurnIdentificator findNextIndex).
+	^ playerWhoseTurnItIsSpotter nextElement.
 ]
 
 { #category : #actions }
@@ -159,10 +158,8 @@ BoardGame >> repeatLastEffectAppliedOn: aPlayer [
 
 { #category : #initialize }
 BoardGame >> startPlayingOnABoardWith: fields with: aGroupOfPlayers [
-	players:= aGroupOfPlayers.
-	playersTurnIdentificator := SequenceSimulator newFrom: (aGroupOfPlayers size).
-	board := Board has: fields.
-	board placeAtTheBeggining: players.
+	playerWhoseTurnItIsSpotter := Sequence newFrom: aGroupOfPlayers.
+	board := Board has: fields usedBy: aGroupOfPlayers.
 ]
 
 { #category : #validations }
@@ -173,7 +170,7 @@ BoardGame >> validateThrowOfAPermanent: aCard by: aPlayer [
 
 { #category : #validations }
 BoardGame >> verifyIfItIsTheTurnOf: currentPlayer [
-	(currentPlayer = (players at: (playersTurnIdentificator actualIndex))) ifFalse:[Error signal: self errorMessageCardCanNotBePlayedOutsidePlayersTurn]
+	(currentPlayer = (playerWhoseTurnItIsSpotter actualElement)) ifFalse:[Error signal: self errorMessageCardCanNotBePlayedOutsidePlayersTurn]
 ]
 
 { #category : #validations }

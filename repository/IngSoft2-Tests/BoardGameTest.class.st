@@ -27,15 +27,15 @@ BoardGameTest >> creationOfAnotherBoardGameWithThreePlayers [
 
 { #category : #positionTests }
 BoardGameTest >> creationOfBoardGameWithThatUsesA: firstDice a: secondDice andA: thirdDice [
-	| aGroupOfDices aDiceCup aSpinNumber aNumberOfFields aBoardGame aGroupOfPlayers fields aDeck |
+	| aGroupOfDices aDiceCup laps aNumberOfFields aBoardGame aGroupOfPlayers fields aDeck |
 	aGroupOfPlayers := {#pau . #male . #belu}.
 	aGroupOfDices := {firstDice. secondDice. thirdDice}.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aNumberOfFields := 50.
-	aSpinNumber := 3.
+	laps := 3.
 	fields:= self generateManually: aNumberOfFields.
 	aDeck := self generateDeck.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck onABoardWith: fields wonWhenReach: aSpinNumber.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck onABoardWith: fields wonWhenReach: laps.
 	^ aBoardGame
 ]
 
@@ -53,12 +53,12 @@ BoardGameTest >> creationOfBoardGameWithThreePlayers [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults [
-	| aDeck aGroupOfDices aDiceCup fields aNumberOfFields aDice aBoardGame aSpinNumber |
+	| aDeck aGroupOfDices aDiceCup fields aNumberOfFields aDice aBoardGame laps |
 	aDice := DeterministicDice with: aSequenceOfDiceResults.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
-	aSpinNumber := 5.
+	laps := 5.
 	fields := self generateManuallyIncludingCardDealer: aNumberOfFields.
 	aDeck := DeterministicDeck containing: cards.
 	aBoardGame := BoardGame
@@ -66,7 +66,7 @@ BoardGameTest >> generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBas
 		using: aDiceCup
 		and: aDeck
 		onABoardWith: fields
-		wonWhenReach: aSpinNumber.
+		wonWhenReach: laps.
 	^ aBoardGame
 ]
 
@@ -104,22 +104,22 @@ BoardGameTest >> generateManuallyIncludingCardDealer: aNumberOfFields [
 
 { #category : #accessingTests }
 BoardGameTest >> newBoardGameWithASinglePlayerAndASingleRound [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber fields aDeck |
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers laps fields aDeck |
 	aDice := DeterministicDice with: #(2 4 7 3).
 	aGroupOfPlayers := {#pau}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
-	aSpinNumber:=1.
+	laps:=1.
 	fields:= self generateManually: aNumberOfFields.
 	aDeck := self generateDeck.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck onABoardWith: fields wonWhenReach: aSpinNumber.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck onABoardWith: fields wonWhenReach: laps.
 	^ aBoardGame
 ]
 
 { #category : #accessingTests }
 BoardGameTest >> newBoardGameWithMultiplePlayers [
-	| aBoardGame secondDice aGroupOfPlayers aGroupOfDices firstDice aNumberOfFields thirdDice aDiceCup aSpinNumber fields aDeck |
+	| aBoardGame secondDice aGroupOfPlayers aGroupOfDices firstDice aNumberOfFields thirdDice aDiceCup laps fields aDeck |
 	firstDice := DeterministicDice with: #(2 4 7 2).
 	secondDice := DeterministicDice with: #(8 5 4 7 2).
 	thirdDice := DeterministicDice with: #(4 1 2 7 2).
@@ -127,10 +127,10 @@ BoardGameTest >> newBoardGameWithMultiplePlayers [
 	aGroupOfDices := {firstDice. secondDice. thirdDice}.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	aNumberOfFields := 50.
-	aSpinNumber:=1.
+	laps:=1.
 	fields:= self generateManually: aNumberOfFields.
 	aDeck := self generateDeck.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck onABoardWith: fields wonWhenReach: aSpinNumber.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck onABoardWith: fields wonWhenReach: laps.
 		
 	^ aBoardGame
 ]
@@ -228,16 +228,16 @@ BoardGameTest >> testABoardGameHasFinished [
 
 { #category : #statusTests }
 BoardGameTest >> testABoardGameHasFinishedAndHasAWinner [
-	| aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup aSpinNumber fields aDeck |
+	| aBoardGame aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup laps fields aDeck |
 	aDice := DeterministicDice with: #(20 15 26 37).
 	aGroupOfPlayers := {#pau. #jorge}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 54.
 	aDiceCup := DiceCup containing: aGroupOfDices.
-	aSpinNumber:=3.
+	laps:=3.
 	fields:= self generateManually: aNumberOfFields.
 	aDeck := self generateDeck.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck onABoardWith: fields wonWhenReach: aSpinNumber.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck onABoardWith: fields wonWhenReach: laps.
 	self assert: ((aBoardGame positionOf: #pau) field) equals: 1.
 	self assert: ((aBoardGame positionOf: #jorge) field) equals: 1.
 	self assert: ((aBoardGame positionOf: #pau) round) equals: 1.
@@ -404,7 +404,7 @@ BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowADiceAndMoveOnThe
 { #category : #playingTests }
 BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowThreeDicesSimultaneously [
  		
-	|  aBoardGame aGroupOfPlayers aGroupOfDices firstDice secondDice thirdDice aNumberOfFields aDiceCup aSpinNumber pauPosition fields aDeck |
+	|  aBoardGame aGroupOfPlayers aGroupOfDices firstDice secondDice thirdDice aNumberOfFields aDiceCup laps pauPosition fields aDeck |
 	firstDice:= DeterministicDice with:#(2 4 7 2).
 	secondDice:= DeterministicDice with:#(8 5 4 7 2).
 	thirdDice:= DeterministicDice with:#(4 1 2 7 2).
@@ -412,10 +412,10 @@ BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowThreeDicesSimulta
 	aGroupOfDices:= { firstDice. secondDice. thirdDice}.
 	aNumberOfFields:= 50.
 	aDiceCup:= DiceCup containing: aGroupOfDices.
-	aSpinNumber:=1.
+	laps:=1.
 	fields:= self generateManually: aNumberOfFields.
 	aDeck := self generateDeck.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck onABoardWith: fields wonWhenReach: aSpinNumber.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck onABoardWith: fields wonWhenReach: laps.
 	pauPosition := Tracker of: #pau standingOn: 25 after: 1.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
@@ -426,37 +426,37 @@ BoardGameTest >> testABoardGameMakesThePlayerWhoseTurnItIsThrowThreeDicesSimulta
 { #category : #validationTests }
 BoardGameTest >> testABoardGameMustHaveAtLeastOneLap [
  		
-	|aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup aSpinNumber aBoard fields aDeck |
+	|aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup laps fields aDeck |
 	aDice:= DeterministicDice with:#(2 4 7 3).
 	aGroupOfPlayers:= {#pau . #male . #belu}.
 	aGroupOfDices := { aDice }.
 	aNumberOfFields:= 49.
 	aDiceCup:= DiceCup containing: aGroupOfDices.
-	aSpinNumber:=0.
+	laps:=0.
 	fields:= self generateManually: aNumberOfFields.
 	aDeck := self generateDeck.
 
 	self 
-		should:[BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck onABoardWith: fields wonWhenReach: aSpinNumber.] 
+		should:[BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck onABoardWith: fields wonWhenReach: laps.] 
 		raise: Error 
-		withExceptionDo: [:error | self assert: error messageText equals: 'The board game must have at leaste one lap'].
+		withExceptionDo: [:error | self assert: error messageText equals: 'The board game must have at least one lap'].
 ]
 
 { #category : #validationTests }
 BoardGameTest >> testABoardGameNeedsAtLeastOnePlayer [
  		
-	|aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup aSpinNumber aBoard fields aDeck |
+	|aGroupOfPlayers aDice aGroupOfDices aNumberOfFields aDiceCup laps fields aDeck |
 	aDice:= DeterministicDice with:#(2 4 7 3).
 	aGroupOfPlayers:= {}.
 	aGroupOfDices := { aDice }.
 	aNumberOfFields:= 49.
 	aDiceCup:= DiceCup containing: aGroupOfDices.
-	aSpinNumber:=1.
+	laps:=1.
 	fields:= self generateManually: aNumberOfFields.
 	aDeck := self generateDeck.
 
 	self 
-		should:[BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck onABoardWith: fields wonWhenReach: aSpinNumber.] 
+		should:[BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck onABoardWith: fields wonWhenReach: laps.] 
 		raise: Error 
 		withExceptionDo: [:error | self assert: error messageText equals: 'The board game must have at leaste ONE player'].
 ]
@@ -464,14 +464,15 @@ BoardGameTest >> testABoardGameNeedsAtLeastOnePlayer [
 { #category : #validationTests }
 BoardGameTest >> testABoardMustAtLeastTwoFields [
  		
-	| fields eventManager speedUpEvent eventsDistribution|
+	| fields eventManager speedUpEvent eventsDistribution players |
 	speedUpEvent:= ProbabilityEvent with: 1.0 of: SpeedUp new.
 	eventsDistribution := OrderedCollection newFrom: {speedUpEvent}.
 	eventManager := RandomProbabilityEventManager basedOn: eventsDistribution.
 	fields := eventManager generate: 1.
+	players:= { #male . #belu }.
 
 	self 
-		should:[Board has: fields.] 
+		should:[Board has: fields usedBy: players] 
 		raise: Error 
 		withExceptionDo: [:error | self assert: error messageText equals: 'There must be al least two fields'].
 ]
@@ -651,16 +652,16 @@ BoardGameTest >> testAPlayerHas2CardsAtTheBegginingOfTheGame [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerHasThreeCardsAfterLandingOnAFieldWithACardDealerEffect [
-	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers aSpinNumber fields aDeck |
+	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers laps fields aDeck |
 	aDice := DeterministicDice with: #(9 10 7 3).
 	aGroupOfPlayers := {#pau}.
 	aGroupOfDices := {aDice}.
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
-	aSpinNumber:=1.
+	laps:=1.
 	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
 	aDeck := self generateDeck.
-	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck onABoardWith: fields wonWhenReach: aSpinNumber.
+	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck onABoardWith: fields wonWhenReach: laps.
 	aBoardGame nextTurn.
 	self assert: (aBoardGame cardsInHandOf: #pau) size equals: 3.
 ]

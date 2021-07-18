@@ -2,8 +2,7 @@ Class {
 	#name : #DeterministicDeck,
 	#superclass : #Object,
 	#instVars : [
-		'sequence',
-		'index'
+		'sequence'
 	],
 	#category : #'IngSoft2-Tests'
 }
@@ -15,14 +14,14 @@ DeterministicDeck class >> containing: aCardsSequence [
 
 { #category : #inirialize }
 DeterministicDeck >> initializeContaining: aCardsSequence [  
-	sequence := aCardsSequence.
-	index := 0.
+	sequence:= Sequence newFrom: aCardsSequence.
 ]
 
 { #category : #actions }
 DeterministicDeck >> pickUp [ 
-	index := index + 1. 
-	^ sequence at: index.
+	"index := index + 1. 
+	^ sequence at: index."
+	^sequence nextElement.
 ]
 
 { #category : #actions }

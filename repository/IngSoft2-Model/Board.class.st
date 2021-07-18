@@ -15,9 +15,9 @@ Board class >> errorMessageNumberOfFieldsMustBeGreaterThanOne [
 ]
 
 { #category : #initialization }
-Board class >> has: fields [ 
+Board class >> has: fields usedBy: players [.
 	self verifyIfItHasAtLeastTwoFields: fields.
-	^self new initializeHaving: fields.
+	^self new initializeHaving: fields usedBy:players.
 ]
 
 { #category : #validations }
@@ -70,10 +70,11 @@ Board >> generateValidTrackerFor: newFieldNumber standingOn: newRoundNumber afte
 ]
 
 { #category : #initialize }
-Board >> initializeHaving: someFields [ 
+Board >> initializeHaving: someFields usedBy:players [.
 	fields := someFields .
 	positionsTracker:= OrderedCollection new.
 	effectsHistory:= OrderedCollection new.
+	self placeAtTheBeggining: players.
 ]
 
 { #category : #private }
@@ -136,7 +137,7 @@ Board >> oveAllPlayersToTheBeginningOfLap [
 	
 ]
 
-{ #category : #'actions - move' }
+{ #category : #private }
 Board >> placeAtTheBeggining: players [
 	positionsTracker := OrderedCollection newFrom: (players collect: [ :aPlayer | Tracker of: aPlayer standingOn: 1 after: 1 ]).
 ]

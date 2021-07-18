@@ -2,8 +2,7 @@ Class {
 	#name : #DeterministicDice,
 	#superclass : #Object,
 	#instVars : [
-		'pattern',
-		'patternIndex'
+		'pattern'
 	],
 	#category : #'IngSoft2-Tests'
 }
@@ -15,13 +14,12 @@ DeterministicDice class >> with: aPattern [.
 
 { #category : #initialize }
 DeterministicDice >> initializeWith: aPattern [ 
-	pattern := aPattern.
-	patternIndex := SequenceSimulator newFrom: (aPattern size).
+	pattern := Sequence newFrom: aPattern.
 ]
 
 { #category : #actions }
 DeterministicDice >> throw [
-	^ pattern at: (patternIndex findNextIndex).
+	^ pattern nextElement.
 	
 	
 	
