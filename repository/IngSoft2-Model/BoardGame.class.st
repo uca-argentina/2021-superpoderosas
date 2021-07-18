@@ -163,12 +163,6 @@ BoardGame >> startPlayingOnABoardWith: fields with: aGroupOfPlayers [
 ]
 
 { #category : #validations }
-BoardGame >> validateThrowOfAPermanent: aCard by: aPlayer [
-	self verifyIfItIsTheTurnOf: aPlayer.
-
-]
-
-{ #category : #validations }
 BoardGame >> verifyIfItIsTheTurnOf: currentPlayer [
 	(currentPlayer = (playerWhoseTurnItIsSpotter actualElement)) ifFalse:[Error signal: self errorMessageCardCanNotBePlayedOutsidePlayersTurn]
 ]
