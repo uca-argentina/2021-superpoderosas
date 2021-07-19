@@ -51,13 +51,6 @@ BoardGame >> affect: aTarget using: aCard by: aPlayer [
 		on: self
 ]
 
-{ #category : #actions }
-BoardGame >> blockPermanently: aPlayer [
-	inactivePlayers add: aPlayer.
-	board inactiveTrackerOf: aPlayer.
-	
-]
-
 { #category : #'actions - cards' }
 BoardGame >> cardsInHandOf: aPlayer [
 	^ cardHandler cardsInHandOf: aPlayer.
@@ -68,7 +61,7 @@ BoardGame >> changeCurrentStateToFinished [
 	isFinished := true.
 ]
 
-{ #category : #actions }
+{ #category : #private }
 BoardGame >> continueTurnOf: player with: sum [
 	| sumOfAllDices |
 	sumOfAllDices := self fieldsToMoveAfter: player obtained: sum.
@@ -99,7 +92,7 @@ BoardGame >> errorMessageDoesNotHaveAWinnerYet [
 	^ 'The board game has not finished yet, so it does not have a winner.'.
 ]
 
-{ #category : #actions }
+{ #category : #'error messages' }
 BoardGame >> errorMessagePlayerWasNeverImprisoned [
 	^ 'This element was never exclude, therefore it can not be reincorporated'
 ]
@@ -123,9 +116,18 @@ BoardGame >> fieldsToMoveIndicatedByInfluentialCardsOf: player [
 ]
 
 { #category : #actions }
-BoardGame >> free: player with: card [
-	inactivePlayers remove: player ifAbsent: [ Error signal: self errorMessagePlayerWasNeverImprisoned ].
+BoardGame >> free: player [
+	inactivePlayers
+		remove: player
+		ifAbsent: [ ].
 	board activateTrackerOf: player.
+	"Error signal: self errorMessagePlayerWasNeverImprisoned"
+	
+]
+
+{ #category : #actions }
+BoardGame >> free: player with: card [
+	self free: player.
 	cardHandler addToCardsRecord: card
 ]
 
@@ -160,6 +162,8 @@ BoardGame >> nextTurn [
 	self verifyIfTheGameHasFinished.
 	player := self lookForPlayerWhoseTurnItIs.
 	sumOfAllDices := diceCup throw.
+	(sumOfAllDices = diceCup max and: (self validateIfNotInJail: player))
+		ifTrue:[self free: player].
 	(self validateIfNotInJail: player)
 		ifFalse: [ self continueTurnOf: player with: sumOfAllDices ]
 ]
@@ -167,6 +171,13 @@ BoardGame >> nextTurn [
 { #category : #actions }
 BoardGame >> positionOf: player [
  ^ board positionOf: player.
+	
+]
+
+{ #category : #actions }
+BoardGame >> putInPrison: aPlayer [
+	inactivePlayers add: aPlayer.
+	board inactiveTrackerOf: aPlayer.
 	
 ]
 

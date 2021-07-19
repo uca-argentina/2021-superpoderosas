@@ -17,6 +17,11 @@ DeterministicDice >> initializeWith: aPattern [
 	pattern := Sequence newFrom: aPattern.
 ]
 
+{ #category : #accessing }
+DeterministicDice >> max [
+	^ pattern  max.
+]
+
 { #category : #actions }
 DeterministicDice >> throw [
 	^ pattern nextElement.

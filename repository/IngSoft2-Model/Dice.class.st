@@ -29,6 +29,11 @@ Dice >> initializeHaving: aNumberOfFaces [
 	numberOfFaces:= aNumberOfFaces.
 ]
 
+{ #category : #accesing }
+Dice >> max [
+	^numberOfFaces
+]
+
 { #category : #actions }
 Dice >> throw [
 	^(1 to: numberOfFaces) atRandom.

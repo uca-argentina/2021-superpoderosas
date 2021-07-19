@@ -26,6 +26,11 @@ Sequence >> initializeNewFrom: elementsSequence [
 ]
 
 { #category : #accessing }
+Sequence >> max [
+	^elements max.
+]
+
+{ #category : #accessing }
 Sequence >> nextElement [
 	| oldIndex |
 	oldIndex := index.

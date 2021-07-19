@@ -5,6 +5,25 @@ Class {
 }
 
 { #category : #randomDiceTests }
+DiceTest >> testADeterministicDiceCanAnswerWithHisMax [
+	| deterministicDice aPattern |
+	aPattern:=#(2 3 4 1 1 6 5).
+	deterministicDice:= DeterministicDice with: aPattern.
+	self assert: deterministicDice max equals: 6.
+	
+	
+]
+
+{ #category : #randomDiceTests }
+DiceTest >> testADiceCanAnswerWithHisMax [
+	| dice |
+	dice:= Dice having: 6.
+	self assert: dice max equals: 6.
+	
+	
+]
+
+{ #category : #randomDiceTests }
 DiceTest >> testARandomDiceHasAtLeastTwoFaces [	
 	self 
 		should:[(Dice having: 0) and:(Dice having: 1).] 

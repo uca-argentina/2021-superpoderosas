@@ -29,6 +29,11 @@ DiceCup >> initializeContaining: aGroupOfDices [
 	dices:= aGroupOfDices.
 ]
 
+{ #category : #accesing }
+DiceCup >> max [
+	^dices sum:[:dice | dice max].
+]
+
 { #category : #actions }
 DiceCup >> throw [
 	| resultOfThrowingAGroupOfDices |
