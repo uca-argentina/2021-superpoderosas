@@ -3,8 +3,7 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'index',
-		'elements',
-		'excludedElements'
+		'elements'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -20,49 +19,22 @@ Sequence >> actualElement [
 	^ elements at: index.
 ]
 
-{ #category : #'error messages' }
-Sequence >> errorMessageElementWasNeverExcluded [
-	^ 'This element was never exclude, therefore it can not be reincorporated'
-]
-
-{ #category : #actions }
-Sequence >> excludePermantly: anElement [
-	excludedElements add: anElement.
-]
-
 { #category : #initialize }
 Sequence >> initializeNewFrom: elementsSequence [
 	elements := elementsSequence.
 	index := 1.
-	excludedElements:= OrderedCollection new.
 ]
 
 { #category : #accessing }
 Sequence >> nextElement [
-	| oldIndex element |
+	| oldIndex |
 	oldIndex := index.
 	self renovateIndex.
-	element := elements at: oldIndex.
-	^self nextElementConsideringPossibleExclusionOf: element.
+	^ elements at: oldIndex.
 ]
 
 { #category : #private }
-Sequence >> nextElementConsideringPossibleExclusionOf: element [
-	(self validateIsNotExclude: element)
-		ifTrue: [ ^ self nextElement ]
-		ifFalse: [ ^ element ]
-]
-
-{ #category : #actions }
-Sequence >> reincorporate: anElement [
-	excludedElements
-		remove: anElement
-		ifAbsent:
-			[ Error signal: self errorMessageElementWasNeverExcluded ]
-]
-
-{ #category : #private }
-Sequence >> renovateIndex [
+Sequence >> renovateIndex [ 
 	self verifyIfThePatternIndexHasToBeTheOriginal
 		ifTrue: [ self replaceIndexWithTheOriginalOne ]
 		ifFalse: [ self updateIndex ]
@@ -76,11 +48,6 @@ Sequence >> replaceIndexWithTheOriginalOne [
 { #category : #private }
 Sequence >> updateIndex [
 	index := index + 1.
-]
-
-{ #category : #validations }
-Sequence >> validateIsNotExclude: anElement [
-	^ excludedElements contains: [:element | anElement = element].
 ]
 
 { #category : #validations }

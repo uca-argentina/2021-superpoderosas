@@ -7,7 +7,8 @@ Class {
 		'board',
 		'cardHandler',
 		'lapsNeededToWin',
-		'playersManager'
+		'playersManager',
+		'inactivePlayers'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -52,7 +53,7 @@ BoardGame >> affect: aTarget using: aCard by: aPlayer [
 
 { #category : #actions }
 BoardGame >> blockPermanently: aPlayer [
-	playersManager excludePermantly: aPlayer.
+	inactivePlayers add: aPlayer.
 	board inactiveTrackerOf: aPlayer.
 	
 ]
@@ -65,6 +66,14 @@ BoardGame >> cardsInHandOf: aPlayer [
 { #category : #private }
 BoardGame >> changeCurrentStateToFinished [
 	isFinished := true.
+]
+
+{ #category : #actions }
+BoardGame >> continueTurnOf: player with: sum [
+	| sumOfAllDices |
+	sumOfAllDices := self fieldsToMoveAfter: player obtained: sum.
+	board move: player along: sumOfAllDices on: self.
+	self endGameIfTheWinnerIs: player.
 ]
 
 { #category : #'actions - cards' }
@@ -90,6 +99,11 @@ BoardGame >> errorMessageDoesNotHaveAWinnerYet [
 	^ 'The board game has not finished yet, so it does not have a winner.'.
 ]
 
+{ #category : #actions }
+BoardGame >> errorMessagePlayerWasNeverImprisoned [
+	^ 'This element was never exclude, therefore it can not be reincorporated'
+]
+
 { #category : #'error messages' }
 BoardGame >> errorMessageTheGameHasFinished [
 	^ 'The board game has already finished, contestants can not play anymore.'.
@@ -110,9 +124,9 @@ BoardGame >> fieldsToMoveIndicatedByInfluentialCardsOf: player [
 
 { #category : #actions }
 BoardGame >> free: player with: card [
-	playersManager reincorporate: player.
+	inactivePlayers remove: player ifAbsent: [ Error signal: self errorMessagePlayerWasNeverImprisoned ].
 	board activateTrackerOf: player.
-	cardHandler addToCardsRecord: card.
+	cardHandler addToCardsRecord: card
 ]
 
 { #category : #'actions - cards' }
@@ -127,6 +141,7 @@ BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck onBo
 	isFinished := false.
 	lapsNeededToWin := laps.
 	cardHandler:= CardHandler managing: aDeck for: aGroupOfPlayers. 
+	inactivePlayers := OrderedCollection new.
 ]
 
 { #category : #accessing }
@@ -137,9 +152,6 @@ BoardGame >> isFinished [
 { #category : #private }
 BoardGame >> lookForPlayerWhoseTurnItIs [
 	^ playersManager nextElement.
-	"(blockedPlayers anySatisfy:[:player | player=aPlayer])
-		ifTrue: [ ^ self lookForPlayerWhoseTurnItIs ]
-		ifFalse:[ ^ aPlayer.]"
 ]
 
 { #category : #actions }
@@ -148,11 +160,8 @@ BoardGame >> nextTurn [
 	self verifyIfTheGameHasFinished.
 	player := self lookForPlayerWhoseTurnItIs.
 	sumOfAllDices := diceCup throw.
-	sumOfAllDices := self
-		fieldsToMoveAfter: player
-		obtained: sumOfAllDices.
-	board move: player along: sumOfAllDices on: self.
-	self endGameIfTheWinnerIs: player.
+	(self validateIfNotInJail: player)
+		ifFalse: [ self continueTurnOf: player with: sumOfAllDices ]
 ]
 
 { #category : #actions }
@@ -177,6 +186,11 @@ BoardGame >> repeatLastEffectAppliedOn: aPlayer [
 BoardGame >> startPlayingOnABoardWith: fields with: aGroupOfPlayers [
 	playersManager := Sequence newFrom: aGroupOfPlayers.
 	board := Board has: fields usedBy: aGroupOfPlayers.
+]
+
+{ #category : #validations }
+BoardGame >> validateIfNotInJail: player [
+	^ inactivePlayers anySatisfy: [ :aPlayer | aPlayer = player ]
 ]
 
 { #category : #validations }
