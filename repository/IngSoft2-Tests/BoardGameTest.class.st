@@ -574,6 +574,20 @@ BoardGameTest >> testACardDealearGivesAPlayerACardAndHeUsesItInmediately [
 	
 ]
 
+{ #category : #playingWithCardsTests }
+BoardGameTest >> testACardDeckIsNotInfinite [
+	| aBoardGame  aSequenceOfDiceResults speedCard cards aGroupOfPlayers |
+	aSequenceOfDiceResults := #(9 14 7 3).
+	speedCard:= Speed new.
+	cards :={speedCard }.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau}.
+	
+	self 
+		should:[	aBoardGame := self generateABoardWithPrisonGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.] 
+		raise: Error 
+		withExceptionDo: [:error | self assert: error messageText equals:'The deck is not infinite, there are no more cards to be handled' ].
+]
+
 { #category : #fieldsEffectTests }
 BoardGameTest >> testAFieldHasNoEffect [
 	| aBoardGame pauPosition beluPosition malePosition |
@@ -651,6 +665,26 @@ BoardGameTest >> testAPlayerCanNotUseADoOverCardWhenTheLastCardPlayedHadASpeedEf
 		raise: Error 
 		withExceptionDo: [:error | self assert: error messageText equals: 'All permanent cards can only be played when it is the turn of the player' ].
 	
+]
+
+{ #category : #playingWithCardsTests }
+BoardGameTest >> testAPlayerCanNotUseAFreedomOnAPlayerWhoIsNotImprisoned [
+	| aBoardGame  aSequenceOfDiceResults speedCard cards aGroupOfPlayers freedomCard anotherFreedomCard overloadCard cancellationCard |
+	aSequenceOfDiceResults := #(9 14 7 3).
+	speedCard:= Speed new.
+	anotherSpeedCard := Speed new.
+	freedomCard:= Freedom new.
+	anotherFreedomCard:= Freedom new.
+	overloadCard:= Overload new.
+	cancellationCard:= Cancellation new.
+	cards :={speedCard . freedomCard . anotherFreedomCard . anotherSpeedCard . cancellationCard. overloadCard}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu .#male}.
+	aBoardGame := self generateABoardWithPrisonGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.
+	
+	self 
+		should:[aBoardGame affect: #belu using: freedomCard by: #pau.] 
+		raise: Error 
+		withExceptionDo: [:error | self assert: error messageText equals:'This element was never exclude, therefore it can not be reincorporated' ].
 ]
 
 { #category : #playingWithCardsTests }
@@ -1310,10 +1344,17 @@ BoardGameTest >> testWhenAPlayerFellsOnAnAtomicBombAllPlayersMoveToFieldOne [
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> testWhenAPlayerFellsOnAnAtomicBombFieldIfAnotherPlayerIsOnPrisionHeIsNotAffected [
-	| aBoardGame pauPosition beluPosition malePosition aSequenceOfDiceResults speedCard cards aGroupOfPlayers |
+	| aBoardGame pauPosition beluPosition malePosition aSequenceOfDiceResults speedCard cards aGroupOfPlayers overloadCard anotherOverloadCard repetitionCard cancellationCard doOverCard |
 	aSequenceOfDiceResults := #(9 14 43 3).
 	speedCard:= Speed new.
-	cards :={speedCard }.
+	overloadCard := Overload new.
+	speedCard:= Speed new.
+	anotherOverloadCard := Overload new.
+	anotherSpeedCard := Speed new.
+	repetitionCard:= Repetition new.
+	cancellationCard:= Cancellation new.
+	doOverCard:= DoOver new.
+	cards := { overloadCard . speedCard  . anotherOverloadCard . anotherSpeedCard . repetitionCard . cancellationCard . doOverCard}.
 	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu .#male}.
 	aBoardGame := self generateABoardWithPrisonGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.
 
@@ -1329,12 +1370,49 @@ BoardGameTest >> testWhenAPlayerFellsOnAnAtomicBombFieldIfAnotherPlayerIsOnPrisi
 					{beluPosition . pauPosition . malePosition })
 ]
 
-{ #category : #fieldsEffectTests }
-BoardGameTest >> testWhenAPlayerFellsOnThePrisonFieldHeLoosesTurns [
-	| aBoardGame pauPosition beluPosition malePosition aSequenceOfDiceResults speedCard cards aGroupOfPlayers |
+{ #category : #playingWithCardsTests }
+BoardGameTest >> testWhenAPlayerFellsOnThePrisonFieldHeCanUseAFreedomCardToLiberateHimselfAndStopsLoosingTurns [
+	| aBoardGame pauPosition beluPosition malePosition aSequenceOfDiceResults speedCard cards aGroupOfPlayers freedomCard anotherFreedomCard overloadCard cancellationCard doOverCard anotherDoOverCard |
 	aSequenceOfDiceResults := #(9 14 7 3).
 	speedCard:= Speed new.
-	cards :={speedCard }.
+	anotherSpeedCard := Speed new.
+	freedomCard:= Freedom new.
+	anotherFreedomCard:= Freedom new.
+	overloadCard:= Overload new.
+	cancellationCard:= Cancellation new.
+	doOverCard:= DoOver new.
+	anotherDoOverCard:= DoOver new.
+	cards :={speedCard . freedomCard . anotherFreedomCard . anotherSpeedCard . cancellationCard. overloadCard . doOverCard . anotherDoOverCard }.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu .#male}.
+	aBoardGame := self generateABoardWithPrisonGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.
+
+	pauPosition := Tracker of: #pau standingOn: 34 after: 1.
+	beluPosition := Tracker of: #belu standingOn: 24 after: 1.
+	malePosition := Tracker of: #male standingOn: 20 after: 1.
+	1 to: 8 do: [ :n | aBoardGame nextTurn ].
+	aBoardGame affect: #belu using: anotherFreedomCard by: #belu.
+	aBoardGame nextTurn.
+	self
+		assert: aBoardGame ranking
+		equals:
+			(OrderedCollection
+				newFrom:
+					{pauPosition . beluPosition . malePosition}).
+]
+
+{ #category : #fieldsEffectTests }
+BoardGameTest >> testWhenAPlayerFellsOnThePrisonFieldHeLoosesTurns [
+	| aBoardGame pauPosition beluPosition malePosition aSequenceOfDiceResults speedCard cards aGroupOfPlayers overloadCard anotherOverloadCard repetitionCard cancellationCard doOverCard |
+	aSequenceOfDiceResults := #(9 14 7 3).
+	speedCard:= Speed new.
+	overloadCard := Overload new.
+	speedCard:= Speed new.
+	anotherOverloadCard := Overload new.
+	anotherSpeedCard := Speed new.
+	repetitionCard:= Repetition new.
+	cancellationCard:= Cancellation new.
+	doOverCard:= DoOver new.
+	cards := { overloadCard . speedCard  . anotherOverloadCard . anotherSpeedCard . repetitionCard . cancellationCard . doOverCard}.
 	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu .#male}.
 	aBoardGame := self generateABoardWithPrisonGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.
 
@@ -1348,4 +1426,35 @@ BoardGameTest >> testWhenAPlayerFellsOnThePrisonFieldHeLoosesTurns [
 			(OrderedCollection
 				newFrom:
 					{pauPosition . malePosition . beluPosition })
+]
+
+{ #category : #playingWithCardsTests }
+BoardGameTest >> testWhenAPlayerUsesAFreedomCardToFreeHisMate [
+	| aBoardGame pauPosition beluPosition malePosition aSequenceOfDiceResults speedCard cards aGroupOfPlayers freedomCard anotherFreedomCard overloadCard cancellationCard doOverCard anotherDoOverCard |
+	aSequenceOfDiceResults := #(9 14 7 3).
+	speedCard:= Speed new.
+	anotherSpeedCard := Speed new.
+	freedomCard:= Freedom new.
+	anotherFreedomCard:= Freedom new.
+	overloadCard:= Overload new.
+	cancellationCard:= Cancellation new.
+	doOverCard:= DoOver new.
+	anotherDoOverCard:= DoOver new.
+	cards :={speedCard . freedomCard . anotherFreedomCard . anotherSpeedCard . cancellationCard. overloadCard . doOverCard . anotherDoOverCard }.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu .#male}.
+	aBoardGame := self generateABoardWithPrisonGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.
+
+	pauPosition := Tracker of: #pau standingOn: 34 after: 1.
+	beluPosition := Tracker of: #belu standingOn: 24 after: 1.
+	malePosition := Tracker of: #male standingOn: 20 after: 1.
+	1 to: 7 do: [ :n | aBoardGame nextTurn ].
+	aBoardGame affect: #belu using: freedomCard by: #pau.
+	aBoardGame nextTurn.
+	aBoardGame nextTurn.
+	self
+		assert: aBoardGame ranking
+		equals:
+			(OrderedCollection
+				newFrom:
+					{pauPosition . beluPosition . malePosition}).
 ]

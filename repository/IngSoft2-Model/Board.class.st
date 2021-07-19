@@ -27,6 +27,14 @@ Board class >> verifyIfItHasAtLeastTwoFields: numberOfFields [.
 		ifTrue: [ Error signal: self errorMessageNumberOfFieldsMustBeGreaterThanOne ] .
 ]
 
+{ #category : #actions }
+Board >> activateTrackerOf: player [
+	| playerTracker |
+	playerTracker:= self positionOf: player.
+	inactiveTrackers remove: playerTracker.
+	activeTrackers add: playerTracker.
+]
+
 { #category : #'actions - effects' }
 Board >> applyAt: aBoardGame lastEffectTo: aPlayer [
 	effectsHistory last effectTriggeredBy: aPlayer on: self of: aBoardGame.
@@ -71,7 +79,7 @@ Board >> generateValidTrackerFor: newFieldNumber standingOn: newRoundNumber afte
 ]
 
 { #category : #actions }
-Board >> inactiveTrackerOF: aPlayer [
+Board >> inactiveTrackerOf: aPlayer [
 	| playerTracker |
 	playerTracker:= (self positionOf: aPlayer).
 	inactiveTrackers add: playerTracker.
@@ -155,7 +163,8 @@ Board >> placeAtTheBeggining: players [
 
 { #category : #accessing }
 Board >> positionOf: aPlayer [
- ^ activeTrackers detect: [ :aPosition | aPosition player = aPlayer] ifNone: [Tracker of: aPlayer standingOn:1  after:1 ].
+ ^ activeTrackers detect: [ :aPosition | aPosition player = aPlayer] 
+		ifNone: [ inactiveTrackers detect: [ :blockedPosition | blockedPosition player = aPlayer]   ].
 ]
 
 { #category : #'actions - effects' }

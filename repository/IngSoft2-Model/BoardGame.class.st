@@ -7,8 +7,7 @@ Class {
 		'board',
 		'cardHandler',
 		'lapsNeededToWin',
-		'playersManager',
-		'blockedPlayers'
+		'playersManager'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -53,9 +52,8 @@ BoardGame >> affect: aTarget using: aCard by: aPlayer [
 
 { #category : #actions }
 BoardGame >> blockPermanently: aPlayer [
-	playersManager remove: aPlayer.
-	blockedPlayers add: aPlayer.
-	board inactiveTrackerOF: aPlayer.
+	playersManager excludePermantly: aPlayer.
+	board inactiveTrackerOf: aPlayer.
 	
 ]
 
@@ -110,6 +108,13 @@ BoardGame >> fieldsToMoveIndicatedByInfluentialCardsOf: player [
 	^(playerInfluentialCards sumNumbers: [ :aCard | aCard action ])
 ]
 
+{ #category : #actions }
+BoardGame >> free: player with: card [
+	playersManager reincorporate: player.
+	board activateTrackerOf: player.
+	cardHandler addToCardsRecord: card.
+]
+
 { #category : #'actions - cards' }
 BoardGame >> influentialCardsOf: aPlayer [
 	^ cardHandler influentialCardsOf: aPlayer.
@@ -122,7 +127,6 @@ BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck onBo
 	isFinished := false.
 	lapsNeededToWin := laps.
 	cardHandler:= CardHandler managing: aDeck for: aGroupOfPlayers. 
-	blockedPlayers:= OrderedCollection new.
 ]
 
 { #category : #accessing }
@@ -133,6 +137,9 @@ BoardGame >> isFinished [
 { #category : #private }
 BoardGame >> lookForPlayerWhoseTurnItIs [
 	^ playersManager nextElement.
+	"(blockedPlayers anySatisfy:[:player | player=aPlayer])
+		ifTrue: [ ^ self lookForPlayerWhoseTurnItIs ]
+		ifFalse:[ ^ aPlayer.]"
 ]
 
 { #category : #actions }

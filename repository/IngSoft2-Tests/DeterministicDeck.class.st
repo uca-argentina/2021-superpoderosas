@@ -2,7 +2,8 @@ Class {
 	#name : #DeterministicDeck,
 	#superclass : #Object,
 	#instVars : [
-		'sequence'
+		'sequence',
+		'index'
 	],
 	#category : #'IngSoft2-Tests'
 }
@@ -12,16 +13,24 @@ DeterministicDeck class >> containing: aCardsSequence [
 	^self new initializeContaining: aCardsSequence.
 ]
 
+{ #category : #'error messages' }
+DeterministicDeck >> errorMessageTheDeckIsNotInfinite [
+	^ 'The deck is not infinite, there are no more cards to be handled'
+]
+
 { #category : #inirialize }
 DeterministicDeck >> initializeContaining: aCardsSequence [  
-	sequence:= Sequence newFrom: aCardsSequence.
+	sequence := aCardsSequence.
+	index := 0.
 ]
 
 { #category : #actions }
-DeterministicDeck >> pickUp [ 
-	"index := index + 1. 
-	^ sequence at: index."
-	^sequence nextElement.
+DeterministicDeck >> pickUp [
+	index := index + 1.
+	index > sequence size
+		ifTrue:
+			[ Error signal: self errorMessageTheDeckIsNotInfinite ]
+		ifFalse: [ ^ sequence at: index ]
 ]
 
 { #category : #actions }
