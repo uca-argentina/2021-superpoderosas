@@ -1,6 +1,6 @@
 Class {
 	#name : #MoonWalk,
-	#superclass : #Effect,
+	#superclass : #Fields,
 	#instVars : [
 		'fieldsToMoveBackwars'
 	],

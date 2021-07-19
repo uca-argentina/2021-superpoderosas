@@ -1,6 +1,6 @@
 Class {
 	#name : #CardDealer,
-	#superclass : #Effect,
+	#superclass : #Fields,
 	#category : #'IngSoft2-Model'
 }
 

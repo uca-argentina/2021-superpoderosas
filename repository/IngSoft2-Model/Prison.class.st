@@ -1,6 +1,6 @@
 Class {
 	#name : #Prison,
-	#superclass : #Effect,
+	#superclass : #Fields,
 	#category : #'IngSoft2-Model'
 }
 

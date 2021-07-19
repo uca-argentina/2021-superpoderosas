@@ -1,6 +1,6 @@
 Class {
 	#name : #SpeedUp,
-	#superclass : #Effect,
+	#superclass : #Fields,
 	#category : #'IngSoft2-Model'
 }
 
