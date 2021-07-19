@@ -8,7 +8,8 @@ Class {
 		'cardHandler',
 		'lapsNeededToWin',
 		'playersManager',
-		'inactivePlayers'
+		'inactivePlayers',
+		'jail'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -61,17 +62,17 @@ BoardGame >> changeCurrentStateToFinished [
 	isFinished := true.
 ]
 
-{ #category : #private }
-BoardGame >> continueTurnOf: player with: sum [
+{ #category : #'actions - cards' }
+BoardGame >> dealACardTo: player [ 
+	cardHandler deliverACardTo:player.
+]
+
+{ #category : #actions }
+BoardGame >> enableMovementOf: player along: sum [
 	| sumOfAllDices |
 	sumOfAllDices := self fieldsToMoveAfter: player obtained: sum.
 	board move: player along: sumOfAllDices on: self.
 	self endGameIfTheWinnerIs: player.
-]
-
-{ #category : #'actions - cards' }
-BoardGame >> dealACardTo: player [ 
-	cardHandler deliverACardTo:player.
 ]
 
 { #category : #private }
@@ -93,11 +94,6 @@ BoardGame >> errorMessageDoesNotHaveAWinnerYet [
 ]
 
 { #category : #'error messages' }
-BoardGame >> errorMessagePlayerWasNeverImprisoned [
-	^ 'This element was never exclude, therefore it can not be reincorporated'
-]
-
-{ #category : #'error messages' }
 BoardGame >> errorMessageTheGameHasFinished [
 	^ 'The board game has already finished, contestants can not play anymore.'.
 ]
@@ -115,17 +111,14 @@ BoardGame >> fieldsToMoveIndicatedByInfluentialCardsOf: player [
 	^(playerInfluentialCards sumNumbers: [ :aCard | aCard action ])
 ]
 
-{ #category : #actions }
+{ #category : #'actions - jail' }
 BoardGame >> free: player [
-	inactivePlayers
-		remove: player
-		ifAbsent: [ ].
 	board activateTrackerOf: player.
-	"Error signal: self errorMessagePlayerWasNeverImprisoned"
+	jail free: player.
 	
 ]
 
-{ #category : #actions }
+{ #category : #'actions - jail' }
 BoardGame >> free: player with: card [
 	self free: player.
 	cardHandler addToCardsRecord: card
@@ -144,6 +137,7 @@ BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck onBo
 	lapsNeededToWin := laps.
 	cardHandler:= CardHandler managing: aDeck for: aGroupOfPlayers. 
 	inactivePlayers := OrderedCollection new.
+	jail:= Jail withFine: (diceCup max).
 ]
 
 { #category : #accessing }
@@ -162,10 +156,7 @@ BoardGame >> nextTurn [
 	self verifyIfTheGameHasFinished.
 	player := self lookForPlayerWhoseTurnItIs.
 	sumOfAllDices := diceCup throw.
-	(sumOfAllDices = diceCup max and: (self validateIfNotInJail: player))
-		ifTrue:[self free: player].
-	(self validateIfNotInJail: player)
-		ifFalse: [ self continueTurnOf: player with: sumOfAllDices ]
+	jail trailOf:player withPayment: sumOfAllDices on: self.
 ]
 
 { #category : #actions }
@@ -174,10 +165,10 @@ BoardGame >> positionOf: player [
 	
 ]
 
-{ #category : #actions }
-BoardGame >> putInPrison: aPlayer [
-	inactivePlayers add: aPlayer.
-	board inactiveTrackerOf: aPlayer.
+{ #category : #'actions - jail' }
+BoardGame >> putInPrison: player [
+	board inactiveTrackerOf: player.
+	jail throwToTheDungeon: player.
 	
 ]
 

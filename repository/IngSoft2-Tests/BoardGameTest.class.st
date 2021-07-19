@@ -668,26 +668,6 @@ BoardGameTest >> testAPlayerCanNotUseADoOverCardWhenTheLastCardPlayedHadASpeedEf
 ]
 
 { #category : #playingWithCardsTests }
-BoardGameTest >> testAPlayerCanNotUseAFreedomOnAPlayerWhoIsNotImprisoned [
-	| aBoardGame  aSequenceOfDiceResults speedCard cards aGroupOfPlayers freedomCard anotherFreedomCard overloadCard cancellationCard |
-	aSequenceOfDiceResults := #(9 14 7 3).
-	speedCard:= Speed new.
-	anotherSpeedCard := Speed new.
-	freedomCard:= Freedom new.
-	anotherFreedomCard:= Freedom new.
-	overloadCard:= Overload new.
-	cancellationCard:= Cancellation new.
-	cards :={speedCard . freedomCard . anotherFreedomCard . anotherSpeedCard . cancellationCard. overloadCard}.
-	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu .#male}.
-	aBoardGame := self generateABoardGameWithPrisonPlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.
-	
-	self 
-		should:[aBoardGame affect: #belu using: freedomCard by: #pau.] 
-		raise: Error 
-		withExceptionDo: [:error | self assert: error messageText equals:'This element was never exclude, therefore it can not be reincorporated' ].
-]
-
-{ #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerCanNotUseASpeedUpCardIfItIsNotHisTurn [
 	| aBoardGame aGroupOfPlayers speedCard cards aSequenceOfDiceResults doOverCard anotherDoOverCard overloadCard |
 	aSequenceOfDiceResults := #(9 10 7 3).
@@ -1513,7 +1493,7 @@ BoardGameTest >> testWhenAPlayerFellsOnThePrisonFieldHeLoosesTurns [
 { #category : #playingWithCardsTests }
 BoardGameTest >> testWhenAPlayerUsesAFreedomCardToFreeHisMate [
 	| aBoardGame pauPosition beluPosition malePosition aSequenceOfDiceResults speedCard cards aGroupOfPlayers freedomCard anotherFreedomCard overloadCard cancellationCard doOverCard anotherDoOverCard |
-	aSequenceOfDiceResults := #(9 14 7 3).
+	aSequenceOfDiceResults := #(9 14 7 3 ).
 	speedCard:= Speed new.
 	anotherSpeedCard := Speed new.
 	freedomCard:= Freedom new.
