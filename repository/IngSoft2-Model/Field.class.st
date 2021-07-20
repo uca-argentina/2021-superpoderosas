@@ -14,6 +14,11 @@ Field class >> affectedBy: effect [
 ]
 
 { #category : #actions }
+Field >> addEffect: effect [
+	effects add: effect.
+]
+
+{ #category : #actions }
 Field >> effectTriggeredBy: aPlayer on: aBoard of: aBoardGame [ 
 	effects do:[:effect | effect effectTriggeredBy: aPlayer on: aBoard of: aBoardGame ].
 	^effects last.

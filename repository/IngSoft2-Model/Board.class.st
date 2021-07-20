@@ -36,8 +36,11 @@ Board >> activateTrackerOf: player [
 ]
 
 { #category : #'actions - effects' }
-Board >> addSpeedUpEffectOn: aField [
-	fields at: aField put: (SpeedUp new).
+Board >> addSpeedUpEffectOn: fieldNumber [
+	| field |
+	field:= fields at: fieldNumber.
+	field addEffect: SpeedUp new.
+	fields at: fieldNumber put: field.
 ]
 
 { #category : #'actions - effects' }
