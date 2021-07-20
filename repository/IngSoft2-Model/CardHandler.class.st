@@ -54,23 +54,23 @@ CardHandler >> errorMessageThePlayerDoesNotHaveTheCardToBeCancel [
 ]
 
 { #category : #'actions - cards' }
-CardHandler >> influence: player with: card [
-	| playerInfluentialCards |
-	playerInfluentialCards := influentialCards at:player.
-	playerInfluentialCards add: card.
-	influentialCards at: player put: playerInfluentialCards.
+CardHandler >> influence: target with: card [
+	| targetInfluentialCards |
+	targetInfluentialCards := influentialCards at: target ifAbsentPut: [ OrderedCollection new ] .
+	targetInfluentialCards add: card.
+	influentialCards at: target put: targetInfluentialCards.
 	self addToCardsRecord: card.
 ]
 
 { #category : #'actions - cards' }
 CardHandler >> influenceAllPlayers: card [ 
-	influentialCards do: [ :playerInfluentialCards | playerInfluentialCards add: card ].
+	influentialCards do: [ :targetInfluentialCards | targetInfluentialCards add: card ].
 	self addToCardsRecord: card 
 ]
 
 { #category : #accessing }
-CardHandler >> influentialCardsOf: player [
-	^ influentialCards at: player
+CardHandler >> influentialCardsOf: target [
+	^ influentialCards at: target
 ]
 
 { #category : #validations }

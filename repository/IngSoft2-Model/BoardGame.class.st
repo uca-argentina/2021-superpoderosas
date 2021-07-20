@@ -43,6 +43,11 @@ BoardGame class >> verifyIfThereIsAtLeastOnePlayerOn: aGroupOfPlayers [
 		ifTrue: [ Error signal: self errorMessageMustHaveAtLeastAPlayer ] .
 ]
 
+{ #category : #'actions - effects' }
+BoardGame >> addSpeedUpEffectOn: aField [
+	board addSpeedUpEffectOn: aField.
+]
+
 { #category : #'actions - cards' }
 BoardGame >> affect: aTarget using: aCard by: aPlayer [
 	cardHandler
@@ -125,8 +130,8 @@ BoardGame >> free: player with: card [
 ]
 
 { #category : #'actions - cards' }
-BoardGame >> influentialCardsOf: aPlayer [
-	^ cardHandler influentialCardsOf: aPlayer.
+BoardGame >> influentialCardsOf: aTarget [
+	^ cardHandler influentialCardsOf: aTarget.
 ]
 
 { #category : #initialize }

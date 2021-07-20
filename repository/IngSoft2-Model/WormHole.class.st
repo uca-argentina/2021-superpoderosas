@@ -1,6 +1,9 @@
 Class {
 	#name : #WormHole,
-	#superclass : #Fields,
+	#superclass : #Effect,
+	#instVars : [
+		'effect'
+	],
 	#category : #'IngSoft2-Model'
 }
 

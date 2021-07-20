@@ -59,7 +59,7 @@ BoardGameTest >> generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBas
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	laps := 5.
-	fields := self generateManuallyIncludingCardDealer: aNumberOfFields.
+	fields := self generateManuallyIncludingBasicsPlusCardDealer: aNumberOfFields.
 	aDeck := DeterministicDeck containing: cards.
 	aBoardGame := BoardGame
 		playedBy: aGroupOfPlayers
@@ -78,7 +78,7 @@ BoardGameTest >> generateABoardGameWithPrisonPlayedBy: aGroupOfPlayers using: ca
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	laps := 5.
-	fields := self generateManuallyIncludingCardDealerAndPrison: aNumberOfFields.
+	fields := self generateManuallyIncludingBasicsPlusCardDealerAndPrison: aNumberOfFields.
 	aDeck := DeterministicDeck containing: cards.
 	aBoardGame := BoardGame
 		playedBy: aGroupOfPlayers
@@ -92,16 +92,22 @@ BoardGameTest >> generateABoardGameWithPrisonPlayedBy: aGroupOfPlayers using: ca
 { #category : #fieldsEffectTests }
 BoardGameTest >> generateDeck [
 	| cards aDeck |
-	cards := OrderedCollection newFrom: { Cancellation new . Acceleration new . Speed new . DoOver new . Repetition new . Overload new}.
+	cards := OrderedCollection newFrom: { Cancellation new . Acceleration new . Speed new . DoOver new . Repetition new . Overload new . Freedom new . SpeedPlus new}.
 	aDeck := Deck containing: cards.
 	^aDeck.
 ]
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> generateManually: aNumberOfFields [ 
-	|  fields  effectDistributionFields effectToDistribute |
+	|  fields  effectDistributionFields effectToDistribute wormHoleField speedUpField atomicBombField moonWalkField anotherMoonWalkField |
 	fields:= OrderedCollection new: aNumberOfFields withAll: NoEffect new.
-	effectToDistribute := {WormHole new. SpeedUp new.AtomicBomb new.MoonWalk with: 16. MoonWalk with: 11}.
+	wormHoleField:= Field affectedBy: WormHole new.
+	speedUpField:= Field affectedBy: SpeedUp new.
+	atomicBombField:= Field affectedBy: AtomicBomb new.
+	moonWalkField:= Field affectedBy: (MoonWalk with:16).
+	anotherMoonWalkField:= Field affectedBy: (MoonWalk with:11).
+	"effectToDistribute := {WormHole new. SpeedUp new.AtomicBomb new.MoonWalk with: 16. MoonWalk with: 11}."
+	effectToDistribute := { wormHoleField . speedUpField . atomicBombField . moonWalkField . anotherMoonWalkField  }.
 	effectDistributionFields := {{3 . 17}.{30 . 48}.{44}.{32}.{23}}.
 	effectToDistribute with: effectDistributionFields do:[ :effect :effectFields | 
 						effectFields do: 
@@ -110,10 +116,16 @@ BoardGameTest >> generateManually: aNumberOfFields [
 ]
 
 { #category : #playingWithCardsTests }
-BoardGameTest >> generateManuallyIncludingCardDealer: aNumberOfFields [ 
-	|  fields effectDistributionFields effectToDistribute |
+BoardGameTest >> generateManuallyIncludingBasicsPlusCardDealer: aNumberOfFields [ 
+	|  fields effectDistributionFields effectToDistribute wormHoleField speedUpField atomicBombField moonWalkField anotherMoonWalkField cardDealerField |
 	fields:= OrderedCollection new: aNumberOfFields withAll: NoEffect new.
-	effectToDistribute := {WormHole new. SpeedUp new.AtomicBomb new.MoonWalk with: 16. MoonWalk with: 11. CardDealer new }.
+	wormHoleField:= Field affectedBy: WormHole new.
+	speedUpField:= Field affectedBy: SpeedUp new.
+	atomicBombField:= Field affectedBy: AtomicBomb new.
+	moonWalkField:= Field affectedBy: (MoonWalk with:16).
+	anotherMoonWalkField:= Field affectedBy: (MoonWalk with:11).
+	cardDealerField:= CardDealer new.
+	effectToDistribute := { wormHoleField . speedUpField . atomicBombField . moonWalkField . anotherMoonWalkField  . cardDealerField }.
 	effectDistributionFields := {{3 . 17}.{30 . 48}.{44}.{32}.{23}.{10}}.
 	effectToDistribute with: effectDistributionFields do:[ :effect :effectFields | 
 						effectFields do: 
@@ -122,10 +134,17 @@ BoardGameTest >> generateManuallyIncludingCardDealer: aNumberOfFields [
 ]
 
 { #category : #playingWithCardsTests }
-BoardGameTest >> generateManuallyIncludingCardDealerAndPrison: aNumberOfFields [ 
-	|  fields effectDistributionFields effectToDistribute |
-	fields:= OrderedCollection new: aNumberOfFields withAll: NoEffect new.
-	effectToDistribute := {WormHole new. SpeedUp new.AtomicBomb new.MoonWalk with: 16. MoonWalk with: 11. CardDealer new . Prison new.}.
+BoardGameTest >> generateManuallyIncludingBasicsPlusCardDealerAndPrison: aNumberOfFields [ 
+	|  fields effectDistributionFields effectToDistribute wormHoleField speedUpField atomicBombField moonWalkField anotherMoonWalkField cardDealerField prisonField |
+		fields:= OrderedCollection new: aNumberOfFields withAll: NoEffect new.
+	wormHoleField:= Field affectedBy: WormHole new.
+	speedUpField:= Field affectedBy: SpeedUp new.
+	atomicBombField:= Field affectedBy: AtomicBomb new.
+	moonWalkField:= Field affectedBy: (MoonWalk with:16).
+	anotherMoonWalkField:= Field affectedBy: (MoonWalk with:11).
+	cardDealerField:= CardDealer new.
+	prisonField:= Prison new.
+	effectToDistribute := { wormHoleField . speedUpField . atomicBombField . moonWalkField . anotherMoonWalkField  . cardDealerField . prisonField}.
 	effectDistributionFields := {{3 . 17}.{30 . 48}.{44}.{32}.{23}.{10}.{15}}.
 	effectToDistribute with: effectDistributionFields do:[ :effect :effectFields | 
 						effectFields do: 
@@ -704,7 +723,7 @@ BoardGameTest >> testAPlayerHasThreeCardsAfterLandingOnAFieldWithACardDealerEffe
 	aNumberOfFields := 61.
 	aDiceCup := DiceCup containing: aGroupOfDices.
 	laps:=1.
-	fields:= self generateManuallyIncludingCardDealer: aNumberOfFields.
+	fields:= self generateManuallyIncludingBasicsPlusCardDealer: aNumberOfFields.
 	aDeck := self generateDeck.
 	aBoardGame := BoardGame playedBy: aGroupOfPlayers using: aDiceCup and: aDeck onABoardWith: fields wonWhenReach: laps.
 	aBoardGame nextTurn.
@@ -1136,7 +1155,7 @@ BoardGameTest >> testAPlayerUsesASpeedCardOnHimselfAndItIncrementsInOneTheResult
 	overloadCard := Overload new.
 	speedCard:= Speed new.
 	anotherOverloadCard := Overload new.
-	anotherSpeedCard := Speed new.
+	anotherSpeedCard := SpeedPlus new.
 	repetitionCard:= Repetition new.
 	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
 	aSequenceOfDiceResults := #(9 10 7 3).
@@ -1150,6 +1169,67 @@ BoardGameTest >> testAPlayerUsesASpeedCardOnHimselfAndItIncrementsInOneTheResult
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.	
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
+	
+]
+
+{ #category : #playingWithCardsTests }
+BoardGameTest >> testAPlayerUsesASpeedPlusCardAndItInfluencesAField [
+	| aBoardGame aGroupOfPlayers overloadCard speedCard aSequenceOfDiceResults cards anotherOverloadCard repetitionCard speedPlusCard |	
+	overloadCard := Overload new.
+	speedPlusCard:= SpeedPlus new.
+	anotherOverloadCard := Overload new.
+	speedCard := Speed new.
+	repetitionCard:= Repetition new.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
+	aSequenceOfDiceResults := #(9 10 7 3).
+	cards := { overloadCard . speedPlusCard  . anotherOverloadCard . speedCard . repetitionCard }.
+	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
+	
+	aBoardGame affect: 10 using: speedPlusCard by: #pau.
+	self assert: (aBoardGame influentialCardsOf:10) equals: (OrderedCollection newFrom: {speedPlusCard}).
+	
+]
+
+{ #category : #playingWithCardsTests }
+BoardGameTest >> testAPlayerUsesASpeedPlusCardOnAFieldAndThatFieldHasNowSpeedUpEffect [
+	| aBoardGame aGroupOfPlayers overloadCard pauPosition beluPosition speedCard aSequenceOfDiceResults cards anotherOverloadCard repetitionCard speedPlusCard |	
+	overloadCard := Overload new.
+	speedPlusCard:= SpeedPlus new.
+	anotherOverloadCard := Overload new.
+	speedCard := Speed new.
+	repetitionCard:= Repetition new.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
+	aSequenceOfDiceResults := #(5 10 7 3).
+	cards := { overloadCard . speedPlusCard  . anotherOverloadCard . speedCard . repetitionCard }.
+	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
+	pauPosition := Tracker of: #pau standingOn: 10 after: 1.
+	beluPosition := Tracker of: #belu standingOn: 1 after: 1.
+	
+	aBoardGame affect: 6 using: speedPlusCard by: #pau.
+	aBoardGame nextTurn.
+	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
+	
+]
+
+{ #category : #playingWithCardsTests }
+BoardGameTest >> testAPlayerUsesASpeedPlusCardOnAFieldAndThatFieldHasNowTwoSppedUpEffects [
+	| aBoardGame aGroupOfPlayers overloadCard pauPosition beluPosition speedCard aSequenceOfDiceResults cards anotherOverloadCard repetitionCard speedPlusCard |	
+	overloadCard := Overload new.
+	speedPlusCard:= SpeedPlus new.
+	anotherOverloadCard := Overload new.
+	speedCard := Speed new.
+	repetitionCard:= Repetition new.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
+	aSequenceOfDiceResults := #(5 29 7 3).
+	cards := { overloadCard . speedPlusCard  . anotherOverloadCard . speedCard . repetitionCard }.
+	aBoardGame := self generateABoardGameWithPrisonPlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
+	pauPosition := Tracker of: #pau standingOn: 6 after: 1.
+	beluPosition := Tracker of: #belu standingOn: 38 after: 1.
+	
+	aBoardGame affect: 30 using: speedPlusCard by: #pau.
+	aBoardGame nextTurn.
+	aBoardGame nextTurn.
+	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {  beluPosition . pauPosition}).
 	
 ]
 

@@ -1,6 +1,6 @@
 Class {
 	#name : #Acceleration,
-	#superclass : #Card,
+	#superclass : #Effect,
 	#category : #'IngSoft2-Model'
 }
 

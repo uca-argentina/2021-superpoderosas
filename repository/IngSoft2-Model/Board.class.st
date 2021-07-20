@@ -7,7 +7,7 @@ Class {
 		'inactiveTrackers',
 		'activeTrackers'
 	],
-	#category : #'IngSoft2-Tests'
+	#category : #'IngSoft2-Model'
 }
 
 { #category : #'error messages' }
@@ -36,6 +36,11 @@ Board >> activateTrackerOf: player [
 ]
 
 { #category : #'actions - effects' }
+Board >> addSpeedUpEffectOn: aField [
+	fields at: aField put: (SpeedUp new).
+]
+
+{ #category : #'actions - effects' }
 Board >> applyAt: aBoardGame lastEffectTo: aPlayer [
 	effectsHistory last effectTriggeredBy: aPlayer on: self of: aBoardGame.
 	self orderPlayersPosition.
@@ -45,7 +50,7 @@ Board >> applyAt: aBoardGame lastEffectTo: aPlayer [
 Board >> considerEffectOf: field on: aBoardGame for: player [
 	| effect |
 	effect := field effectTriggeredBy: player on: self of: aBoardGame.
-	effectsHistory add: effect
+	effectsHistory add: effect.
 ]
 
 { #category : #private }

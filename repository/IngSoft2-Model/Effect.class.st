@@ -1,10 +1,10 @@
 Class {
-	#name : #Fields,
+	#name : #Effect,
 	#superclass : #Object,
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #actions }
-Fields >> effectTriggeredBy: aPlayer on: aBoard of: aBoardGame [
+Effect >> effectTriggeredBy: aPlayer on: aBoard of: aBoardGame [
 	^ self subclassResponsibility
 ]
