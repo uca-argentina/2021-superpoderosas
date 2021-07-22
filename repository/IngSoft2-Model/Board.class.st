@@ -125,10 +125,12 @@ Board >> move: player along: result on: aBoardGame [
 { #category : #'actions - move' }
 Board >> move: player over: aNumberOfFields [ 
 	| newPosition oldPosition |
-	oldPosition := self positionOf: player.
-	newPosition := self findNewPositionWhen: player hasMoved: aNumberOfFields from: oldPosition.
-	self replaceOldPositioOf: player with: newPosition.
-	^ newPosition
+	(self positionOfInactiveTrackerOf: player) 
+		ifNil: [
+				oldPosition := self positionOf: player.
+				newPosition := self findNewPositionWhen: player hasMoved: aNumberOfFields from: oldPosition.
+				self replaceOldPositioOf: player with: newPosition.
+				^ newPosition.]
 ]
 
 { #category : #'actions - move' }
@@ -171,8 +173,16 @@ Board >> placeAtTheBeggining: players [
 
 { #category : #accessing }
 Board >> positionOf: aPlayer [
- ^ activeTrackers detect: [ :aPosition | aPosition player = aPlayer] 
-		ifNone: [ inactiveTrackers detect: [ :blockedPosition | blockedPosition player = aPlayer]   ].
+	^ activeTrackers
+		detect: [ :aPosition | aPosition player = aPlayer ]
+		ifNone:
+			[ self positionOfInactiveTrackerOf: aPlayer ]
+]
+
+{ #category : #private }
+Board >> positionOfInactiveTrackerOf: aPlayer [
+	^ inactiveTrackers
+		detect: [ :blockedPosition | blockedPosition player = aPlayer ] ifNone: [  ].
 ]
 
 { #category : #'actions - effects' }
