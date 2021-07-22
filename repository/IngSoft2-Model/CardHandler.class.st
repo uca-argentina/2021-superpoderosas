@@ -76,7 +76,7 @@ CardHandler >> errorMessageThePlayerDoesNotHaveTheCardToBeCancel [
 { #category : #'actions - cards' }
 CardHandler >> influence: target with: card [
 	| targetInfluentialCards |
-	targetInfluentialCards := influentialCards at: target ."ifAbsentPut: [ OrderedCollection new ] ."
+	targetInfluentialCards := influentialCards at: target .
 	targetInfluentialCards add: card.
 	influentialCards at: target put: targetInfluentialCards.
 	self addToCardsRecord: card.
