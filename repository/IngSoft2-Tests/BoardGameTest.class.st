@@ -144,7 +144,7 @@ BoardGameTest >> generateManuallyIncludingBasicsPlusCardDealerAndPrison: aNumber
 	cardDealerField:= Field affectedBy: CardDealer new.
 	prisonField:= Field affectedBy: Prison new.
 	fieldsToDistribute := { wormHoleField . speedUpField . atomicBombField . moonWalkField . anotherMoonWalkField  . cardDealerField . prisonField}.
-	fieldsDistribution := {{3 . 17}.{30 . 48}.{44}.{32}.{23}.{10}.{15}}.
+	fieldsDistribution := {{3 . 17}.{30 . 48}.{44}.{32}.{23}.{2 . 10 . 16 . 26 . 31 . 39}.{15}}.
 	fieldsToDistribute with: fieldsDistribution do:[ :effect :effectFields | 
 						effectFields do: 
 								[ :fieldNumber | fields at: fieldNumber put: effect ]].
@@ -737,7 +737,7 @@ BoardGameTest >> testAPlayerMustGoThreeTimesAroundTheBoardToWin [
 	self assert: aBoardGame winner equals: #pau.	
 ]
 
-{ #category : #playingWithCardsTests }
+{ #category : #playingTests }
 BoardGameTest >> testAPlayerParticipatesInABoardGameWhithCardsAndEffects [
 	| aBoardGame aGroupOfPlayers overloadCard pauPosition beluPosition aSequenceOfDiceResults cards speedCard doOverCard acceleratioCard repetitionCard |
 	overloadCard := Overload new.
@@ -767,6 +767,44 @@ BoardGameTest >> testAPlayerParticipatesInABoardGameWhithCardsAndEffects [
 	
 	
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
+	
+]
+
+{ #category : #playingTests }
+BoardGameTest >> testAPlayerParticipatesInABoardGameWhithCardsAndEffectsIncludingAPrisonEffectAndASpeedPlusCard [
+	| aBoardGame aGroupOfPlayers overloadCard pauPosition beluPosition aSequenceOfDiceResults cards speedCard doOverCard acceleratioCard repetitionCard freedomCard speedPlusCard anotherDoOverCard |
+	overloadCard := Overload new.
+	speedCard := Speed new.
+	doOverCard := DoOver new.
+	acceleratioCard := Acceleration new.
+	repetitionCard := Repetition new.
+	freedomCard:= Freedom new.
+	speedPlusCard:= SpeedPlus new.
+	anotherDoOverCard:= DoOver new.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
+	aSequenceOfDiceResults := #(1 9 14 5).
+	cards := { overloadCard . speedCard . doOverCard . acceleratioCard . repetitionCard . freedomCard . speedPlusCard . anotherDoOverCard}.
+	aBoardGame := self generateABoardGameWithPrisonPlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
+
+	pauPosition := Tracker of: #pau standingOn: 33 after: 1.
+	beluPosition := Tracker of: #belu standingOn: 31 after: 1.
+		
+	1 to: 6 do: [ :n | aBoardGame nextTurn ].
+	
+	aBoardGame affect: #belu using: overloadCard by: #pau.
+	aBoardGame affect: #belu using: freedomCard by: #belu.
+	aBoardGame nextTurn.
+	aBoardGame affect: aGroupOfPlayers using: acceleratioCard by: #belu.
+	aBoardGame nextTurn.
+	aBoardGame affect: 27 using: speedPlusCard by: #pau.
+	aBoardGame affect: #belu using: repetitionCard  by: #pau.
+	aBoardGame nextTurn.
+	aBoardGame nextTurn.
+	aBoardGame affect: #belu using: speedCard by:#pau.
+
+	
+	
+	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: { pauPosition . beluPosition}).
 	
 ]
 
@@ -1674,7 +1712,7 @@ BoardGameTest >> testWhenAPlayerFellsOnThePrisonFieldHeCanUseAFreedomCardToLiber
 					{pauPosition . malePosition . beluPosition }).
 ]
 
-{ #category : #playingTests }
+{ #category : #fieldsEffectTests }
 BoardGameTest >> testWhenAPlayerFellsOnThePrisonFieldHeIsSetFreeWhenHeObtainsTheMaxResultPossibleOfUsingDiceCup [
 	| aBoardGame pauPosition beluPosition malePosition aSequenceOfDiceResults speedCard cards aGroupOfPlayers freedomCard anotherFreedomCard overloadCard cancellationCard doOverCard anotherDoOverCard |
 	aSequenceOfDiceResults := #(9 14 5 3 20).
