@@ -11,8 +11,8 @@ Class {
 }
 
 { #category : #inicialization }
-CardHandler class >> managing: aDeck for: players [ 
-	^ self new initializeManaging: aDeck for: players
+CardHandler class >> managing: aDeck for: players and: fields [
+	^ self new initializeManaging: aDeck for: players and: fields
 ]
 
 { #category : #private }
@@ -38,6 +38,26 @@ CardHandler >> cardsInHandOf: player [
 	^ cardsInHand at: player.
 ]
 
+{ #category : #private }
+CardHandler >> defineInfluentialCardsOf: players and: fields [
+	| targetsInfluentialCards targets |
+	targets := self defineTargetsWith: players and: fields.
+	targetsInfluentialCards := targets
+		collect: [ :player | OrderedCollection new ].
+	influentialCards := OrderedDictionary
+		newFromKeys: targets
+		andValues: targetsInfluentialCards
+]
+
+{ #category : #private }
+CardHandler >> defineTargetsWith: players and: fields [
+	| targets fieldNumeration |
+	fieldNumeration := OrderedCollection new.
+	1 to: fields size do: [ :fieldNumber | fieldNumeration add: fieldNumber ].
+	targets := players , fieldNumeration.
+	^ targets
+]
+
 { #category : #'actions - cards' }
 CardHandler >> deliverACardTo: player [
 	(cardsInHand at:player) add: (deck pickUp).
@@ -56,7 +76,7 @@ CardHandler >> errorMessageThePlayerDoesNotHaveTheCardToBeCancel [
 { #category : #'actions - cards' }
 CardHandler >> influence: target with: card [
 	| targetInfluentialCards |
-	targetInfluentialCards := influentialCards at: target ifAbsentPut: [ OrderedCollection new ] .
+	targetInfluentialCards := influentialCards at: target ."ifAbsentPut: [ OrderedCollection new ] ."
 	targetInfluentialCards add: card.
 	influentialCards at: target put: targetInfluentialCards.
 	self addToCardsRecord: card.
@@ -70,18 +90,15 @@ CardHandler >> influenceAllPlayers: card [
 
 { #category : #accessing }
 CardHandler >> influentialCardsOf: target [
-	^ influentialCards at: target
+	^ influentialCards at: target.
 ]
 
-{ #category : #validations }
-CardHandler >> initializeManaging: aDeck for: players [ 
-	| playersInfluentialCards |
-	deck:= aDeck.
-	cardsInHand:= OrderedDictionary newFromKeys: players andValues:(players collect:[:player |(aDeck pickUp:2)]).
-	playersInfluentialCards:= players collect: [ :player | OrderedCollection new ].
-	influentialCards:= OrderedDictionary newFromKeys: players andValues: playersInfluentialCards.
-	cardsHistory:= OrderedCollection new.
-
+{ #category : #initialize }
+CardHandler >> initializeManaging: aDeck for: players and: fields [
+	deck := aDeck.
+	cardsInHand := OrderedDictionary newFromKeys: players andValues: (players collect: [ :player | aDeck pickUp: 2 ]).
+	self defineInfluentialCardsOf: players and: fields.
+	cardsHistory := OrderedCollection new
 ]
 
 { #category : #'actions - cards' }

@@ -140,7 +140,7 @@ BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck onBo
 	self startPlayingOnABoardWith: fields with: aGroupOfPlayers.
 	isFinished := false.
 	lapsNeededToWin := laps.
-	cardHandler:= CardHandler managing: aDeck for: aGroupOfPlayers. 
+	cardHandler:= CardHandler managing: aDeck for: aGroupOfPlayers and:fields. 
 	inactivePlayers := OrderedCollection new.
 	jail:= Jail withFine: (diceCup max).
 ]
