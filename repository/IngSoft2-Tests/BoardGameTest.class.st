@@ -99,17 +99,16 @@ BoardGameTest >> generateDeck [
 
 { #category : #fieldsEffectTests }
 BoardGameTest >> generateManually: aNumberOfFields [ 
-	|  fields  effectDistributionFields effectToDistribute wormHoleField speedUpField atomicBombField moonWalkField anotherMoonWalkField |
+	|  fields  fieldsDistribution fieldsToDistribute wormHoleField speedUpField atomicBombField moonWalkField anotherMoonWalkField |
 	fields:= OrderedCollection new: aNumberOfFields withAll: NoEffect new.
 	wormHoleField:= Field affectedBy: WormHole new.
 	speedUpField:= Field affectedBy: SpeedUp new.
 	atomicBombField:= Field affectedBy: AtomicBomb new.
 	moonWalkField:= Field affectedBy: (MoonWalk with:16).
 	anotherMoonWalkField:= Field affectedBy: (MoonWalk with:11).
-	"effectToDistribute := {WormHole new. SpeedUp new.AtomicBomb new.MoonWalk with: 16. MoonWalk with: 11}."
-	effectToDistribute := { wormHoleField . speedUpField . atomicBombField . moonWalkField . anotherMoonWalkField  }.
-	effectDistributionFields := {{3 . 17}.{30 . 48}.{44}.{32}.{23}}.
-	effectToDistribute with: effectDistributionFields do:[ :effect :effectFields | 
+	fieldsToDistribute := { wormHoleField . speedUpField . atomicBombField . moonWalkField . anotherMoonWalkField  }.
+	fieldsDistribution := {{3 . 17}.{30 . 48}.{44}.{32}.{23}}.
+	fieldsToDistribute with: fieldsDistribution do:[ :effect :effectFields | 
 						effectFields do: 
 								[ :fieldNumber | fields at: fieldNumber put: effect ]].
 	^fields.
@@ -117,7 +116,7 @@ BoardGameTest >> generateManually: aNumberOfFields [
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> generateManuallyIncludingBasicsPlusCardDealer: aNumberOfFields [ 
-	|  fields effectDistributionFields effectToDistribute wormHoleField speedUpField atomicBombField moonWalkField anotherMoonWalkField cardDealerField |
+	|  fields fieldsDistribution fieldsToDistribute wormHoleField speedUpField atomicBombField moonWalkField anotherMoonWalkField cardDealerField |
 	fields:= OrderedCollection new: aNumberOfFields withAll: ( Field affectedBy: NoEffect new).
 	wormHoleField:= Field affectedBy: WormHole new.
 	speedUpField:= Field affectedBy: SpeedUp new.
@@ -125,9 +124,9 @@ BoardGameTest >> generateManuallyIncludingBasicsPlusCardDealer: aNumberOfFields 
 	moonWalkField:= Field affectedBy: (MoonWalk with:16).
 	anotherMoonWalkField:= Field affectedBy: (MoonWalk with:11).
 	cardDealerField:= Field affectedBy: CardDealer new.
-	effectToDistribute := { wormHoleField . speedUpField . atomicBombField . moonWalkField . anotherMoonWalkField  . cardDealerField }.
-	effectDistributionFields := {{3 . 17}.{30 . 48}.{44}.{32}.{23}.{10}}.
-	effectToDistribute with: effectDistributionFields do:[ :effect :effectFields | 
+	fieldsToDistribute := { wormHoleField . speedUpField . atomicBombField . moonWalkField . anotherMoonWalkField  . cardDealerField }.
+	fieldsDistribution := {{3 . 17}.{30 . 48}.{44}.{32}.{23}.{10}}.
+	fieldsToDistribute with: fieldsDistribution do:[ :effect :effectFields | 
 						effectFields do: 
 								[ :fieldNumber | fields at: fieldNumber put: effect ]].
 	^fields.
@@ -135,7 +134,7 @@ BoardGameTest >> generateManuallyIncludingBasicsPlusCardDealer: aNumberOfFields 
 
 { #category : #playingWithCardsTests }
 BoardGameTest >> generateManuallyIncludingBasicsPlusCardDealerAndPrison: aNumberOfFields [ 
-	|  fields effectDistributionFields effectToDistribute wormHoleField speedUpField atomicBombField moonWalkField anotherMoonWalkField cardDealerField prisonField |
+	|  fields fieldsDistribution fieldsToDistribute wormHoleField speedUpField atomicBombField moonWalkField anotherMoonWalkField cardDealerField prisonField |
 	fields:= OrderedCollection new: aNumberOfFields withAll: ( Field affectedBy: NoEffect new).
 	wormHoleField:= Field affectedBy: WormHole new.
 	speedUpField:= Field affectedBy: SpeedUp new.
@@ -144,9 +143,9 @@ BoardGameTest >> generateManuallyIncludingBasicsPlusCardDealerAndPrison: aNumber
 	anotherMoonWalkField:= Field affectedBy: (MoonWalk with:11).
 	cardDealerField:= Field affectedBy: CardDealer new.
 	prisonField:= Prison new.
-	effectToDistribute := { wormHoleField . speedUpField . atomicBombField . moonWalkField . anotherMoonWalkField  . cardDealerField . prisonField}.
-	effectDistributionFields := {{3 . 17}.{30 . 48}.{44}.{32}.{23}.{10}.{15}}.
-	effectToDistribute with: effectDistributionFields do:[ :effect :effectFields | 
+	fieldsToDistribute := { wormHoleField . speedUpField . atomicBombField . moonWalkField . anotherMoonWalkField  . cardDealerField . prisonField}.
+	fieldsDistribution := {{3 . 17}.{30 . 48}.{44}.{32}.{23}.{10}.{15}}.
+	fieldsToDistribute with: fieldsDistribution do:[ :effect :effectFields | 
 						effectFields do: 
 								[ :fieldNumber | fields at: fieldNumber put: effect ]].
 	^fields.
