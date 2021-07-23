@@ -9,7 +9,7 @@ Class {
 		'lapsNeededToWin',
 		'playersManager',
 		'inactivePlayers',
-		'jail'
+		'court'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -72,12 +72,10 @@ BoardGame >> dealACardTo: player [
 	cardHandler deliverACardTo:player.
 ]
 
-{ #category : #actions }
-BoardGame >> enableMovementOf: player along: sum [
-	| sumOfAllDices |
-	sumOfAllDices := self fieldsToMoveAfter: player obtained: sum.
-	board move: player along: sumOfAllDices on: self.
-	self endGameIfTheWinnerIs: player.
+{ #category : #private }
+BoardGame >> determineActionOf: player basingOn: result [
+	(court dictateIf: player isFreeWhenScored: result on: self)
+		ifTrue: [ board move: player along: result on: self ]
 ]
 
 { #category : #private }
@@ -119,7 +117,7 @@ BoardGame >> fieldsToMoveIndicatedByInfluentialCardsOf: player [
 { #category : #'actions - jail' }
 BoardGame >> free: player [
 	board unblock: player.
-	jail free: player.
+	court free: player.
 	
 ]
 
@@ -142,7 +140,7 @@ BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck onBo
 	lapsNeededToWin := laps.
 	cardHandler:= CardHandler managing: aDeck for: aGroupOfPlayers and:fields. 
 	inactivePlayers := OrderedCollection new.
-	jail:= Jail withFine: (diceCup max).
+	court := Court dictating: (diceCup max).
 ]
 
 { #category : #accessing }
@@ -157,11 +155,13 @@ BoardGame >> lookForPlayerWhoseTurnItIs [
 
 { #category : #actions }
 BoardGame >> nextTurn [
-	| player sumOfAllDices |
+	| player result |
 	self verifyIfTheGameHasFinished.
 	player := self lookForPlayerWhoseTurnItIs.
-	sumOfAllDices := diceCup throw.
-	jail trailOf:player withPayment: sumOfAllDices on: self.
+	result := diceCup throw.
+	result := self fieldsToMoveAfter: player obtained: result.
+	self determineActionOf: player basingOn: result.
+	self endGameIfTheWinnerIs: player
 ]
 
 { #category : #actions }
@@ -173,7 +173,7 @@ BoardGame >> positionOf: player [
 { #category : #'actions - jail' }
 BoardGame >> putInPrison: player [
 	board block: player.
-	jail throwToTheDungeon: player.
+	court throwToTheDungeon: player.
 	
 ]
 
