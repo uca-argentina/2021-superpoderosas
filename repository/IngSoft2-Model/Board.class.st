@@ -4,8 +4,8 @@ Class {
 	#instVars : [
 		'fields',
 		'effectsHistory',
-		'inactiveTrackers',
-		'activeTrackers'
+		'activeTrackers',
+		'blockedTrackers'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -27,14 +27,6 @@ Board class >> verifyIfItHasAtLeastTwoFields: numberOfFields [.
 		ifTrue: [ Error signal: self errorMessageNumberOfFieldsMustBeGreaterThanOne ] .
 ]
 
-{ #category : #actions }
-Board >> activateTrackerOf: player [
-	| playerTracker |
-	playerTracker:= self positionOf: player.
-	inactiveTrackers remove: playerTracker.
-	activeTrackers add: playerTracker.
-]
-
 { #category : #'actions - effects' }
 Board >> addSpeedUpEffectOn: fieldNumber [
 	| field |
@@ -47,6 +39,14 @@ Board >> addSpeedUpEffectOn: fieldNumber [
 Board >> applyAt: aBoardGame lastEffectTo: aPlayer [
 	effectsHistory last effectTriggeredBy: aPlayer on: self of: aBoardGame.
 	self orderPlayersPosition.
+]
+
+{ #category : #actions }
+Board >> block: aPlayer [
+	| playerTracker |
+	playerTracker:= (self positionOf: aPlayer).
+	blockedTrackers add: playerTracker.
+	activeTrackers remove:playerTracker. 
 ]
 
 { #category : #private }
@@ -86,20 +86,17 @@ Board >> generateValidTrackerFor: newFieldNumber standingOn: newRoundNumber afte
 	^ newPosition
 ]
 
-{ #category : #actions }
-Board >> inactiveTrackerOf: aPlayer [
-	| playerTracker |
-	playerTracker:= (self positionOf: aPlayer).
-	inactiveTrackers add: playerTracker.
-	activeTrackers remove:playerTracker. 
-]
-
 { #category : #initialize }
 Board >> initializeHaving: someFields usedBy:players [.
 	fields := someFields .
-	inactiveTrackers:=OrderedCollection new.
+	blockedTrackers:=OrderedCollection new.
 	effectsHistory:= OrderedCollection new.
 	self placeAtTheBeggining: players.
+]
+
+{ #category : #private }
+Board >> isBlocked: player [
+	^ blockedTrackers anySatisfy:[:tracker | tracker = (self positionOf: player)]
 ]
 
 { #category : #private }
@@ -125,9 +122,11 @@ Board >> move: player along: result on: aBoardGame [
 { #category : #'actions - move' }
 Board >> move: player over: aNumberOfFields [ 
 	| newPosition oldPosition |
-	(self positionOfInactiveTrackerOf: player) 
-		ifNil: [
-				oldPosition := self positionOf: player.
+	oldPosition := self positionOf: player.
+	(self isBlocked: player) 
+		ifTrue:[	
+				^oldPosition ]
+		ifFalse: [
 				newPosition := self findNewPositionWhen: player hasMoved: aNumberOfFields from: oldPosition.
 				self replaceOldPositioOf: player with: newPosition.
 				^ newPosition.]
@@ -155,7 +154,7 @@ Board >> numberOfFields [
 Board >> orderPlayersPosition [
 	| playersTracker |
 	playersTracker:= OrderedCollection newFrom: activeTrackers.
-	playersTracker addAll:inactiveTrackers.
+	playersTracker addAll:blockedTrackers.
 	^ playersTracker	sort: [ :aPosition :anotherPosition | aPosition >= anotherPosition ]
 	
 ]
@@ -181,7 +180,7 @@ Board >> positionOf: aPlayer [
 
 { #category : #private }
 Board >> positionOfInactiveTrackerOf: aPlayer [
-	^ inactiveTrackers
+	^ blockedTrackers
 		detect: [ :blockedPosition | blockedPosition player = aPlayer ] ifNone: [  ].
 ]
 
@@ -202,6 +201,14 @@ Board >> replaceOldPositioOf: player with: newPosition [
 { #category : #actions }
 Board >> searchFieldFor: aPosition [
 	^ fields at: aPosition field
+]
+
+{ #category : #actions }
+Board >> unblock: player [
+	| playerTracker |
+	playerTracker:= self positionOf: player.
+	blockedTrackers remove: playerTracker.
+	activeTrackers add: playerTracker.
 ]
 
 { #category : #validations }

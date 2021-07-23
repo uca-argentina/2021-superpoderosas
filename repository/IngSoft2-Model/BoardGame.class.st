@@ -118,7 +118,7 @@ BoardGame >> fieldsToMoveIndicatedByInfluentialCardsOf: player [
 
 { #category : #'actions - jail' }
 BoardGame >> free: player [
-	board activateTrackerOf: player.
+	board unblock: player.
 	jail free: player.
 	
 ]
@@ -172,7 +172,7 @@ BoardGame >> positionOf: player [
 
 { #category : #'actions - jail' }
 BoardGame >> putInPrison: player [
-	board inactiveTrackerOf: player.
+	board block: player.
 	jail throwToTheDungeon: player.
 	
 ]
