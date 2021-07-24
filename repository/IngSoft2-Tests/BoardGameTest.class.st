@@ -1562,6 +1562,34 @@ BoardGameTest >> testWhenAPlayerFellsOnAMoonWalkFieldTheRestOfThePlayersMustGoBa
 ]
 
 { #category : #fieldsEffectTests }
+BoardGameTest >> testWhenAPlayerFellsOnAMoonWalkFieldTheRestOfThePlayersMustGoBackwardsNFieldsExceptFromPlayerInPrison [
+	| aBoardGame pauPosition beluPosition malePosition aSequenceOfDiceResults speedCard overloadCard anotherOverloadCard repetitionCard cancellationCard doOverCard cards aGroupOfPlayers |
+	aSequenceOfDiceResults := #(9 14 31 3).
+	speedCard:= Speed new.
+	overloadCard := Overload new.
+	speedCard:= Speed new.
+	anotherOverloadCard := Overload new.
+	anotherSpeedCard := Speed new.
+	repetitionCard:= Repetition new.
+	cancellationCard:= Cancellation new.
+	doOverCard:= DoOver new.
+	cards := { overloadCard . speedCard  . anotherOverloadCard . anotherSpeedCard . repetitionCard . cancellationCard . doOverCard}.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu .#male}.
+	aBoardGame := self generateABoardGameWithPrisonPlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.
+
+	pauPosition := Tracker of: #pau standingOn: 1 after: 1.
+	beluPosition := Tracker of: #belu standingOn: 15 after: 1.
+	malePosition := Tracker of: #male standingOn: 32 after: 1.
+	1 to: 3 do: [ :n | aBoardGame nextTurn ].
+	self
+		assert: aBoardGame ranking
+		equals:
+			(OrderedCollection
+				newFrom:
+					{ malePosition . beluPosition. pauPosition })
+]
+
+{ #category : #fieldsEffectTests }
 BoardGameTest >> testWhenAPlayerFellsOnASpeedUpFieldHeAdvancesFourMoreFields [
 	| aBoardGame pauPosition beluPosition malePosition |
 	aBoardGame := self creationOfBoardGameWithThreePlayers.

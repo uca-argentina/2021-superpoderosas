@@ -49,11 +49,7 @@ BoardGame >> addSpeedUpEffectOn: aField [
 
 { #category : #'actions - cards' }
 BoardGame >> affect: aTarget using: aCard by: aPlayer [
-	cardHandler
-		affect: aTarget
-		using: aCard
-		by: aPlayer
-		on: self
+	cardHandler affect: aTarget using: aCard by: aPlayer on: self
 ]
 
 { #category : #'actions - cards' }
@@ -107,13 +103,13 @@ BoardGame >> fieldsToMoveIndicatedByInfluentialCardsOf: player [
 	^(playerInfluentialCards sumNumbers: [ :aCard | aCard action ])
 ]
 
-{ #category : #'actions - prison' }
-BoardGame >> free: player [
-	board unblock: player.
-	
+{ #category : #'actions - freedom' }
+BoardGame >> free: result ifNecesaryWithPayment: player [
+	diceCup max = result
+		ifTrue: [ board unblock: player ]
 ]
 
-{ #category : #'actions - prison' }
+{ #category : #'actions - freedom' }
 BoardGame >> free: player with: card [
 	board unblock: player.
 	cardHandler addToCardsRecord: card
@@ -134,18 +130,6 @@ BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck onBo
 	inactivePlayers := OrderedCollection new.
 ]
 
-{ #category : #'actions - prison' }
-BoardGame >> is: player freeWhenThown: score [
-	(self isEnoughToCoverPenalty: score)
-		ifTrue: [ self free: player ].
-	^ (self isEnoughToCoverPenalty: score).
-]
-
-{ #category : #'actions - prison' }
-BoardGame >> isEnoughToCoverPenalty: score [
-	^ score = diceCup max
-]
-
 { #category : #accessing }
 BoardGame >> isFinished [
 	^ isFinished.
@@ -163,7 +147,8 @@ BoardGame >> nextTurn [
 	player := self lookForPlayerWhoseTurnItIs.
 	result := diceCup throw.
 	result := self fieldsToMoveAfter: player obtained: result.
-	board move: player along: result on: self .
+	self free: result ifNecesaryWithPayment: player.
+	board move: player along: result on: self.
 	self endGameIfTheWinnerIs: player
 ]
 

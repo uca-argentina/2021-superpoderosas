@@ -4,8 +4,7 @@ Class {
 	#instVars : [
 		'fields',
 		'effectsHistory',
-		'activeTrackers',
-		'blockedTrackers'
+		'trackers'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -42,11 +41,11 @@ Board >> applyAt: aBoardGame lastEffectTo: aPlayer [
 ]
 
 { #category : #'actions - prison' }
-Board >> block: aPlayer [
+Board >> block: player [
 	| playerTracker |
-	playerTracker := self positionOf: aPlayer.
-	blockedTrackers add: playerTracker.
-	activeTrackers remove: playerTracker ifAbsent:[].
+	playerTracker := self positionOf: player.
+	trackers remove: playerTracker ifAbsent:[].
+	trackers add: (Tracker of: player standingOn: (playerTracker field)  after:  (playerTracker round) definedBy: BlockedCondition new ).
 ]
 
 { #category : #private }
@@ -65,45 +64,30 @@ Board >> determinateAdditionalRoundsBasingOn: totalFields [
 { #category : #private }
 Board >> findNewPositionWhen: player hasMoved: aNumberOfFields from: oldPosition [
 	| totalFields newRoundNumber newFieldNumber |
-	totalFields := oldPosition field + aNumberOfFields.
+	totalFields:= oldPosition findFieldAfterIntentionToMove: aNumberOfFields.
 	newFieldNumber := self lookUpResultingFieldNumberBasingOn: totalFields.
 	newRoundNumber := oldPosition round + (self determinateAdditionalRoundsBasingOn: totalFields).
 	^ self
-		generateValidTrackerFor: newFieldNumber
-		standingOn: newRoundNumber
-		after: player
+		generateValidTrackerFor: player
+		standingOn: newFieldNumber
+		after: newRoundNumber
+		determinedBy: oldPosition status.
 ]
 
 { #category : #private }
-Board >> generateValidTrackerFor: newFieldNumber standingOn: newRoundNumber after: player [
+Board >> generateValidTrackerFor: player standingOn: newFieldNumber after: newRoundNumber determinedBy: status [
 	| newPosition |
-	newPosition := Tracker
-		of: player
-		standingOn: newFieldNumber
-		after: newRoundNumber.
-	newPosition := self
-		validateIfPlayerShouldBeAtTheBeginningBasingOn: newPosition.
+	newPosition := Tracker of: player standingOn: newFieldNumber after: newRoundNumber definedBy: status.
+	newPosition := self validateIfPlayerShouldBeAtTheBeginningBasingOn: newPosition.
 	^ newPosition
 ]
 
 { #category : #initialize }
 Board >> initializeHaving: someFields usedBy:players [.
 	fields := someFields .
-	blockedTrackers:= Set new.
+	"blockedTrackers:= Set new."
 	effectsHistory:= OrderedCollection new.
 	self placeAtTheBeggining: players.
-]
-
-{ #category : #'actions - prison' }
-Board >> isFree: player [
-	^ (blockedTrackers anySatisfy:[:tracker | tracker = (self positionOf: player)]) not.
-]
-
-{ #category : #'actions - prison' }
-Board >> isFree: player whenThrown: aNumberOfFields on: boardGame [
-	(self isFree: player) 
-		ifFalse: [ ^ boardGame is: player freeWhenThown: aNumberOfFields]
-		ifTrue:[ ^true].
 ]
 
 { #category : #private }
@@ -121,39 +105,31 @@ Board >> lookUpResultingFieldNumberBasingOn: totalFields [
 { #category : #'actions - move' }
 Board >> move: player along: result on: boardGame [ 
 	| newPosition field |
-	newPosition := self move: player over: result on: boardGame.
+	newPosition := self move: player over: result.
 	field := self searchFieldFor: newPosition.
 	self considerEffectOf: field on: boardGame for: player.
 ]
 
-{ #category : #private }
-Board >> move: player over: oldPosition from: aNumberOfFields [
-	| newPosition |
+{ #category : #'actions - move' }
+Board >> move: player over: aNumberOfFields [
+	| oldPosition newPosition |
+	oldPosition := self positionOf: player.
 	newPosition := self findNewPositionWhen: player hasMoved: aNumberOfFields from: oldPosition.
 	self replaceOldPositioOf: player with: newPosition.
-	^ newPosition
-]
-
-{ #category : #'actions - move' }
-Board >> move: player over: aNumberOfFields on: aBoardGame [
-	| oldPosition |
-	oldPosition := self positionOf: player.
-	(self isFree: player whenThrown: aNumberOfFields on: aBoardGame)
-		ifFalse: [ ^ oldPosition ]
-		ifTrue:	[ ^ self move: player over: oldPosition from: aNumberOfFields ]
+	^ newPosition.
 ]
 
 { #category : #'actions - move' }
 Board >> moveAllPlayers: aNumberOfFields except: aPlayer [ 
 	| playerPosition |
-	playerPosition := activeTrackers detect:[:position | position player = aPlayer].
-	activeTrackers  := activeTrackers reject: [ :position | position player = aPlayer ] thenCollect: [ :position | self findNewPositionWhen: (position player) hasMoved: aNumberOfFields from: position].
-	activeTrackers add: playerPosition .
+	playerPosition := trackers detect:[:position | position player = aPlayer].
+	trackers  := trackers reject: [ :position | position player = aPlayer ] thenCollect: [ :position | self findNewPositionWhen: (position player) hasMoved: aNumberOfFields from: position].
+	trackers add: playerPosition .
 ]
 
 { #category : #'actions - move' }
 Board >> moveAllPlayersToTheBeginningOfLap [
-	activeTrackers := activeTrackers collect: [ :position | Tracker of: (position player) standingOn: 1 after: (position round) ]
+	trackers := trackers collect: [ :position | Tracker of: (position player) standingOn: (position resetFieldNumber) after: (position round) ]
 ]
 
 { #category : #accessing }
@@ -164,29 +140,24 @@ Board >> numberOfFields [
 { #category : #actions }
 Board >> orderPlayersPosition [
 	| playersTracker |
-	playersTracker:= OrderedCollection newFrom: activeTrackers.
+	"playersTracker:= OrderedCollection newFrom: trackers.
 	playersTracker addAll:blockedTrackers.
-	^ playersTracker	sort: [ :aPosition :anotherPosition | aPosition >= anotherPosition ]
+	^ playersTracker	sort: [ :aPosition :anotherPosition | aPosition >= anotherPosition ]"
+	^ trackers sort: [ :aPosition :anotherPosition | aPosition >= anotherPosition ]
 	
 ]
 
 { #category : #private }
 Board >> placeAtTheBeggining: players [
-	activeTrackers := OrderedCollection newFrom: (players collect: [ :aPlayer | Tracker of: aPlayer standingOn: 1 after: 1 ]).
+	trackers := OrderedCollection newFrom: (players collect: [ :aPlayer | Tracker of: aPlayer standingOn: 1 after: 1 ]).
 ]
 
 { #category : #accessing }
 Board >> positionOf: aPlayer [
-	^ activeTrackers
+	^ trackers
 		detect: [ :aPosition | aPosition player = aPlayer ]
-		ifNone:
-			[ self positionOfInactiveTrackerOf: aPlayer ]
-]
-
-{ #category : #private }
-Board >> positionOfInactiveTrackerOf: aPlayer [
-	^ blockedTrackers
-		detect: [ :blockedPosition | blockedPosition player = aPlayer ] ifNone: [  ].
+		"ifNone:
+			[ self positionOfInactiveTrackerOf: aPlayer ]"
 ]
 
 { #category : #'actions - effects' }
@@ -198,8 +169,8 @@ Board >> repeatAt: aBoardGame lastEffectAppliedOn: aPlayer [
 
 { #category : #actions }
 Board >> replaceOldPositioOf: player with: newPosition [
-	activeTrackers removeAllSuchThat:[:position | position player = player].
-	activeTrackers add: newPosition
+	trackers removeAllSuchThat:[:position | position player = player].
+	trackers add: newPosition
 	
 ]
 
@@ -212,8 +183,8 @@ Board >> searchFieldFor: aPosition [
 Board >> unblock: player [
 	| playerTracker |
 	playerTracker:= self positionOf: player.
-	blockedTrackers remove: playerTracker.
-	activeTrackers add: playerTracker.
+	trackers remove: playerTracker.
+	trackers add: (Tracker of: player standingOn: (playerTracker field)  after:  (playerTracker round)).
 ]
 
 { #category : #validations }

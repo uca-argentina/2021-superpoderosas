@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'round',
 		'field',
-		'player'
+		'player',
+		'status'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -15,6 +16,16 @@ Tracker class >> of: aPlayer standingOn: aField after: aNumberOfRound [
 		initializeOf: aPlayer
 		standingOn: aField
 		after: aNumberOfRound
+		definedBy: ActiveCondition new.
+]
+
+{ #category : #initialization }
+Tracker class >> of: aPlayer standingOn: aField after: aNumberOfRound definedBy: aStatus [
+	^ self new
+		initializeOf: aPlayer
+		standingOn: aField
+		after: aNumberOfRound
+		definedBy: aStatus.
 ]
 
 { #category : #comparing }
@@ -28,9 +39,14 @@ Tracker >> >= anotherTracker [
 	^ ((self round > anotherTracker round) or: [(self field >= anotherTracker field  )and:[self round = anotherTracker round]])
 ]
 
-{ #category : #accesing }
+{ #category : #accessing }
 Tracker >> field [
 	^ field
+]
+
+{ #category : #actions }
+Tracker >> findFieldAfterIntentionToMove: fields [
+	^ status findNewValueWhenYouTryAdding: fields with: field.
 ]
 
 { #category : #comparing }
@@ -40,18 +56,34 @@ Tracker >> hash [
 ]
 
 { #category : #initialize }
-Tracker >> initializeOf: aPlayer standingOn: aField after: aRound [
+Tracker >> initializeOf: aPlayer standingOn: aField after: aRound definedBy: aStatus [
 	round:= aRound.
 	field:= aField.
 	player:= aPlayer.
+	status:= aStatus.
 ]
 
-{ #category : #accesing }
+{ #category : #actions }
+Tracker >> isBlocked [
+	^status isBlocked.
+]
+
+{ #category : #accessing }
 Tracker >> player [
 	^ player
 ]
 
-{ #category : #accesing }
+{ #category : #actions }
+Tracker >> resetFieldNumber [
+	^status resetValueWhenActualIs: field.
+]
+
+{ #category : #accessing }
 Tracker >> round [
 	^ round
+]
+
+{ #category : #accessing }
+Tracker >> status [
+	^ status
 ]
