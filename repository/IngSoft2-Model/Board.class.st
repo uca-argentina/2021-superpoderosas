@@ -44,7 +44,7 @@ Board >> applyAt: aBoardGame lastEffectTo: aPlayer [
 Board >> block: player [
 	| playerTracker |
 	playerTracker := self positionOf: player.
-	trackers remove: playerTracker ifAbsent:[].
+	trackers remove: playerTracker.
 	trackers add: (Tracker of: player standingOn: (playerTracker field)  after:  (playerTracker round) definedBy: BlockedCondition new ).
 ]
 
@@ -59,6 +59,11 @@ Board >> considerEffectOf: field on: aBoardGame for: player [
 Board >> determinateAdditionalRoundsBasingOn: totalFields [
 	^ (totalFields-1) // (self numberOfFields).
 	
+]
+
+{ #category : #'error messages' }
+Board >> errorMessagePlayerWasNeverBlocked [
+	^ 'A Freedom card can not be played on a player who was never blocked'
 ]
 
 { #category : #private }
@@ -85,7 +90,6 @@ Board >> generateValidTrackerFor: player standingOn: newFieldNumber after: newRo
 { #category : #initialize }
 Board >> initializeHaving: someFields usedBy:players [.
 	fields := someFields .
-	"blockedTrackers:= Set new."
 	effectsHistory:= OrderedCollection new.
 	self placeAtTheBeggining: players.
 ]
@@ -139,10 +143,6 @@ Board >> numberOfFields [
 
 { #category : #actions }
 Board >> orderPlayersPosition [
-	| playersTracker |
-	"playersTracker:= OrderedCollection newFrom: trackers.
-	playersTracker addAll:blockedTrackers.
-	^ playersTracker	sort: [ :aPosition :anotherPosition | aPosition >= anotherPosition ]"
 	^ trackers sort: [ :aPosition :anotherPosition | aPosition >= anotherPosition ]
 	
 ]
@@ -156,8 +156,7 @@ Board >> placeAtTheBeggining: players [
 Board >> positionOf: aPlayer [
 	^ trackers
 		detect: [ :aPosition | aPosition player = aPlayer ]
-		"ifNone:
-			[ self positionOfInactiveTrackerOf: aPlayer ]"
+	
 ]
 
 { #category : #'actions - effects' }
@@ -185,6 +184,18 @@ Board >> unblock: player [
 	playerTracker:= self positionOf: player.
 	trackers remove: playerTracker.
 	trackers add: (Tracker of: player standingOn: (playerTracker field)  after:  (playerTracker round)).
+]
+
+{ #category : #'actions - prison' }
+Board >> unblockBlocked: player [
+   self validateIfPlayerIsBlocked: player.
+	self unblock: player.
+]
+
+{ #category : #'error messages' }
+Board >> validateIfPlayerIsBlocked: player [
+	((self positionOf: player) isBlocked)
+		ifFalse: [ Error signal: self errorMessagePlayerWasNeverBlocked ]
 ]
 
 { #category : #validations }

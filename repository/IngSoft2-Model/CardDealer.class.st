@@ -1,9 +1,6 @@
 Class {
 	#name : #CardDealer,
 	#superclass : #Effect,
-	#instVars : [
-		'effect'
-	],
 	#category : #'IngSoft2-Model'
 }
 

@@ -645,6 +645,27 @@ BoardGameTest >> testAPlayerCanNotCancelACardAPlayerDoesNotHave [
 ]
 
 { #category : #playingWithCardsTests }
+BoardGameTest >> testAPlayerCanNotFreeAPlayerWhoWasNeverImmprisoned [
+	| aBoardGame aGroupOfPlayers freedomCard aSequenceOfDiceResults cards speedCard repeatCard aSecondSpeedCard cancellationCard accelerationCard |
+	freedomCard := Freedom new.
+	cancellationCard := Cancellation new.
+	speedCard:= Speed new.
+	repeatCard := Repetition new.
+	aSecondSpeedCard:= Speed new.
+	accelerationCard:= Acceleration new.
+	cards := { freedomCard . cancellationCard .  speedCard . repeatCard . aSecondSpeedCard . accelerationCard  }.
+	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
+	aSequenceOfDiceResults := #(10 10 7 3).
+	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.	
+	
+	self 
+		should:[aBoardGame affect: #belu using: freedomCard by: #pau] 
+		raise: Error 
+		withExceptionDo: [:error | self assert: error messageText equals: 'A Freedom card can not be played on a player who was never blocked' ].
+	
+]
+
+{ #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerCanNotUseACardHeDoesNotHave [
 	| aBoardGame aGroupOfPlayers overloadCard aSequenceOfDiceResults cards  |
 	overloadCard := Overload new.

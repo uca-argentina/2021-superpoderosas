@@ -77,7 +77,7 @@ BoardGame >> endGameIfTheWinnerIs: player [
 
 { #category : #'error messages' }
 BoardGame >> errorMessageCardCanNotBePlayedOutsidePlayersTurn [
- ^ 'All permanent cards can only be played when it is the turn of the player'.
+	^ 'All permanent cards can only be played when it is the turn of the player'.
 ]
 
 { #category : #'error messages' }
@@ -111,7 +111,7 @@ BoardGame >> free: result ifNecesaryWithPayment: player [
 
 { #category : #'actions - freedom' }
 BoardGame >> free: player with: card [
-	board unblock: player.
+	board unblockBlocked: player.
 	cardHandler addToCardsRecord: card
 ]
 
@@ -174,11 +174,6 @@ BoardGame >> repeatLastEffectAppliedOn: aPlayer [
 BoardGame >> startPlayingOnABoardWith: fields with: aGroupOfPlayers [
 	playersManager := Sequence newFrom: aGroupOfPlayers.
 	board := Board has: fields usedBy: aGroupOfPlayers.
-]
-
-{ #category : #validations }
-BoardGame >> validateIfNotInJail: player [
-	^ inactivePlayers anySatisfy: [ :aPlayer | aPlayer = player ]
 ]
 
 { #category : #validations }

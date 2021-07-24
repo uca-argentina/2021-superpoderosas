@@ -2,7 +2,6 @@ Class {
 	#name : #MoonWalk,
 	#superclass : #Effect,
 	#instVars : [
-		'effect',
 		'fieldsToMoveBackwars'
 	],
 	#category : #'IngSoft2-Model'
