@@ -124,12 +124,10 @@ Board >> move: player over: aNumberOfFields [
 	| newPosition oldPosition |
 	oldPosition := self positionOf: player.
 	(self isBlocked: player) 
-		ifTrue:[	
-				^oldPosition ]
-		ifFalse: [
-				newPosition := self findNewPositionWhen: player hasMoved: aNumberOfFields from: oldPosition.
-				self replaceOldPositioOf: player with: newPosition.
-				^ newPosition.]
+		ifTrue:[	^oldPosition ]
+		ifFalse: [newPosition := self findNewPositionWhen: player hasMoved: aNumberOfFields from: oldPosition.
+					self replaceOldPositioOf: player with: newPosition.
+					^ newPosition.]
 ]
 
 { #category : #'actions - move' }

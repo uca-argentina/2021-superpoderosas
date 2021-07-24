@@ -20,7 +20,7 @@ Sequence >> actualElement [
 ]
 
 { #category : #initialize }
-Sequence >> initializeNewFrom: elementsSequence [
+Sequence >> initializeNewFrom: elementsSequence [ 
 	elements := elementsSequence.
 	index := 1.
 ]
