@@ -7,13 +7,13 @@ Class {
 	#category : #'IngSoft2-Tests'
 }
 
-{ #category : #asserting }
+{ #category : #actions }
 BoardGameTest >> assert: groupOfEvents areDistributedBasedOn: distributionOfEvents withTolerance: tolerance [
 	| val |
 	distributionOfEvents do:[ :probabilityEvent | val:=(self relativeEventOcurrenceOf: probabilityEvent in:groupOfEvents).self assert: val < tolerance] 
 ]
 
-{ #category : #positionTests }
+{ #category : #actions }
 BoardGameTest >> creationOfAnotherBoardGameWithThreePlayers [
 	| secondDice firstDice thirdDice |
 	firstDice := DeterministicDice with: #(12 20 21 17).
@@ -25,7 +25,7 @@ BoardGameTest >> creationOfAnotherBoardGameWithThreePlayers [
 		andA: thirdDice
 ]
 
-{ #category : #positionTests }
+{ #category : #actions }
 BoardGameTest >> creationOfBoardGameWithThatUsesA: firstDice a: secondDice andA: thirdDice [
 	| aGroupOfDices aDiceCup laps aNumberOfFields aBoardGame aGroupOfPlayers fields aDeck |
 	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #male . #belu}.
@@ -39,7 +39,7 @@ BoardGameTest >> creationOfBoardGameWithThatUsesA: firstDice a: secondDice andA:
 	^ aBoardGame
 ]
 
-{ #category : #positionTests }
+{ #category : #actions }
 BoardGameTest >> creationOfBoardGameWithThreePlayers [
 	|secondDice firstDice thirdDice |
 	firstDice := DeterministicDice with: #(2 4 7 2).
@@ -51,7 +51,7 @@ BoardGameTest >> creationOfBoardGameWithThreePlayers [
 		andA: thirdDice
 ]
 
-{ #category : #playingWithCardsTests }
+{ #category : #actions }
 BoardGameTest >> generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults [
 	| aDeck aGroupOfDices aDiceCup fields aNumberOfFields aDice aBoardGame laps |
 	aDice := DeterministicDice with: aSequenceOfDiceResults.
@@ -70,7 +70,7 @@ BoardGameTest >> generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBas
 	^ aBoardGame
 ]
 
-{ #category : #playingWithCardsTests }
+{ #category : #actions }
 BoardGameTest >> generateABoardGameWithPrisonPlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults [
 	| aDeck aGroupOfDices aDiceCup fields aNumberOfFields aDice aBoardGame laps |
 	aDice := DeterministicDice with: aSequenceOfDiceResults.
@@ -89,7 +89,7 @@ BoardGameTest >> generateABoardGameWithPrisonPlayedBy: aGroupOfPlayers using: ca
 	^ aBoardGame
 ]
 
-{ #category : #fieldsEffectTests }
+{ #category : #actions }
 BoardGameTest >> generateDeck [
 	| cards aDeck |
 	cards := OrderedCollection newFrom: { Cancellation new . Acceleration new . Speed new . DoOver new . Repetition new . Overload new . Freedom new . SpeedPlus new}.
@@ -97,7 +97,7 @@ BoardGameTest >> generateDeck [
 	^aDeck.
 ]
 
-{ #category : #fieldsEffectTests }
+{ #category : #actions }
 BoardGameTest >> generateManually: aNumberOfFields [ 
 	|  fields  fieldsDistribution fieldsToDistribute wormHoleField speedUpField atomicBombField moonWalkField anotherMoonWalkField |
 	fields:= OrderedCollection new: aNumberOfFields withAll: NoEffect new.
@@ -114,7 +114,7 @@ BoardGameTest >> generateManually: aNumberOfFields [
 	^fields.
 ]
 
-{ #category : #playingWithCardsTests }
+{ #category : #actions }
 BoardGameTest >> generateManuallyIncludingBasicsPlusCardDealer: aNumberOfFields [ 
 	|  fields fieldsDistribution fieldsToDistribute wormHoleField speedUpField atomicBombField moonWalkField anotherMoonWalkField cardDealerField |
 	fields:= OrderedCollection new: aNumberOfFields withAll: ( Field affectedBy: NoEffect new).
@@ -132,7 +132,7 @@ BoardGameTest >> generateManuallyIncludingBasicsPlusCardDealer: aNumberOfFields 
 	^fields.
 ]
 
-{ #category : #playingWithCardsTests }
+{ #category : #actions }
 BoardGameTest >> generateManuallyIncludingBasicsPlusCardDealerAndPrison: aNumberOfFields [ 
 	|  fields fieldsDistribution fieldsToDistribute wormHoleField speedUpField atomicBombField moonWalkField anotherMoonWalkField cardDealerField prisonField |
 	fields:= OrderedCollection new: aNumberOfFields withAll: ( Field affectedBy: NoEffect new).
@@ -151,7 +151,7 @@ BoardGameTest >> generateManuallyIncludingBasicsPlusCardDealerAndPrison: aNumber
 	^fields.
 ]
 
-{ #category : #accessingTests }
+{ #category : #actions }
 BoardGameTest >> newBoardGameWithASinglePlayerAndASingleRound [
 	| aGroupOfDices aDiceCup aNumberOfFields aDice aBoardGame aGroupOfPlayers laps fields aDeck |
 	aDice := DeterministicDice with: #(2 4 7 3).
@@ -166,7 +166,7 @@ BoardGameTest >> newBoardGameWithASinglePlayerAndASingleRound [
 	^ aBoardGame
 ]
 
-{ #category : #accessingTests }
+{ #category : #actions }
 BoardGameTest >> newBoardGameWithMultiplePlayers [
 	| aBoardGame secondDice aGroupOfPlayers aGroupOfDices firstDice aNumberOfFields thirdDice aDiceCup laps fields aDeck |
 	firstDice := DeterministicDice with: #(2 4 7 2).
@@ -184,7 +184,7 @@ BoardGameTest >> newBoardGameWithMultiplePlayers [
 	^ aBoardGame
 ]
 
-{ #category : #asserting }
+{ #category : #actions }
 BoardGameTest >> relativeEventOcurrenceOf: aProbabilityEvent in: groupOfEvents [ 
 	| numberOfOcurrences percentageOfOcurrences relativePercentageOfOCurrences |
 	numberOfOcurrences:= groupOfEvents count: [ :event | event = (aProbabilityEvent event)].
