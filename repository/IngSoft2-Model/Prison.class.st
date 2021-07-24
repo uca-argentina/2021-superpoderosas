@@ -9,5 +9,5 @@ Class {
 
 { #category : #actions }
 Prison >> effectTriggeredBy: aPlayer on: aBoard of: aBoardGame [
-	aBoardGame putInPrison: aPlayer.
+	aBoard block: aPlayer.
 ]

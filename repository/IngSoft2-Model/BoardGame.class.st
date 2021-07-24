@@ -8,8 +8,7 @@ Class {
 		'cardHandler',
 		'lapsNeededToWin',
 		'playersManager',
-		'inactivePlayers',
-		'court'
+		'inactivePlayers'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -73,12 +72,6 @@ BoardGame >> dealACardTo: player [
 ]
 
 { #category : #private }
-BoardGame >> determineActionOf: player basingOn: result [
-	(court dictateIf: player isFreeWhenScored: result on: self)
-		ifTrue: [ board move: player along: result on: self ]
-]
-
-{ #category : #private }
 BoardGame >> endGameIfTheWinnerIs: player [
 	| newPosition |
 	newPosition := board positionOf: player.
@@ -114,16 +107,15 @@ BoardGame >> fieldsToMoveIndicatedByInfluentialCardsOf: player [
 	^(playerInfluentialCards sumNumbers: [ :aCard | aCard action ])
 ]
 
-{ #category : #'actions - jail' }
+{ #category : #'actions - prison' }
 BoardGame >> free: player [
 	board unblock: player.
-	court free: player.
 	
 ]
 
-{ #category : #'actions - jail' }
+{ #category : #'actions - prison' }
 BoardGame >> free: player with: card [
-	self free: player.
+	board unblock: player.
 	cardHandler addToCardsRecord: card
 ]
 
@@ -140,7 +132,18 @@ BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck onBo
 	lapsNeededToWin := laps.
 	cardHandler:= CardHandler managing: aDeck for: aGroupOfPlayers and:fields. 
 	inactivePlayers := OrderedCollection new.
-	court := Court dictating: (diceCup max).
+]
+
+{ #category : #'actions - prison' }
+BoardGame >> is: player freeWhenThown: score [
+	(self isEnoughToCoverPenalty: score)
+		ifTrue: [ self free: player ].
+	^ (self isEnoughToCoverPenalty: score).
+]
+
+{ #category : #'actions - prison' }
+BoardGame >> isEnoughToCoverPenalty: score [
+	^ score = diceCup max
 ]
 
 { #category : #accessing }
@@ -160,20 +163,13 @@ BoardGame >> nextTurn [
 	player := self lookForPlayerWhoseTurnItIs.
 	result := diceCup throw.
 	result := self fieldsToMoveAfter: player obtained: result.
-	self determineActionOf: player basingOn: result.
+	board move: player along: result on: self .
 	self endGameIfTheWinnerIs: player
 ]
 
 { #category : #actions }
 BoardGame >> positionOf: player [
  ^ board positionOf: player.
-	
-]
-
-{ #category : #'actions - jail' }
-BoardGame >> putInPrison: player [
-	board block: player.
-	court throwToTheDungeon: player.
 	
 ]
 
