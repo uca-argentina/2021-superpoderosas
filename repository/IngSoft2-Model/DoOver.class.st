@@ -4,6 +4,10 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
+{ #category : #accessing }
+DoOver >> notifyCancellationRegarding: target on: aBoardGame [
+]
+
 { #category : #actions }
 DoOver >> thrownBy: aPlayer aims: aTarget on: aBoardGame handledBy: cardHandler [ 
 	cardHandler repeatLastCardThrownBy: aPlayer affecting: aTarget on: aBoardGame.

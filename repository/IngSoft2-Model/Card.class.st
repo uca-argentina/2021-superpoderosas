@@ -6,6 +6,7 @@ Class {
 
 { #category : #accessing }
 Card >> notifyCancellationRegarding: target on: aBoardGame [
+	self subclassResponsibility.
 ]
 
 { #category : #accessing }

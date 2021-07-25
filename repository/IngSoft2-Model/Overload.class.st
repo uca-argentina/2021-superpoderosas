@@ -9,6 +9,10 @@ Overload >> action [
 	^ -2.
 ]
 
+{ #category : #accessing }
+Overload >> notifyCancellationRegarding: target on: aBoardGame [
+]
+
 { #category : #actions }
 Overload >> thrownBy: aPlayer aims: aTarget on: aBoardGame handledBy: cardHandler [ 
 	aBoardGame verifyIfItIsTheTurnOf: aPlayer.

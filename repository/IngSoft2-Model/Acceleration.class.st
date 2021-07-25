@@ -9,6 +9,10 @@ Acceleration >> action [
 	^ 1.
 ]
 
+{ #category : #accessing }
+Acceleration >> notifyCancellationRegarding: target on: aBoardGame [
+]
+
 { #category : #actions }
 Acceleration >> thrownBy: aPlayer aims: aTarget on: aBoardGame handledBy: cardHandler [ 
 	aBoardGame verifyIfItIsTheTurnOf: aPlayer.
