@@ -28,10 +28,18 @@ Board class >> verifyIfItHasAtLeastTwoFields: numberOfFields [.
 
 { #category : #'actions - effects' }
 Board >> add: effect on: fieldNumber [
-	| field |
-	field:= fields at: fieldNumber.
-	field add: effect.
-	fields at: fieldNumber put: field.
+	| oldField effects |
+	oldField := fields at: fieldNumber.
+	effects := self add: effect toEffectsFrom: oldField.
+	self replaceFieldOf: fieldNumber withFieldAffectedBy: effects.
+]
+
+{ #category : #private }
+Board >> add: effect toEffectsFrom:oldField [
+	| effects |
+	effects:= oldField effects.
+	effects add: effect.
+	^effects
 ]
 
 { #category : #'actions - effects' }
@@ -160,10 +168,33 @@ Board >> positionOf: aPlayer [
 ]
 
 { #category : #'actions - effects' }
+Board >> remove: effect from: fieldNumber [
+	| oldField  effects|
+	oldField:= fields at: fieldNumber.
+	effects:= self remove: effect fromEffectsOf:oldField.
+	self replaceFieldOf: fieldNumber withFieldAffectedBy: effects.
+]
+
+{ #category : #private }
+Board >> remove: effect fromEffectsOf:oldField [
+	| effects |
+	effects:= oldField effects.
+	effects remove: effect.
+	^effects
+]
+
+{ #category : #'actions - effects' }
 Board >> repeatAt: aBoardGame lastEffectAppliedOn: aPlayer [
 	effectsHistory isEmpty
 		ifFalse:
 			[ self applyAt: aBoardGame lastEffectTo: aPlayer].
+]
+
+{ #category : #private }
+Board >> replaceFieldOf: fieldNumber withFieldAffectedBy: effects [
+	| newField |
+	newField := Field affectedBy: effects.
+	fields at: fieldNumber put: newField
 ]
 
 { #category : #actions }

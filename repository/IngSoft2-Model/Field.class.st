@@ -14,17 +14,17 @@ Field class >> affectedBy: effect [
 ]
 
 { #category : #actions }
-Field >> add: effect [
-	effects add: effect.
-]
-
-{ #category : #actions }
 Field >> effectTriggeredBy: aPlayer on: aBoard of: aBoardGame [ 
 	effects do:[:effect | effect effectTriggeredBy: aPlayer on: aBoard of: aBoardGame ].
 	^effects last.
 ]
 
+{ #category : #actions }
+Field >> effects [
+	^effects.
+]
+
 { #category : #initialize }
-Field >> initializeAffectedBy: effect [ 
-	effects := OrderedCollection newFrom: {effect}.
+Field >> initializeAffectedBy: someEffects [ 
+	effects := someEffects asOrderedCollection.
 ]
