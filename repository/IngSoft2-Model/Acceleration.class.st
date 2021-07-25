@@ -9,7 +9,7 @@ Acceleration >> action [
 	^ 1.
 ]
 
-{ #category : #accessing }
+{ #category : #actions }
 Acceleration >> notifyCancellationRegarding: target on: aBoardGame [
 ]
 

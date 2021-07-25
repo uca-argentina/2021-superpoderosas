@@ -4,7 +4,7 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #accessing }
+{ #category : #actions }
 Freedom >> notifyCancellationRegarding: target on: aBoardGame [
 ]
 

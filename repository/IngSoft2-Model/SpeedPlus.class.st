@@ -7,13 +7,13 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #accessing }
+{ #category : #actions }
 SpeedPlus >> notifyCancellationRegarding: target on: aBoardGame [
 	aBoardGame remove: SpeedUp new from: target.
 	
 ]
 
-{ #category : #accessing }
+{ #category : #actions }
 SpeedPlus >> thrownBy: aPlayer aims: aField on: aBoardGame handledBy: cardHandler [
 	aBoardGame verifyIfItIsTheTurnOf: aPlayer.
 	aBoardGame add: SpeedUp new on: aField.

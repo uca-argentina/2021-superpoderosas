@@ -4,7 +4,7 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #accessing }
+{ #category : #actions }
 DoOver >> notifyCancellationRegarding: target on: aBoardGame [
 ]
 

@@ -9,7 +9,7 @@ Overload >> action [
 	^ -2.
 ]
 
-{ #category : #accessing }
+{ #category : #actions }
 Overload >> notifyCancellationRegarding: target on: aBoardGame [
 ]
 
