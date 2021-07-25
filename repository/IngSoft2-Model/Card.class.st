@@ -5,6 +5,10 @@ Class {
 }
 
 { #category : #accessing }
+Card >> notifyCancellationRegarding: target on: aBoardGame [
+]
+
+{ #category : #accessing }
 Card >> thrownBy: aPlayer aims: aTarget on: aBoardGame handledBy: cardHandler [
 	^ self subclassResponsibility
 ]

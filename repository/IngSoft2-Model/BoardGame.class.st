@@ -164,6 +164,11 @@ BoardGame >> ranking [
 ]
 
 { #category : #'actions - effects' }
+BoardGame >> remove: effect from: aField [
+	board remove: effect from: aField.
+]
+
+{ #category : #'actions - effects' }
 BoardGame >> repeatLastEffectAppliedOn: aPlayer [
 	board repeatAt: self lastEffectAppliedOn: aPlayer.
 	self endGameIfTheWinnerIs: aPlayer.

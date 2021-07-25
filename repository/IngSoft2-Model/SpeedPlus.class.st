@@ -8,6 +8,12 @@ Class {
 }
 
 { #category : #accessing }
+SpeedPlus >> notifyCancellationRegarding: target on: aBoardGame [
+	aBoardGame remove: SpeedUp new from: target.
+	
+]
+
+{ #category : #accessing }
 SpeedPlus >> thrownBy: aPlayer aims: aField on: aBoardGame handledBy: cardHandler [
 	aBoardGame verifyIfItIsTheTurnOf: aPlayer.
 	aBoardGame add: SpeedUp new on: aField.

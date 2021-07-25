@@ -27,10 +27,13 @@ CardHandler >> affect: aTarget using: aCard by: aPlayer on: aBoardGame [
 ]
 
 { #category : #'actions - cards' }
-CardHandler >> cancel: cardToBeCancelled with: aCard [
+CardHandler >> cancel: cardToBeCancelled with: aCard on: aBoardGame [
+	| target |
 	self validateIfAnyPlayerHas: cardToBeCancelled.
+	target:= self findTargetContaining: cardToBeCancelled.
 	self removeFromInfluentialCards: cardToBeCancelled.
 	self addToCardsRecord: aCard.
+	cardToBeCancelled notifyCancellationRegarding: target on: aBoardGame.
 ]
 
 { #category : #accessing }
@@ -68,6 +71,11 @@ CardHandler >> errorMessageAPlayerMustHaveTheCardInHand [
 { #category : #'error messages' }
 CardHandler >> errorMessageThePlayerDoesNotHaveTheCardToBeCancel [
  ^'The player does not have the card to be cancelled.'
+]
+
+{ #category : #accessing }
+CardHandler >> findTargetContaining: card [
+	^ (self selectAssociationsContaining: card) keys first.
 ]
 
 { #category : #'actions - cards' }
