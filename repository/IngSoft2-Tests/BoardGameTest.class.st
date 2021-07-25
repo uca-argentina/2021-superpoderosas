@@ -800,7 +800,7 @@ BoardGameTest >> testAPlayerParticipatesInABoardGameWhithCardsAndEffectsIncludin
 	acceleratioCard := Acceleration new.
 	repetitionCard := Repetition new.
 	freedomCard:= Freedom new.
-	speedPlusCard:= SpeedPlus new.
+	speedPlusCard:= SpeedPlus withSpeedEffect.
 	anotherDoOverCard:= DoOver new.
 	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
 	aSequenceOfDiceResults := #(1 9 14 5).
@@ -880,7 +880,7 @@ BoardGameTest >> testAPlayerUsesACancellationCardAndRemovesASpeedPlusCardFromAFi
 	cancellationCard := Cancellation new.
 	overloadCard := Overload new.
 	anotherCancellationCard := Cancellation new.
-	speedPlusCard := SpeedPlus new.
+	speedPlusCard := SpeedPlus withSpeedEffect.
 	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
 	aSequenceOfDiceResults := #(9 10 7 3).
 	cards := { accelerationCard . cancellationCard . speedPlusCard . anotherCancellationCard . overloadCard }.
@@ -1059,7 +1059,7 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedWasASpeedPlusCar
 	speedCard := Speed new.
 	repeatCard:= Repetition new.
 	overloadCard := Overload new.
-	speedPlusCard:= SpeedPlus new.
+	speedPlusCard:= SpeedPlus withSpeedEffect.
 	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
 	aSequenceOfDiceResults := #(1 29 7 3).
 	cards := { speedPlusCard  . doOverCard . repeatCard . speedCard . overloadCard}.
@@ -1258,7 +1258,7 @@ BoardGameTest >> testAPlayerUsesARepeatWhenSpeedUpEffecttCausedByASpeedPlusCardH
 	speedCard := Speed new.
 	overloadCard:= Overload new.
 	anotherOverloadCard := Overload new.
-	speedPlusCard:= SpeedPlus new.
+	speedPlusCard:= SpeedPlus withSpeedEffect.
 	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
 	aSequenceOfDiceResults := #(5 29 7 3).
 	cards := { speedPlusCard  . anotherOverloadCard . repeatCard . speedCard . overloadCard}.
@@ -1281,7 +1281,7 @@ BoardGameTest >> testAPlayerUsesASpeedCardOnHimselfAndItIncrementsInOneTheResult
 	overloadCard := Overload new.
 	speedCard:= Speed new.
 	anotherOverloadCard := Overload new.
-	anotherSpeedCard := SpeedPlus new.
+	anotherSpeedCard := SpeedPlus withSpeedEffect.
 	repetitionCard:= Repetition new.
 	aGroupOfPlayers := OrderedCollection newFrom: {#pau . #belu}.
 	aSequenceOfDiceResults := #(9 10 7 3).
@@ -1302,7 +1302,7 @@ BoardGameTest >> testAPlayerUsesASpeedCardOnHimselfAndItIncrementsInOneTheResult
 BoardGameTest >> testAPlayerUsesASpeedPlusCardAndItInfluencesAField [
 	| aBoardGame aGroupOfPlayers overloadCard speedCard aSequenceOfDiceResults cards anotherOverloadCard repetitionCard speedPlusCard |	
 	overloadCard := Overload new.
-	speedPlusCard:= SpeedPlus new.
+	speedPlusCard:= SpeedPlus withSpeedEffect.
 	anotherOverloadCard := Overload new.
 	speedCard := Speed new.
 	repetitionCard:= Repetition new.
@@ -1320,7 +1320,7 @@ BoardGameTest >> testAPlayerUsesASpeedPlusCardAndItInfluencesAField [
 BoardGameTest >> testAPlayerUsesASpeedPlusCardOnAFieldAndThatFieldHasNowAMoonwalkAndASpeedUpEffect [
 	| aBoardGame aGroupOfPlayers overloadCard pauPosition beluPosition speedCard aSequenceOfDiceResults cards anotherOverloadCard repetitionCard speedPlusCard |	
 	overloadCard := Overload new.
-	speedPlusCard:= SpeedPlus new.
+	speedPlusCard:= SpeedPlus withSpeedEffect.
 	anotherOverloadCard := Overload new.
 	speedCard := Speed new.
 	repetitionCard:= Repetition new.
@@ -1343,7 +1343,7 @@ BoardGameTest >> testAPlayerUsesASpeedPlusCardOnAFieldAndThatFieldHasNowAMoonwal
 BoardGameTest >> testAPlayerUsesASpeedPlusCardOnAFieldAndThatFieldHasNowAnAtomicBombAndASpeedUpEffect [
 	| aBoardGame aGroupOfPlayers overloadCard pauPosition beluPosition speedCard aSequenceOfDiceResults cards anotherOverloadCard repetitionCard speedPlusCard |	
 	overloadCard := Overload new.
-	speedPlusCard:= SpeedPlus new.
+	speedPlusCard:= SpeedPlus withSpeedEffect.
 	anotherOverloadCard := Overload new.
 	speedCard := Speed new.
 	repetitionCard:= Repetition new.
@@ -1366,7 +1366,7 @@ BoardGameTest >> testAPlayerUsesASpeedPlusCardOnAFieldAndThatFieldHasNowAnAtomic
 BoardGameTest >> testAPlayerUsesASpeedPlusCardOnAFieldAndThatFieldHasNowSpeedUpEffect [
 	| aBoardGame aGroupOfPlayers overloadCard pauPosition beluPosition speedCard aSequenceOfDiceResults cards anotherOverloadCard repetitionCard speedPlusCard |	
 	overloadCard := Overload new.
-	speedPlusCard:= SpeedPlus new.
+	speedPlusCard:= SpeedPlus withSpeedEffect.
 	anotherOverloadCard := Overload new.
 	speedCard := Speed new.
 	repetitionCard:= Repetition new.
@@ -1387,7 +1387,7 @@ BoardGameTest >> testAPlayerUsesASpeedPlusCardOnAFieldAndThatFieldHasNowSpeedUpE
 BoardGameTest >> testAPlayerUsesASpeedPlusCardOnAFieldAndThatFieldHasNowTwoSppedUpEffects [
 	| aBoardGame aGroupOfPlayers overloadCard pauPosition beluPosition speedCard aSequenceOfDiceResults cards anotherOverloadCard repetitionCard speedPlusCard |	
 	overloadCard := Overload new.
-	speedPlusCard:= SpeedPlus new.
+	speedPlusCard:= SpeedPlus withSpeedEffect.
 	anotherOverloadCard := Overload new.
 	speedCard := Speed new.
 	repetitionCard:= Repetition new.
@@ -1409,7 +1409,7 @@ BoardGameTest >> testAPlayerUsesASpeedPlusCardOnAFieldAndThatFieldHasNowTwoSpped
 BoardGameTest >> testAPlayerUsesASpeedPlusCardOnAFieldAndTheSpeedUpEffectAnnulatesTheEffectOfWormHole [
 	| aBoardGame aGroupOfPlayers overloadCard pauPosition beluPosition speedCard aSequenceOfDiceResults cards anotherOverloadCard repetitionCard speedPlusCard |	
 	overloadCard := Overload new.
-	speedPlusCard:= SpeedPlus new.
+	speedPlusCard:= SpeedPlus withSpeedEffect.
 	anotherOverloadCard := Overload new.
 	speedCard := Speed new.
 	repetitionCard:= Repetition new.
@@ -1432,7 +1432,7 @@ BoardGameTest >> testAPlayerUsesASpeedPlusCardOnAFieldAndTheSpeedUpEffectAnnulat
 BoardGameTest >> testAPlayerUsesASpeedPlusCardOnAFieldThatHasAPrisonEffectSoTheSpeedUpEffectInAnnulated [
 	| aBoardGame aGroupOfPlayers overloadCard pauPosition beluPosition speedCard aSequenceOfDiceResults cards anotherOverloadCard repetitionCard speedPlusCard |	
 	overloadCard := Overload new.
-	speedPlusCard:= SpeedPlus new.
+	speedPlusCard:= SpeedPlus withSpeedEffect.
 	anotherOverloadCard := Overload new.
 	speedCard := Speed new.
 	repetitionCard:= Repetition new.
