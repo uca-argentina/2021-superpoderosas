@@ -14,7 +14,7 @@ Field class >> affectedBy: effect [
 ]
 
 { #category : #actions }
-Field >> addEffect: effect [
+Field >> add: effect [
 	effects add: effect.
 ]
 

@@ -43,8 +43,8 @@ BoardGame class >> verifyIfThereIsAtLeastOnePlayerOn: aGroupOfPlayers [
 ]
 
 { #category : #'actions - effects' }
-BoardGame >> addSpeedUpEffectOn: aField [
-	board addSpeedUpEffectOn: aField.
+BoardGame >> add: effect on: aField [
+	board add: effect on: aField.
 ]
 
 { #category : #'actions - cards' }
@@ -104,7 +104,7 @@ BoardGame >> fieldsToMoveIndicatedByInfluentialCardsOf: player [
 ]
 
 { #category : #'actions - freedom' }
-BoardGame >> free: result ifNecesaryWithPayment: player [
+BoardGame >> free: player ifNecesaryWithPayment: result [
 	diceCup max = result
 		ifTrue: [ board unblock: player ]
 ]
@@ -147,7 +147,7 @@ BoardGame >> nextTurn [
 	player := self lookForPlayerWhoseTurnItIs.
 	result := diceCup throw.
 	result := self fieldsToMoveAfter: player obtained: result.
-	self free: result ifNecesaryWithPayment: player.
+	self free: player ifNecesaryWithPayment: result.
 	board move: player along: result on: self.
 	self endGameIfTheWinnerIs: player
 ]

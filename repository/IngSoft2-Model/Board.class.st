@@ -27,10 +27,10 @@ Board class >> verifyIfItHasAtLeastTwoFields: numberOfFields [.
 ]
 
 { #category : #'actions - effects' }
-Board >> addSpeedUpEffectOn: fieldNumber [
+Board >> add: effect on: fieldNumber [
 	| field |
 	field:= fields at: fieldNumber.
-	field addEffect: SpeedUp new.
+	field add: effect.
 	fields at: fieldNumber put: field.
 ]
 

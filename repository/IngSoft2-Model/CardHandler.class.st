@@ -30,7 +30,7 @@ CardHandler >> affect: aTarget using: aCard by: aPlayer on: aBoardGame [
 CardHandler >> cancel: cardToBeCancelled with: aCard [
 	self validateIfAnyPlayerHas: cardToBeCancelled.
 	self removeFromInfluentialCards: cardToBeCancelled.
-	self addToCardsRecord: aCard
+	self addToCardsRecord: aCard.
 ]
 
 { #category : #accessing }
@@ -42,11 +42,8 @@ CardHandler >> cardsInHandOf: player [
 CardHandler >> defineInfluentialCardsOf: players and: fields [
 	| targetsInfluentialCards targets |
 	targets := self defineTargetsWith: players and: fields.
-	targetsInfluentialCards := targets
-		collect: [ :player | OrderedCollection new ].
-	influentialCards := OrderedDictionary
-		newFromKeys: targets
-		andValues: targetsInfluentialCards
+	targetsInfluentialCards := targets collect: [ :player | OrderedCollection new ].
+	influentialCards := OrderedDictionary newFromKeys: targets andValues: targetsInfluentialCards
 ]
 
 { #category : #private }
