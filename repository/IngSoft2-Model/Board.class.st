@@ -48,7 +48,7 @@ Board >> applyAt: aBoardGame lastEffectTo: aPlayer [
 	self orderPlayersPosition.
 ]
 
-{ #category : #'actions - prison' }
+{ #category : #'actions - condition' }
 Board >> block: player [
 	| playerTracker |
 	playerTracker := self positionOf: player.
@@ -209,7 +209,7 @@ Board >> searchFieldFor: aPosition [
 	^ fields at: aPosition field
 ]
 
-{ #category : #'actions - prison' }
+{ #category : #'actions - condition' }
 Board >> unblock: player [
 	| playerTracker |
 	playerTracker:= self positionOf: player.
@@ -217,7 +217,7 @@ Board >> unblock: player [
 	trackers add: (Tracker of: player standingOn: (playerTracker field)  after:  (playerTracker round)).
 ]
 
-{ #category : #'actions - prison' }
+{ #category : #'actions - condition' }
 Board >> unblockBlocked: player [
    self validateIfPlayerIsBlocked: player.
 	self unblock: player.
