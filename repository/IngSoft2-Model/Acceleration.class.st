@@ -11,7 +11,7 @@ Acceleration >> action [
 
 { #category : #actions }
 Acceleration >> thrownBy: aPlayer aims: aTarget on: aBoardGame handledBy: cardHandler [ 
-	aBoardGame validateThrowOfAPermanent: self by: aPlayer.
+	aBoardGame validateThrownOfAPermanentCardBy: aPlayer.
 	cardHandler influenceAllPlayers: self.
 	
 ]

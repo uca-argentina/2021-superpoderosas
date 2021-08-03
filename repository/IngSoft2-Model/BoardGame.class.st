@@ -6,40 +6,40 @@ Class {
 		'isFinished',
 		'playersTurnIdentificator',
 		'diceCup',
-		'spinsNeededToWin',
 		'board',
-		'cardHandler'
+		'cardHandler',
+		'lapsToWin'
 	],
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #'error messages' }
-BoardGame class >> errorMessageMustHaveAtLeastAPlayer [
+BoardGame class >> errorMessageABoardGameMustHaveAtLeastAPlayer [
 	^ 'The board game must have at leaste ONE player'
 ]
 
 { #category : #'error messages' }
-BoardGame class >> errorMessageSpinNumberMustBeGreaterThanCero [
+BoardGame class >> errorMessageABoardGameMustHaveAtLeastOneLap [
 	^ 'The board game must have at leaste one lap'
 ]
 
 { #category : #initialization }
-BoardGame class >> playedBy: aGroupOfPlayers using: aDiceCup and: aDeck onABoardWith: fields wonWhenReach: aSpinNumber [
+BoardGame class >> playedBy: aGroupOfPlayers using: aDiceCup and: aDeck onABoardWith: fields wonWhenReach: laps [
 		self verifyIfThereIsAtLeastOnePlayerOn: aGroupOfPlayers .
-		self verifySpinNumberIsGreaterThanCero: aSpinNumber.
-		^ self new initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck onBoardWith: fields wonWhenReach: aSpinNumber.
+		self verifyIfThereIsAtLeastOne: laps.
+		^ self new initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck onBoardWith: fields wonWhenReach: laps.
+]
+
+{ #category : #validations }
+BoardGame class >> verifyIfThereIsAtLeastOne: laps [.
+	(laps <1 ) 
+		ifTrue: [ Error signal: self errorMessageABoardGameMustHaveAtLeastOneLap ] .
 ]
 
 { #category : #validations }
 BoardGame class >> verifyIfThereIsAtLeastOnePlayerOn: aGroupOfPlayers [ 
 	(aGroupOfPlayers isEmpty ) 
-		ifTrue: [ Error signal: self errorMessageMustHaveAtLeastAPlayer ] .
-]
-
-{ #category : #validations }
-BoardGame class >> verifySpinNumberIsGreaterThanCero: aSpinNumber [.
-	(aSpinNumber <1 ) 
-		ifTrue: [ Error signal: self errorMessageSpinNumberMustBeGreaterThanCero ] .
+		ifTrue: [ Error signal: self errorMessageABoardGameMustHaveAtLeastAPlayer ] .
 ]
 
 { #category : #'actions - cards' }
@@ -70,7 +70,7 @@ BoardGame >> dealACardTo: player [
 BoardGame >> endGameIfTheWinnerIs: player [
 	| newPosition |
 	newPosition := board positionOf: player.
-	newPosition round > spinsNeededToWin
+	newPosition round > lapsToWin
 		ifTrue: [ self changeCurrentStateToFinished ]
 ]
 
@@ -108,11 +108,11 @@ BoardGame >> influentialCardsOf: aPlayer [
 ]
 
 { #category : #initialize }
-BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck onBoardWith: fields wonWhenReach: aSpinNumber [
+BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck onBoardWith: fields wonWhenReach: laps [
 	diceCup := aDiceCup.
 	self startPlayingOnABoardWith: fields with: aGroupOfPlayers.
 	isFinished := false.
-	spinsNeededToWin := aSpinNumber.
+	lapsToWin := laps.
 	cardHandler:= CardHandler managing: aDeck for: players. 
 ]
 
@@ -137,7 +137,6 @@ BoardGame >> nextTurn [
 		obtained: sumOfAllDices.
 	board move: player along: sumOfAllDices on: self.
 	self endGameIfTheWinnerIs: player.
-	^ player
 ]
 
 { #category : #actions }
@@ -167,7 +166,7 @@ BoardGame >> startPlayingOnABoardWith: fields with: aGroupOfPlayers [
 ]
 
 { #category : #validations }
-BoardGame >> validateThrowOfAPermanent: aCard by: aPlayer [
+BoardGame >> validateThrownOfAPermanentCardBy: aPlayer [
 	self verifyIfItIsTheTurnOf: aPlayer.
 
 ]

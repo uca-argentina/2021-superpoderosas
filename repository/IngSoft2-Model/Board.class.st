@@ -40,6 +40,17 @@ Board >> considerEffectOf: field on: aBoardGame for: player [
 ]
 
 { #category : #private }
+Board >> createValidTrackerFor: aPlayer standingOn: aField after: aRound [
+	| newTracker |
+	newTracker := Tracker
+		of: aPlayer
+		standingOn: aField
+		after: aRound.
+	newTracker := self validate: newTracker.
+	^ newTracker
+]
+
+{ #category : #private }
 Board >> determinateAdditionalRoundsBasingOn: totalFields [
 	^ (totalFields-1) // (self numberOfFields).
 	
@@ -47,14 +58,16 @@ Board >> determinateAdditionalRoundsBasingOn: totalFields [
 
 { #category : #private }
 Board >> findNewPositionWhen: player hasMoved: aNumberOfFields from: oldPosition [
-	| totalFields newPosition newRoundNumber newFieldNumber |
+	| totalFields newRoundNumber newFieldNumber |
 	totalFields := oldPosition field + aNumberOfFields.
-	newFieldNumber := self lookUpResultingFieldNumberBasingOn: totalFields.
-	newRoundNumber :=  oldPosition round + (self determinateAdditionalRoundsBasingOn: totalFields).
-	newPosition := Tracker of: player standingOn: newFieldNumber after: newRoundNumber.
-	newPosition := self validate: newPosition.
-	^ newPosition
-	
+	newFieldNumber := self
+		lookUpResultingFieldNumberBasingOn: totalFields.
+	newRoundNumber := oldPosition round
+		+ (self determinateAdditionalRoundsBasingOn: totalFields).
+	^ self
+		createValidTrackerFor: player
+		standingOn: newFieldNumber
+		after: newRoundNumber
 ]
 
 { #category : #initialize }
@@ -89,7 +102,6 @@ Board >> move: player over: aNumberOfFields [
 	| newPosition oldPosition |
 	oldPosition := self positionOf: player.
 	newPosition := self findNewPositionWhen: player hasMoved: aNumberOfFields from: oldPosition.
-	positionsTracker removeAllSuchThat:[:position | position player = player].
 	self replaceOldPositioOf: player with: newPosition.
 	^ newPosition
 ]
@@ -103,8 +115,8 @@ Board >> moveAllPlayers: aNumberOfFields except: aPlayer [
 ]
 
 { #category : #'actions - move' }
-Board >> moveAllPlayersTo: aSpecificField [
-	positionsTracker := positionsTracker collect: [ :position | Tracker of: (position player) standingOn: aSpecificField after: (position round) ]
+Board >> moveAllPlayersToTheStartOfTheCurrentLap [
+	positionsTracker := positionsTracker collect: [ :position | Tracker of: (position player) standingOn: 1 after: (position round) ]
 	
 ]
 

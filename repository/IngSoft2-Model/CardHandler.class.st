@@ -98,8 +98,7 @@ CardHandler >> removeFromInfluentialCards: cardToBeCancelled [
 
 { #category : #'actions - cards' }
 CardHandler >> repeatLastCardThrownBy: aPlayer affecting: aTarget on: aBoardGame [
-	(cardsHistory isEmpty) 
-	ifFalse: [ (cardsHistory last) thrownBy: aPlayer aims: aTarget on: aBoardGame handledBy: self].
+	cardsHistory ifNotEmpty: [ (cardsHistory last) thrownBy: aPlayer aims: aTarget on: aBoardGame handledBy: self].
 ]
 
 { #category : #private }
