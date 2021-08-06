@@ -10,12 +10,6 @@ Class {
 }
 
 { #category : #initialization }
-Board class >> containing: fields usedOnABoardGameBy: players [
-	self verifyIfItHasAtLeastTwo: fields.
-	^self new initializeContaining: fields usedOnAGameBy: players.
-]
-
-{ #category : #initialization }
 Board class >> containing: fields usedOnAGameBy: players [
 	self verifyIfItHasAtLeastTwo: fields.
 	^self new initializeContaining: fields usedOnAGameBy: players.
