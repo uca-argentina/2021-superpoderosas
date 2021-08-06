@@ -166,7 +166,7 @@ BoardGame >> repeatLastEffectAppliedOn: aPlayer [
 BoardGame >> startPlayingOnABoardWith: fields with: aGroupOfPlayers [
 	players:= aGroupOfPlayers.
 	playersTurnSequence := Sequence newFrom: aGroupOfPlayers.
-	board := Board containing: fields usedOnABoardGameBy: aGroupOfPlayers.
+	board := Board containing: fields usedOnAGameBy: aGroupOfPlayers.
 ]
 
 { #category : #validations }

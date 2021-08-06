@@ -471,7 +471,7 @@ BoardGameTest >> testABoardMustAtLeastTwoFields [
 	fields := eventManager generate: 1.
 
 	self 
-		should:[Board containing: fields usedOnABoardGameBy: {}] 
+		should:[Board containing: fields usedOnAGameBy: {}] 
 		raise: Error 
 		withExceptionDo: [:error | self assert: error messageText equals: 'There must be al least two fields'].
 ]
