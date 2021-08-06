@@ -9,20 +9,26 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
+{ #category : #initialization }
+Board class >> containing: fields usedOnABoardGameBy: players [
+	self verifyIfItHasAtLeastTwo: fields.
+	^self new initializeContaining: fields usedOnAGameBy: players.
+]
+
+{ #category : #initialization }
+Board class >> containing: fields usedOnAGameBy: players [
+	self verifyIfItHasAtLeastTwo: fields.
+	^self new initializeContaining: fields usedOnAGameBy: players.
+]
+
 { #category : #'error messages' }
 Board class >> errorMessageNumberOfFieldsMustBeGreaterThanOne [
  ^ 'There must be al least two fields'
 ]
 
-{ #category : #initialization }
-Board class >> has: fields [ 
-	self verifyIfItHasAtLeastTwoFields: fields.
-	^self new initializeHaving: fields.
-]
-
 { #category : #validations }
-Board class >> verifyIfItHasAtLeastTwoFields: numberOfFields [.
-	(numberOfFields size < 3 ) 
+Board class >> verifyIfItHasAtLeastTwo: fields [.
+	(fields size < 3 ) 
 		ifTrue: [ Error signal: self errorMessageNumberOfFieldsMustBeGreaterThanOne ] .
 ]
 
@@ -71,9 +77,9 @@ Board >> findNewPositionWhen: player hasMoved: aNumberOfFields from: oldPosition
 ]
 
 { #category : #initialize }
-Board >> initializeHaving: someFields [ 
-	fields := someFields .
-	positionsTracker:= OrderedCollection new.
+Board >> initializeContaining: boardGameFields usedOnAGameBy: players [
+	fields := boardGameFields.
+	positionsTracker := OrderedCollection newFrom: (players collect: [ :aPlayer | Tracker of: aPlayer standingOn: 1 after: 1 ]).
 	effectsHistory:= OrderedCollection new.
 ]
 
@@ -130,11 +136,6 @@ Board >> orderPlayersPosition [
 	^positionsTracker
 		sort: [ :aPosition :anotherPosition | aPosition >= anotherPosition ]
 	
-]
-
-{ #category : #'actions - move' }
-Board >> placeAtTheBeggining: players [
-	positionsTracker := OrderedCollection newFrom: (players collect: [ :aPlayer | Tracker of: aPlayer standingOn: 1 after: 1 ]).
 ]
 
 { #category : #accessing }

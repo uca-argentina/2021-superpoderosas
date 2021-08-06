@@ -465,13 +465,13 @@ BoardGameTest >> testABoardGameNeedsAtLeastOnePlayer [
 BoardGameTest >> testABoardMustAtLeastTwoFields [
  		
 	| fields eventManager speedUpEvent eventsDistribution|
-	speedUpEvent:= ProbabilityEvent with: 1.0 of: SpeedUp new.
+	speedUpEvent:= ProbabilityEvent with: 1.0 of: SpeedUp.
 	eventsDistribution := OrderedCollection newFrom: {speedUpEvent}.
 	eventManager := RandomProbabilityEventManager basedOn: eventsDistribution.
 	fields := eventManager generate: 1.
 
 	self 
-		should:[Board has: fields.] 
+		should:[Board containing: fields usedOnABoardGameBy: {}] 
 		raise: Error 
 		withExceptionDo: [:error | self assert: error messageText equals: 'There must be al least two fields'].
 ]
@@ -764,7 +764,7 @@ BoardGameTest >> testAPlayerUsesACancellationCardAndRemovesAnAccelerationCard [
 	
 	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults.
 
-	aBoardGame affect: #pau using: accelerationCard by: #pau.
+	aBoardGame affect: aBoardGame players using: accelerationCard by: #pau.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	aBoardGame affect: accelerationCard using: cancellationCard by: #pau.
@@ -841,7 +841,7 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedHadAnAcceleratio
 	pauPosition := Tracker of: #pau standingOn: 20 after: 1.
 	beluPosition := Tracker of: #belu standingOn: 12 after: 1.
 		
-	aBoardGame affect: #pau using: accelerationCard by: #pau.
+	aBoardGame affect: aBoardGame players using: accelerationCard by: #pau.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	aBoardGame affect: #pau using: doOverCard by: #pau.
@@ -1071,7 +1071,7 @@ BoardGameTest >> testAPlayerUsesAnAccelerationCardAndIncrementsInOneTheResultOfA
 	pauPosition := Tracker of: #pau standingOn: 19 after: 1.
 	beluPosition := Tracker of: #belu standingOn: 12 after: 1.
 	
-	aBoardGame affect: #pau using: accelerationCard by: #pau.
+	aBoardGame affect: aBoardGame players using: accelerationCard by: #pau.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.
 	aBoardGame nextTurn.

@@ -4,7 +4,7 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #accessing }
+{ #category : #actions }
 Card >> thrownBy: aPlayer aims: aTarget on: aBoardGame handledBy: cardHandler [ 
 	^ self subclassResponsibility
 ]

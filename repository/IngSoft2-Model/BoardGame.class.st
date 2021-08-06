@@ -4,11 +4,11 @@ Class {
 	#instVars : [
 		'players',
 		'isFinished',
-		'playersTurnIdentificator',
 		'diceCup',
 		'board',
 		'cardHandler',
-		'lapsToWin'
+		'lapsToWin',
+		'playersTurnSequence'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -123,7 +123,7 @@ BoardGame >> isFinished [
 
 { #category : #private }
 BoardGame >> lookForPlayerWhoseTurnItIs [
-	^ players at: (playersTurnIdentificator findNextIndex).
+	^ playersTurnSequence nextElement.
 ]
 
 { #category : #actions }
@@ -137,6 +137,11 @@ BoardGame >> nextTurn [
 		obtained: sumOfAllDices.
 	board move: player along: sumOfAllDices on: self.
 	self endGameIfTheWinnerIs: player.
+]
+
+{ #category : #accesing }
+BoardGame >> players [
+	^ players
 ]
 
 { #category : #actions }
@@ -160,9 +165,8 @@ BoardGame >> repeatLastEffectAppliedOn: aPlayer [
 { #category : #initialize }
 BoardGame >> startPlayingOnABoardWith: fields with: aGroupOfPlayers [
 	players:= aGroupOfPlayers.
-	playersTurnIdentificator := SequenceSimulator newFrom: (aGroupOfPlayers size).
-	board := Board has: fields.
-	board placeAtTheBeggining: players.
+	playersTurnSequence := Sequence newFrom: aGroupOfPlayers.
+	board := Board containing: fields usedOnABoardGameBy: aGroupOfPlayers.
 ]
 
 { #category : #validations }
@@ -173,7 +177,7 @@ BoardGame >> validateThrownOfAPermanentCardBy: aPlayer [
 
 { #category : #validations }
 BoardGame >> verifyIfItIsTheTurnOf: currentPlayer [
-	(currentPlayer = (players at: (playersTurnIdentificator actualIndex))) ifFalse:[Error signal: self errorMessageCardCanNotBePlayedOutsidePlayersTurn]
+	(currentPlayer = playersTurnSequence actualElement) ifFalse:[Error signal: self errorMessageCardCanNotBePlayedOutsidePlayersTurn]
 ]
 
 { #category : #validations }
