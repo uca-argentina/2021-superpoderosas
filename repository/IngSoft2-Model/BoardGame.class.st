@@ -139,7 +139,7 @@ BoardGame >> nextTurn [
 	self endGameIfTheWinnerIs: player.
 ]
 
-{ #category : #accesing }
+{ #category : #accessing }
 BoardGame >> players [
 	^ players
 ]

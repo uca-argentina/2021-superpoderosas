@@ -7,7 +7,7 @@ Class {
 	#category : #'IngSoft2-Tests'
 }
 
-{ #category : #asserting }
+{ #category : #assertingTests }
 BoardGameTest >> assert: groupOfEvents areDistributedBasedOn: distributionOfEvents withTolerance: tolerance [
 	| val |
 	distributionOfEvents do:[ :probabilityEvent | val:=(self relativeEventOcurrenceOf: probabilityEvent in:groupOfEvents).self assert: val < tolerance] 
@@ -135,7 +135,7 @@ BoardGameTest >> newBoardGameWithMultiplePlayers [
 	^ aBoardGame
 ]
 
-{ #category : #asserting }
+{ #category : #assertingTests }
 BoardGameTest >> relativeEventOcurrenceOf: aProbabilityEvent in: groupOfEvents [ 
 	| numberOfOcurrences percentageOfOcurrences relativePercentageOfOCurrences |
 	numberOfOcurrences:= groupOfEvents count: [ :event | event = (aProbabilityEvent event)].
@@ -1220,6 +1220,11 @@ BoardGameTest >> testWhenAPlayerFellsOnASpeedUpFieldHeAdvancesFourMoreFieldsAndT
 			(OrderedCollection
 				newFrom:
 					{pauPosition . beluPosition . malePosition })
+]
+
+{ #category : #sprintFieldTests }
+BoardGameTest >> testWhenAPlayerFellsOnASprintFieldAndHasNotPlayedAnyCardHeAdvances2FieldsAndTheRoundDoesNotChange [
+
 ]
 
 { #category : #fieldsEffectTests }
