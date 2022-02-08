@@ -51,6 +51,25 @@ BoardGameTest >> creationOfBoardGameWithThreePlayers [
 		andA: thirdDice
 ]
 
+{ #category : #sprintFieldTests }
+BoardGameTest >> generateABoardGameIncludingSprintEffectPlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults [
+	| aDeck aGroupOfDices aDiceCup fields aNumberOfFields aDice aBoardGame laps |
+	aDice := DeterministicDice with: aSequenceOfDiceResults.
+	aGroupOfDices := {aDice}.
+	aNumberOfFields := 61.
+	aDiceCup := DiceCup containing: aGroupOfDices.
+	laps := 5.
+	fields := self generateManuallyIncludingSprintEffect: aNumberOfFields.
+	aDeck := DeterministicDeck containing: cards.
+	aBoardGame := BoardGame
+		playedBy: aGroupOfPlayers
+		using: aDiceCup
+		and: aDeck
+		onABoardWith: fields
+		wonWhenReach: laps.
+	^ aBoardGame
+]
+
 { #category : #playingWithCardsTests }
 BoardGameTest >> generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults [
 	| aDeck aGroupOfDices aDiceCup fields aNumberOfFields aDice aBoardGame laps |
@@ -96,6 +115,18 @@ BoardGameTest >> generateManuallyIncludingCardDealer: aNumberOfFields [
 	fields:= OrderedCollection new: aNumberOfFields withAll: NoEffect new.
 	effectToDistribute := {WormHole new. SpeedUp new.AtomicBomb new.MoonWalk with: 16. MoonWalk with: 11. CardDealer new}.
 	effectDistributionFields := {{3 . 17}.{30 . 48}.{44}.{32}.{23}.{10}}.
+	effectToDistribute with: effectDistributionFields do:[ :effect :effectFields | 
+						effectFields do: 
+								[ :fieldNumber | fields at: fieldNumber put: effect ]].
+	^fields.
+]
+
+{ #category : #sprintFieldTests }
+BoardGameTest >> generateManuallyIncludingSprintEffect: aNumberOfFields [ 
+	|  fields effectDistributionFields effectToDistribute |
+	fields:= OrderedCollection new: aNumberOfFields withAll: NoEffect new.
+	effectToDistribute := {WormHole new. SpeedUp new.AtomicBomb new.MoonWalk with: 16. MoonWalk with: 11. CardDealer new. Sprint new}.
+	effectDistributionFields := {{3 . 17}.{30 . 48}.{44}.{32}.{23}.{10} . {6}}.
 	effectToDistribute with: effectDistributionFields do:[ :effect :effectFields | 
 						effectFields do: 
 								[ :fieldNumber | fields at: fieldNumber put: effect ]].
@@ -1224,7 +1255,45 @@ BoardGameTest >> testWhenAPlayerFellsOnASpeedUpFieldHeAdvancesFourMoreFieldsAndT
 
 { #category : #sprintFieldTests }
 BoardGameTest >> testWhenAPlayerFellsOnASprintFieldAndHasNotPlayedAnyCardHeAdvances2FieldsAndTheRoundDoesNotChange [
+	| aBoardGame aGroupOfPlayers repeatCard pauPosition beluPosition speedCard aSequenceOfDiceResults cards aSecondSpeedCard aSecondRepeatCard aThirdSpeedCard |
+	repeatCard := Repetition new.
+	speedCard := Speed new.
+	aSecondSpeedCard:= Speed new.
+	aSecondRepeatCard := Repetition new.
+	aThirdSpeedCard:= Speed new.
+	aGroupOfPlayers := {#pau . #belu}.
+	aSequenceOfDiceResults := #(5 10 1 10).
+	cards := { repeatCard . speedCard . aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard }.
+	aBoardGame := self generateABoardGameIncludingSprintEffectPlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
 
+	pauPosition := Tracker of: #pau standingOn: 8 after: 1.
+	beluPosition := Tracker of: #belu standingOn: 1 after: 1.
+		
+	aBoardGame nextTurn.
+	
+	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
+]
+
+{ #category : #sprintFieldTests }
+BoardGameTest >> testWhenAPlayerFellsOnASprintFieldAndHasPlayedACardHeAdvances1FieldsAndTheRoundDoesNotChange [
+	| aBoardGame aGroupOfPlayers repeatCard pauPosition beluPosition speedCard aSequenceOfDiceResults cards aSecondSpeedCard aSecondRepeatCard aThirdSpeedCard |
+	repeatCard := Repetition new.
+	speedCard := Speed new.
+	aSecondSpeedCard:= Speed new.
+	aSecondRepeatCard := Repetition new.
+	aThirdSpeedCard:= Speed new.
+	aGroupOfPlayers := {#pau . #belu}.
+	aSequenceOfDiceResults := #(4 10 1 10).
+	cards := { repeatCard . speedCard . aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard }.
+	aBoardGame := self generateABoardGameIncludingSprintEffectPlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
+
+	pauPosition := Tracker of: #pau standingOn: 7 after: 1.
+	beluPosition := Tracker of: #belu standingOn: 1 after: 1.
+
+	aBoardGame affect: #pau using: speedCard by: #pau.		
+	aBoardGame nextTurn.
+	
+	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
 ]
 
 { #category : #fieldsEffectTests }

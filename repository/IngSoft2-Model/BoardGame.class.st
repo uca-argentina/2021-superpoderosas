@@ -126,6 +126,14 @@ BoardGame >> lookForPlayerWhoseTurnItIs [
 	^ playersTurnSequence nextElement.
 ]
 
+{ #category : #'actions - effects' }
+BoardGame >> moveAsManyFieldsAsCardsInHandHas: aPlayer [
+	| aNumberOfFields |
+	aNumberOfFields:= (self cardsInHandOf: aPlayer) size.
+	board move: aPlayer over: aNumberOfFields.
+
+]
+
 { #category : #actions }
 BoardGame >> nextTurn [
 	| player sumOfAllDices |
