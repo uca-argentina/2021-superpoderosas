@@ -1318,6 +1318,31 @@ BoardGameTest >> testWhenAPlayerFellsOnASprintFieldAndHasPlayedACardHeAdvances1F
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
 ]
 
+{ #category : #reversalCardTests }
+BoardGameTest >> testWhenAPlayerFellsOnAWormHoleFieldAndHasPlayedAReversalCardHeAdvances4Fields [
+	| aBoardGame aGroupOfPlayers aRepeatCard pauPosition beluPosition aSpeedCard aSequenceOfDiceResults cards aSecondSpeedCard aSecondRepeatCard aThirdSpeedCard aReversalCard |
+	aRepeatCard := Repetition new.
+	aSpeedCard := Speed new.
+	aSecondSpeedCard:= Speed new.
+	aSecondRepeatCard := Repetition new.
+	aThirdSpeedCard:= Speed new.
+	aReversalCard := Reversal new.
+	aGroupOfPlayers := {#pau . #belu}.
+	aSequenceOfDiceResults := #(6 10 10 10).
+	cards := { aReversalCard. aRepeatCard . aSpeedCard . aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard }.
+	aBoardGame := self generateABoardGameIncludingSprintEffectPlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
+
+	pauPosition := Tracker of: #pau standingOn: 21 after: 1.
+	beluPosition := Tracker of: #belu standingOn: 11 after: 1.
+
+	aBoardGame affect: 17 using: aReversalCard by: #pau.		
+	aBoardGame nextTurn.
+	aBoardGame nextTurn.
+	aBoardGame nextTurn.
+	
+	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
+]
+
 { #category : #fieldsEffectTests }
 BoardGameTest >> testWhenAPlayerFellsOnAWormHoleFieldHeMovesBackwardsFourFields [
 	| aBoardGame pauPosition beluPosition malePosition |

@@ -170,6 +170,12 @@ BoardGame >> repeatLastEffectAppliedOn: aPlayer [
 
 ]
 
+{ #category : #'actions - effects' }
+BoardGame >> reverseTheEffectOf: aField [
+	board reverseTheEffectOf: aField.
+
+]
+
 { #category : #initialize }
 BoardGame >> startPlayingOnABoardWith: fields with: aGroupOfPlayers [
 	players:= aGroupOfPlayers.
