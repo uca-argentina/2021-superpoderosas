@@ -1275,6 +1275,28 @@ BoardGameTest >> testWhenAPlayerFellsOnASprintFieldAndHasNotPlayedAnyCardHeAdvan
 ]
 
 { #category : #sprintFieldTests }
+BoardGameTest >> testWhenAPlayerFellsOnASprintFieldAndHasPlayed2CardsHeADoesNotdvancesAnyFieldAndTheRoundDoesNotChange [
+	| aBoardGame aGroupOfPlayers repeatCard pauPosition beluPosition speedCard aSequenceOfDiceResults cards aSecondSpeedCard aSecondRepeatCard aThirdSpeedCard |
+	repeatCard := Repetition new.
+	speedCard := Speed new.
+	aSecondSpeedCard:= Speed new.
+	aSecondRepeatCard := Repetition new.
+	aThirdSpeedCard:= Speed new.
+	aGroupOfPlayers := {#pau . #belu}.
+	aSequenceOfDiceResults := #(4 10 1 10).
+	cards := { repeatCard . speedCard . aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard }.
+	aBoardGame := self generateABoardGameIncludingSprintEffectPlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
+
+	pauPosition := Tracker of: #pau standingOn: 7 after: 1.
+	beluPosition := Tracker of: #belu standingOn: 1 after: 1.
+
+	aBoardGame affect: #pau using: speedCard by: #pau.		
+	aBoardGame nextTurn.
+	
+	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
+]
+
+{ #category : #sprintFieldTests }
 BoardGameTest >> testWhenAPlayerFellsOnASprintFieldAndHasPlayedACardHeAdvances1FieldsAndTheRoundDoesNotChange [
 	| aBoardGame aGroupOfPlayers repeatCard pauPosition beluPosition speedCard aSequenceOfDiceResults cards aSecondSpeedCard aSecondRepeatCard aThirdSpeedCard |
 	repeatCard := Repetition new.
