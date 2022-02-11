@@ -145,6 +145,13 @@ Board >> repeatAt: aBoardGame lastEffectAppliedOn: aPlayer [
 			[ self applyAt: aBoardGame lastEffectTo: aPlayer].
 ]
 
+{ #category : #'actions - effects' }
+Board >> replace: effect with: reverseEffect at:aFieldNumber [
+	(effect = reverseEffect) 
+		ifFalse: 
+			[fields at: aFieldNumber put: reverseEffect].
+]
+
 { #category : #actions }
 Board >> replaceOldPositioOf: player with: newPosition [
 	positionsTracker removeAllSuchThat:[:position | position player = player].
@@ -157,7 +164,7 @@ Board >> reverseTheEffectOf: aFieldNumber [
 	| effect reverseEffect |
 	effect:= self searchFieldFor: aFieldNumber .
 	reverseEffect:= effect reverse.
-	fields at: aFieldNumber put: reverseEffect.
+	self replace: effect with: reverseEffect at:aFieldNumber.
 ]
 
 { #category : #actions }

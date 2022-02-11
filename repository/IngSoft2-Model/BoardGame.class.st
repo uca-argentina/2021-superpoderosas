@@ -134,6 +134,14 @@ BoardGame >> moveAsManyFieldsAsCardsInHandHas: aPlayer [
 
 ]
 
+{ #category : #'actions - effects' }
+BoardGame >> moveBackwardsAsManyFieldsAsCardsInHandHas: aPlayer [
+	| aNumberOfFields |
+	aNumberOfFields:= (self cardsInHandOf: aPlayer) size.
+	board move: aPlayer over: aNumberOfFields negated.
+
+]
+
 { #category : #actions }
 BoardGame >> nextTurn [
 	| player sumOfAllDices |

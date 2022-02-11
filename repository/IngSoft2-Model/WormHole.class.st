@@ -15,12 +15,12 @@ WormHole >> effectTriggeredBy: aPlayer on: aBoard of: aBoardGame [
 
 { #category : #actions }
 WormHole >> initialize [
-	reverse := SpeedUp new.
+	reverse := SpeedUp.
 
 ]
 
 { #category : #actions }
 WormHole >> reverse [
-	^ reverse.
+	^ reverse new.
 
 ]
