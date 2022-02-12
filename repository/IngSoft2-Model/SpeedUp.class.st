@@ -13,12 +13,12 @@ SpeedUp >> effectTriggeredBy: aPlayer on: aBoard of: aBoardGame [
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #initialize }
 SpeedUp >> initialize [
 	reverse := WormHole.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SpeedUp >> reverse [
 	^ reverse new.
 ]

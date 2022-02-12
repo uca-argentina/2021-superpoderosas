@@ -171,6 +171,11 @@ BoardGame >> ranking [
 	^ board orderPlayersPosition.
 ]
 
+{ #category : #'actions - cards' }
+BoardGame >> removeACardFrom: player [ 
+	cardHandler removeACardFrom: player.
+]
+
 { #category : #'actions - effects' }
 BoardGame >> repeatLastEffectAppliedOn: aPlayer [
 	board repeatAt: self lastEffectAppliedOn: aPlayer.

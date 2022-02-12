@@ -13,13 +13,13 @@ AtomicBomb >> effectTriggeredBy: aPlayer on: aBoard of: aBoardGame [
 
 ]
 
-{ #category : #actions }
+{ #category : #initialize }
 AtomicBomb >> initialize [
 	reverse:= self.
 
 ]
 
-{ #category : #actions }
+{ #category : #accessing }
 AtomicBomb >> reverse [
 	^reverse.
 

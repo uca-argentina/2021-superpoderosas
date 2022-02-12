@@ -25,7 +25,7 @@ MoonWalk >> initializeWith: aNumberOfFildes [
 	reverse:= ForwardMoonWalk.
 ]
 
-{ #category : #initialize }
+{ #category : #accessing }
 MoonWalk >> reverse [
 	^ reverse with: fieldsToMoveBackwars .
 ]
