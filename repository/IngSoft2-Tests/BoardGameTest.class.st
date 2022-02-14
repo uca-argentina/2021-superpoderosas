@@ -51,25 +51,6 @@ BoardGameTest >> creationOfBoardGameWithThreePlayers [
 		andA: thirdDice
 ]
 
-{ #category : #sprintFieldTests }
-BoardGameTest >> generateABoardGameIncludingSprintEffectPlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults [
-	| aDeck aGroupOfDices aDiceCup fields aNumberOfFields aDice aBoardGame laps |
-	aDice := DeterministicDice with: aSequenceOfDiceResults.
-	aGroupOfDices := {aDice}.
-	aNumberOfFields := 61.
-	aDiceCup := DiceCup containing: aGroupOfDices.
-	laps := 5.
-	fields := self generateManuallyIncludingSprintEffect: aNumberOfFields.
-	aDeck := DeterministicDeck containing: cards.
-	aBoardGame := BoardGame
-		playedBy: aGroupOfPlayers
-		using: aDiceCup
-		and: aDeck
-		onABoardWith: fields
-		wonWhenReach: laps.
-	^ aBoardGame
-]
-
 { #category : #playingWithCardsTests }
 BoardGameTest >> generateABoardGamePlayedBy: aGroupOfPlayers using: cards andBasedOn: aSequenceOfDiceResults [
 	| aDeck aGroupOfDices aDiceCup fields aNumberOfFields aDice aBoardGame laps |
@@ -115,18 +96,6 @@ BoardGameTest >> generateManuallyIncludingCardDealer: aNumberOfFields [
 	fields:= OrderedCollection new: aNumberOfFields withAll: NoEffect new.
 	effectToDistribute := {WormHole new. SpeedUp new.AtomicBomb new.MoonWalk with: 16. MoonWalk with: 11. CardDealer new}.
 	effectDistributionFields := {{3 . 17}.{30 . 48}.{44}.{32}.{23}.{10}}.
-	effectToDistribute with: effectDistributionFields do:[ :effect :effectFields | 
-						effectFields do: 
-								[ :fieldNumber | fields at: fieldNumber put: effect ]].
-	^fields.
-]
-
-{ #category : #sprintFieldTests }
-BoardGameTest >> generateManuallyIncludingSprintEffect: aNumberOfFields [ 
-	|  fields effectDistributionFields effectToDistribute |
-	fields:= OrderedCollection new: aNumberOfFields withAll: NoEffect new.
-	effectToDistribute := {WormHole new. SpeedUp new.AtomicBomb new.MoonWalk with: 16. MoonWalk with: 11. CardDealer new. Sprint new}.
-	effectDistributionFields := {{3 . 17}.{30 . 48}.{44}.{32}.{23}.{10} . {6}}.
 	effectToDistribute with: effectDistributionFields do:[ :effect :effectFields | 
 						effectFields do: 
 								[ :fieldNumber | fields at: fieldNumber put: effect ]].
@@ -673,28 +642,6 @@ BoardGameTest >> testAPlayerCanNotUseASpeedUpCardIfItIsNotHisTurn [
 	
 ]
 
-{ #category : #reversalCardTests }
-BoardGameTest >> testAPlayerCannotPlayAReversalCardsIfItIsNotHisTurnSinceItIsAPermanentCard [
-	| aBoardGame aGroupOfPlayers aRepeatCard aSpeedCard aSequenceOfDiceResults cards aSecondSpeedCard aSecondRepeatCard aThirdSpeedCard aReversalCard |
-	aRepeatCard := Repetition new.
-	aSpeedCard := Speed new.
-	aSecondSpeedCard:= Speed new.
-	aSecondRepeatCard := Repetition new.
-	aThirdSpeedCard:= Speed new.
-	aReversalCard := Reversal new.
-	aGroupOfPlayers := {#pau . #belu}.
-	aSequenceOfDiceResults := #(11 10 15 8 5 3 10).
-	cards := {aReversalCard. aRepeatCard . aSpeedCard . aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard }.
-	aBoardGame := self generateABoardGameIncludingSprintEffectPlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
-
-	aBoardGame nextTurn.
-	
-	self 
-		should:[aBoardGame affect: 5 using: aReversalCard by: #pau] 
-		raise: Error 
-		withExceptionDo: [:error | self assert: error messageText equals: 'All permanent cards can only be played when it is the turn of the player' ].
-]
-
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerHas2CardsAtTheBegginingOfTheGame [
 	| aBoardGame |
@@ -1200,105 +1147,6 @@ BoardGameTest >> testTheBoardIsCircular [
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition}).
 ]
 
-{ #category : #reversalCardTests }
-BoardGameTest >> testWhenAPlayerFellsOnACardDealerFieldAndHasPlayedAReversalCardsDelivers0Cards [
-	| aBoardGame aGroupOfPlayers aRepeatCard aSpeedCard aSequenceOfDiceResults cards aSecondSpeedCard aSecondRepeatCard aThirdSpeedCard aReversalCard |
-	aRepeatCard := Repetition new.
-	aSpeedCard := Speed new.
-	aSecondSpeedCard:= Speed new.
-	aSecondRepeatCard := Repetition new.
-	aThirdSpeedCard:= Speed new.
-	aReversalCard := Reversal new.
-	aGroupOfPlayers := {#pau . #belu}.
-	aSequenceOfDiceResults := #(10 9 8 8 10 4 10).
-	cards := { aRepeatCard . aSpeedCard . aReversalCard. aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard }.
-	aBoardGame := self generateABoardGameIncludingSprintEffectPlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
-
-	aBoardGame nextTurn.
-	self assert: (aBoardGame cardsInHandOf: #belu) size equals: 2.	
-	aBoardGame affect: 10 using: aReversalCard by: #belu.
-	aBoardGame affect: #belu using: aSecondSpeedCard by: #belu.
-	aBoardGame nextTurn.
-	self assert: (aBoardGame cardsInHandOf: #belu) size equals: 0.	
-]
-
-{ #category : #reversalCardTests }
-BoardGameTest >> testWhenAPlayerFellsOnACardDealerFieldAndHasPlayedAReversalCardsDelivers1Card [
-	| aBoardGame aGroupOfPlayers aRepeatCard aSpeedCard aSequenceOfDiceResults cards aSecondSpeedCard aSecondRepeatCard aThirdSpeedCard aReversalCard |
-	aRepeatCard := Repetition new.
-	aSpeedCard := Speed new.
-	aSecondSpeedCard:= Speed new.
-	aSecondRepeatCard := Repetition new.
-	aThirdSpeedCard:= Speed new.
-	aReversalCard := Reversal new.
-	aGroupOfPlayers := {#pau . #belu}.
-	aSequenceOfDiceResults := #(10 9 8 8 10 4 10).
-	cards := { aRepeatCard . aSpeedCard . aReversalCard. aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard }.
-	aBoardGame := self generateABoardGameIncludingSprintEffectPlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
-
-	aBoardGame nextTurn.
-	self assert: (aBoardGame cardsInHandOf: #belu) size equals: 2.	
-	aBoardGame affect: 10 using: aReversalCard by: #belu.
-	aBoardGame nextTurn.
-	self assert: (aBoardGame cardsInHandOf: #belu) size equals: 0.	
-]
-
-{ #category : #reversalCardTests }
-BoardGameTest >> testWhenAPlayerFellsOnAMoonWalkFieldAndHasPlayedAReversalCardsTheFieldTheRestOfThePlayersAdvance11Fields [
-	| aBoardGame aGroupOfPlayers aRepeatCard pauPosition beluPosition aSpeedCard aSequenceOfDiceResults cards aSecondSpeedCard aSecondRepeatCard aThirdSpeedCard aReversalCard |
-	aRepeatCard := Repetition new.
-	aSpeedCard := Speed new.
-	aSecondSpeedCard:= Speed new.
-	aSecondRepeatCard := Repetition new.
-	aThirdSpeedCard:= Speed new.
-	aReversalCard := Reversal new.
-	aGroupOfPlayers := {#pau . #belu}.
-	aSequenceOfDiceResults := #(1 10 8 8 10 4 10).
-	cards := { aRepeatCard . aSpeedCard . aReversalCard. aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard }.
-	aBoardGame := self generateABoardGameIncludingSprintEffectPlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
-
-	pauPosition := Tracker of: #pau standingOn: 31 after: 1.
-	beluPosition := Tracker of: #belu standingOn: 23 after: 1.
-
-	aBoardGame nextTurn.
-	aBoardGame nextTurn.
-	aBoardGame nextTurn.
-	aBoardGame nextTurn.
-	aBoardGame nextTurn.
-	aBoardGame affect: 23 using: aReversalCard by: #belu.	
-	aBoardGame nextTurn.	
-	
-	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: { pauPosition . beluPosition }).
-]
-
-{ #category : #reversalCardTests }
-BoardGameTest >> testWhenAPlayerFellsOnAMoonWalkFieldAndHasPlayedAReversalCardsTheFieldTheRestOfThePlayersAdvance16Fields [
-	| aBoardGame aGroupOfPlayers aRepeatCard pauPosition beluPosition aSpeedCard aSequenceOfDiceResults cards aSecondSpeedCard aSecondRepeatCard aThirdSpeedCard aReversalCard |
-	aRepeatCard := Repetition new.
-	aSpeedCard := Speed new.
-	aSecondSpeedCard:= Speed new.
-	aSecondRepeatCard := Repetition new.
-	aThirdSpeedCard:= Speed new.
-	aReversalCard := Reversal new.
-	aGroupOfPlayers := {#pau . #belu}.
-	aSequenceOfDiceResults := #(11 10 15 8 5 3 10).
-	cards := {aReversalCard. aRepeatCard . aSpeedCard . aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard }.
-	aBoardGame := self generateABoardGameIncludingSprintEffectPlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
-
-	pauPosition := Tracker of: #pau standingOn: 32 after: 1.
-	beluPosition := Tracker of: #belu standingOn: 38 after: 1.
-
-	aBoardGame nextTurn.
-	aBoardGame nextTurn.
-	aBoardGame nextTurn.
-	aBoardGame nextTurn.
-	aBoardGame affect: 32 using: aReversalCard by: #pau.	
-	aBoardGame nextTurn.
-	aBoardGame nextTurn.	
-	
-	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: { beluPosition . pauPosition }).
-]
-
 { #category : #fieldsEffectTests }
 BoardGameTest >> testWhenAPlayerFellsOnAMoonWalkFieldTheRestOfThePlayersMustGoBackwardsNFields [
 	| aBoardGame pauPosition beluPosition malePosition |
@@ -1335,33 +1183,6 @@ BoardGameTest >> testWhenAPlayerFellsOnAMoonWalkFieldTheRestOfThePlayersMustGoBa
 			(OrderedCollection
 				newFrom:
 					{ pauPosition . beluPosition . malePosition }).
-]
-
-{ #category : #reversalCardTests }
-BoardGameTest >> testWhenAPlayerFellsOnASpeedUpFieldAndHasPlayedAReversalCardHeGoesBackwards4Fields [
-	| aBoardGame aGroupOfPlayers aRepeatCard pauPosition beluPosition aSpeedCard aSequenceOfDiceResults cards aSecondSpeedCard aSecondRepeatCard aThirdSpeedCard aReversalCard |
-	aRepeatCard := Repetition new.
-	aSpeedCard := Speed new.
-	aSecondSpeedCard:= Speed new.
-	aSecondRepeatCard := Repetition new.
-	aThirdSpeedCard:= Speed new.
-	aReversalCard := Reversal new.
-	aGroupOfPlayers := {#pau . #belu}.
-	aSequenceOfDiceResults := #(10 1 9 10).
-	cards := { aReversalCard. aRepeatCard . aSpeedCard . aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard }.
-	aBoardGame := self generateABoardGameIncludingSprintEffectPlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
-
-	pauPosition := Tracker of: #pau standingOn: 26 after: 1.
-	beluPosition := Tracker of: #belu standingOn: 12 after: 1.
-	
-	aBoardGame nextTurn.
-	aBoardGame nextTurn.
-	aBoardGame affect: 30 using: aReversalCard by: #pau.	
-	aBoardGame nextTurn.
-	aBoardGame nextTurn.
-	aBoardGame nextTurn.
-	
-	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
 ]
 
 { #category : #fieldsEffectTests }
@@ -1403,115 +1224,7 @@ BoardGameTest >> testWhenAPlayerFellsOnASpeedUpFieldHeAdvancesFourMoreFieldsAndT
 
 { #category : #sprintFieldTests }
 BoardGameTest >> testWhenAPlayerFellsOnASprintFieldAndHasNotPlayedAnyCardHeAdvances2FieldsAndTheRoundDoesNotChange [
-	| aBoardGame aGroupOfPlayers repeatCard pauPosition beluPosition speedCard aSequenceOfDiceResults cards aSecondSpeedCard aSecondRepeatCard aThirdSpeedCard |
-	repeatCard := Repetition new.
-	speedCard := Speed new.
-	aSecondSpeedCard:= Speed new.
-	aSecondRepeatCard := Repetition new.
-	aThirdSpeedCard:= Speed new.
-	aGroupOfPlayers := {#pau . #belu}.
-	aSequenceOfDiceResults := #(5 10 1 10).
-	cards := { repeatCard . speedCard . aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard }.
-	aBoardGame := self generateABoardGameIncludingSprintEffectPlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
 
-	pauPosition := Tracker of: #pau standingOn: 8 after: 1.
-	beluPosition := Tracker of: #belu standingOn: 1 after: 1.
-		
-	aBoardGame nextTurn.
-	
-	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
-]
-
-{ #category : #sprintFieldTests }
-BoardGameTest >> testWhenAPlayerFellsOnASprintFieldAndHasPlayed2CardsHeADoesNotdvancesAnyFieldAndTheRoundDoesNotChange [
-	| aBoardGame aGroupOfPlayers repeatCard pauPosition beluPosition speedCard aSequenceOfDiceResults cards aSecondSpeedCard aSecondRepeatCard aThirdSpeedCard |
-	repeatCard := Repetition new.
-	speedCard := Speed new.
-	aSecondSpeedCard:= Speed new.
-	aSecondRepeatCard := Repetition new.
-	aThirdSpeedCard:= Speed new.
-	aGroupOfPlayers := {#pau . #belu}.
-	aSequenceOfDiceResults := #(4 10 1 10).
-	cards := { repeatCard . speedCard . aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard }.
-	aBoardGame := self generateABoardGameIncludingSprintEffectPlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
-
-	pauPosition := Tracker of: #pau standingOn: 7 after: 1.
-	beluPosition := Tracker of: #belu standingOn: 1 after: 1.
-
-	aBoardGame affect: #pau using: speedCard by: #pau.		
-	aBoardGame nextTurn.
-	
-	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
-]
-
-{ #category : #sprintFieldTests }
-BoardGameTest >> testWhenAPlayerFellsOnASprintFieldAndHasPlayedACardHeAdvances1FieldsAndTheRoundDoesNotChange [
-	| aBoardGame aGroupOfPlayers repeatCard pauPosition beluPosition speedCard aSequenceOfDiceResults cards aSecondSpeedCard aSecondRepeatCard aThirdSpeedCard |
-	repeatCard := Repetition new.
-	speedCard := Speed new.
-	aSecondSpeedCard:= Speed new.
-	aSecondRepeatCard := Repetition new.
-	aThirdSpeedCard:= Speed new.
-	aGroupOfPlayers := {#pau . #belu}.
-	aSequenceOfDiceResults := #(4 10 1 10).
-	cards := { repeatCard . speedCard . aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard }.
-	aBoardGame := self generateABoardGameIncludingSprintEffectPlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
-
-	pauPosition := Tracker of: #pau standingOn: 7 after: 1.
-	beluPosition := Tracker of: #belu standingOn: 1 after: 1.
-
-	aBoardGame affect: #pau using: speedCard by: #pau.		
-	aBoardGame nextTurn.
-	
-	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
-]
-
-{ #category : #reversalCardTests }
-BoardGameTest >> testWhenAPlayerFellsOnASprintFieldAndHasPlayedAReversalCardsMovesBackwardsAsManyFieldsAsCardsInHand [
-	| aBoardGame aGroupOfPlayers aRepeatCard pauPosition beluPosition aSpeedCard aSequenceOfDiceResults cards aSecondSpeedCard aSecondRepeatCard aThirdSpeedCard aReversalCard |
-	aRepeatCard := Repetition new.
-	aSpeedCard := Speed new.
-	aSecondSpeedCard:= Speed new.
-	aSecondRepeatCard := Repetition new.
-	aThirdSpeedCard:= Speed new.
-	aReversalCard := Reversal new.
-	aGroupOfPlayers := {#pau . #belu}.
-	aSequenceOfDiceResults := #(5 10 9 1 10 3 10).
-	cards := { aReversalCard. aRepeatCard . aSpeedCard . aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard }.
-	aBoardGame := self generateABoardGameIncludingSprintEffectPlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
-
-	pauPosition := Tracker of: #pau standingOn: 5 after: 1.
-	beluPosition := Tracker of: #belu standingOn: 1 after: 1.
-
-	aBoardGame affect: 6 using: aReversalCard by: #pau.	
-	aBoardGame nextTurn.
-	
-	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: { pauPosition . beluPosition }).
-]
-
-{ #category : #reversalCardTests }
-BoardGameTest >> testWhenAPlayerFellsOnAWormHoleFieldAndHasPlayedAReversalCardHeAdvances4Fields [
-	| aBoardGame aGroupOfPlayers aRepeatCard pauPosition beluPosition aSpeedCard aSequenceOfDiceResults cards aSecondSpeedCard aSecondRepeatCard aThirdSpeedCard aReversalCard |
-	aRepeatCard := Repetition new.
-	aSpeedCard := Speed new.
-	aSecondSpeedCard:= Speed new.
-	aSecondRepeatCard := Repetition new.
-	aThirdSpeedCard:= Speed new.
-	aReversalCard := Reversal new.
-	aGroupOfPlayers := {#pau . #belu}.
-	aSequenceOfDiceResults := #(6 10 10 10).
-	cards := { aReversalCard. aRepeatCard . aSpeedCard . aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard }.
-	aBoardGame := self generateABoardGameIncludingSprintEffectPlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
-
-	pauPosition := Tracker of: #pau standingOn: 21 after: 1.
-	beluPosition := Tracker of: #belu standingOn: 11 after: 1.
-
-	aBoardGame affect: 17 using: aReversalCard by: #pau.		
-	aBoardGame nextTurn.
-	aBoardGame nextTurn.
-	aBoardGame nextTurn.
-	
-	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
 ]
 
 { #category : #fieldsEffectTests }
@@ -1566,56 +1279,4 @@ BoardGameTest >> testWhenAPlayerFellsOnAnAtomicBombAllPlayersMoveToFieldOne [
 			(OrderedCollection
 				newFrom:
 					{malePosition . beluPosition . pauPosition })
-]
-
-{ #category : #reversalCardTests }
-BoardGameTest >> testWhenAPlayerFellsOnAnAtomicBombFieldAndHasPlayedAReversalCardsAllPlayersMoveToFieldOne [
-	| aBoardGame aGroupOfPlayers aRepeatCard pauPosition beluPosition aSpeedCard aSequenceOfDiceResults cards aSecondSpeedCard aSecondRepeatCard aThirdSpeedCard aReversalCard |
-	aRepeatCard := Repetition new.
-	aSpeedCard := Speed new.
-	aSecondSpeedCard:= Speed new.
-	aSecondRepeatCard := Repetition new.
-	aThirdSpeedCard:= Speed new.
-	aReversalCard := Reversal new.
-	aGroupOfPlayers := {#pau . #belu}.
-	aSequenceOfDiceResults := #(10 10 9 1 10 3 10).
-	cards := { aReversalCard. aRepeatCard . aSpeedCard . aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard }.
-	aBoardGame := self generateABoardGameIncludingSprintEffectPlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
-
-	pauPosition := Tracker of: #pau standingOn: 1 after: 1.
-	beluPosition := Tracker of: #belu standingOn: 1 after: 1.
-
-	aBoardGame nextTurn.
-	aBoardGame nextTurn.
-	aBoardGame nextTurn.
-	aBoardGame nextTurn.
-	aBoardGame nextTurn.
-	aBoardGame nextTurn.
-	aBoardGame affect: 44 using: aReversalCard by: #pau.		
-	aBoardGame nextTurn.
-	
-	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: { beluPosition . pauPosition }).
-]
-
-{ #category : #reversalCardTests }
-BoardGameTest >> testWhenAPlayerFellsOnAnEffectlessFieldAndHasPlayedAReversalCardsNothingHappens [
-	| aBoardGame aGroupOfPlayers aRepeatCard pauPosition beluPosition aSpeedCard aSequenceOfDiceResults cards aSecondSpeedCard aSecondRepeatCard aThirdSpeedCard aReversalCard |
-	aRepeatCard := Repetition new.
-	aSpeedCard := Speed new.
-	aSecondSpeedCard:= Speed new.
-	aSecondRepeatCard := Repetition new.
-	aThirdSpeedCard:= Speed new.
-	aReversalCard := Reversal new.
-	aGroupOfPlayers := {#pau . #belu}.
-	aSequenceOfDiceResults := #(1 10 15 8 5 3 10).
-	cards := {aReversalCard. aRepeatCard . aSpeedCard . aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard }.
-	aBoardGame := self generateABoardGameIncludingSprintEffectPlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
-
-	pauPosition := Tracker of: #pau standingOn: 2 after: 1.
-	beluPosition := Tracker of: #belu standingOn: 1 after: 1.
-
-	aBoardGame affect: 2 using: aReversalCard by: #pau.	
-	aBoardGame nextTurn.
-	
-	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: { pauPosition . beluPosition }).
 ]

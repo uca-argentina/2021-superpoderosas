@@ -89,13 +89,6 @@ CardHandler >> make: player lay: aCard [
 	(cardsInHand at:player) remove: aCard ifAbsent: [Error signal: self errorMessageAPlayerMustHaveTheCardInHand].
 ]
 
-{ #category : #'actions - cards' }
-CardHandler >> removeACardFrom: player [
-	| playerCardsInHand |
-	playerCardsInHand := cardsInHand at:player.
-	playerCardsInHand remove: playerCardsInHand last ifAbsent: [].
-]
-
 { #category : #private }
 CardHandler >> removeFromInfluentialCards: cardToBeCancelled [
 	influentialCards

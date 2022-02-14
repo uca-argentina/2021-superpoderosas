@@ -8,8 +8,3 @@ Class {
 Effect >> effectTriggeredBy: aPlayer on: aBoard of: aBoardGame [
 	^self subclassResponsibility.
 ]
-
-{ #category : #accesing }
-Effect >> reverse [
-	^self subclassResponsibility.
-]

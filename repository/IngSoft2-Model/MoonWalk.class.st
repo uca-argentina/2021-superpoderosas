@@ -2,8 +2,7 @@ Class {
 	#name : #MoonWalk,
 	#superclass : #Effect,
 	#instVars : [
-		'fieldsToMoveBackwars',
-		'reverse'
+		'fieldsToMoveBackwars'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -22,10 +21,4 @@ MoonWalk >> effectTriggeredBy: aPlayer on: aBoard of: aBoardGame [
 { #category : #initialize }
 MoonWalk >> initializeWith: aNumberOfFildes [ 
 	fieldsToMoveBackwars := aNumberOfFildes .
-	reverse:= ForwardMoonWalk.
-]
-
-{ #category : #accessing }
-MoonWalk >> reverse [
-	^ reverse with: fieldsToMoveBackwars .
 ]

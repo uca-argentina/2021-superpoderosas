@@ -91,10 +91,9 @@ Board >> lookUpResultingFieldNumberBasingOn: totalFields [
 
 { #category : #'actions - move' }
 Board >> move: player along: result on: aBoardGame [ 
-	| newPosition field newFieldNumber |
+	| newPosition field |
 	newPosition := self move: player over: result.
-	newFieldNumber:= newPosition field.
-	field := self searchFieldFor: newFieldNumber.
+	field := self searchFieldFor: newPosition.
 	self considerEffectOf: field on: aBoardGame for: player.
 ]
 
@@ -145,13 +144,6 @@ Board >> repeatAt: aBoardGame lastEffectAppliedOn: aPlayer [
 			[ self applyAt: aBoardGame lastEffectTo: aPlayer].
 ]
 
-{ #category : #'actions - effects' }
-Board >> replace: effect with: reverseEffect at:aFieldNumber [
-	(effect = reverseEffect) 
-		ifFalse: 
-			[fields at: aFieldNumber put: reverseEffect].
-]
-
 { #category : #actions }
 Board >> replaceOldPositioOf: player with: newPosition [
 	positionsTracker removeAllSuchThat:[:position | position player = player].
@@ -159,17 +151,9 @@ Board >> replaceOldPositioOf: player with: newPosition [
 	
 ]
 
-{ #category : #'actions - effects' }
-Board >> reverseTheEffectOf: aFieldNumber [
-	| effect reverseEffect |
-	effect:= self searchFieldFor: aFieldNumber .
-	reverseEffect:= effect reverse.
-	self replace: effect with: reverseEffect at:aFieldNumber.
-]
-
 { #category : #actions }
 Board >> searchFieldFor: aPosition [
-	^ fields at: aPosition
+	^ fields at: aPosition field
 ]
 
 { #category : #validations }

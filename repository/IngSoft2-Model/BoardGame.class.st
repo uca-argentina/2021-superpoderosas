@@ -126,22 +126,6 @@ BoardGame >> lookForPlayerWhoseTurnItIs [
 	^ playersTurnSequence nextElement.
 ]
 
-{ #category : #'actions - effects' }
-BoardGame >> moveAsManyFieldsAsCardsInHandHas: aPlayer [
-	| aNumberOfFields |
-	aNumberOfFields:= (self cardsInHandOf: aPlayer) size.
-	board move: aPlayer over: aNumberOfFields.
-
-]
-
-{ #category : #'actions - effects' }
-BoardGame >> moveBackwardsAsManyFieldsAsCardsInHandHas: aPlayer [
-	| aNumberOfFields |
-	aNumberOfFields:= (self cardsInHandOf: aPlayer) size.
-	board move: aPlayer over: aNumberOfFields negated.
-
-]
-
 { #category : #actions }
 BoardGame >> nextTurn [
 	| player sumOfAllDices |
@@ -171,21 +155,10 @@ BoardGame >> ranking [
 	^ board orderPlayersPosition.
 ]
 
-{ #category : #'actions - cards' }
-BoardGame >> removeACardFrom: player [ 
-	cardHandler removeACardFrom: player.
-]
-
 { #category : #'actions - effects' }
 BoardGame >> repeatLastEffectAppliedOn: aPlayer [
 	board repeatAt: self lastEffectAppliedOn: aPlayer.
 	self endGameIfTheWinnerIs: aPlayer.
-
-]
-
-{ #category : #'actions - effects' }
-BoardGame >> reverseTheEffectOf: aField [
-	board reverseTheEffectOf: aField.
 
 ]
 
