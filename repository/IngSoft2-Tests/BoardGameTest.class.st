@@ -697,6 +697,46 @@ BoardGameTest >> testAPlayerCannotPlayAReversalCardsIfItIsNotHisTurnSinceItIsAPe
 		withExceptionDo: [:error | self assert: error messageText equals: 'All permanent cards can only be played when it is the turn of the player' ].
 ]
 
+{ #category : #reversalCardTests }
+BoardGameTest >> testAPlayerCannotThrowAReversalCradToAFieldNumberThatIsGreaterThanTheBoardSize [
+	| aBoardGame aGroupOfPlayers aRepeatCard aSpeedCard aSequenceOfDiceResults cards aSecondSpeedCard aSecondRepeatCard aThirdSpeedCard aReversalCard |
+	aRepeatCard := Repetition new.
+	aSpeedCard := Speed new.
+	aSecondSpeedCard:= Speed new.
+	aSecondRepeatCard := Repetition new.
+	aThirdSpeedCard:= Speed new.
+	aReversalCard := Reversal new.
+	aGroupOfPlayers := {#pau . #belu}.
+	aSequenceOfDiceResults := #(1 10 15 8 5 3 10).
+	cards := {aReversalCard. aRepeatCard . aSpeedCard . aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard }.
+	aBoardGame := self generateABoardGameIncludingSprintEffectPlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
+
+	self 
+		should:[	aBoardGame affect: 62 using: aReversalCard by: #pau.	] 
+		raise: Error 
+		withExceptionDo: [:error | self assert: error messageText equals: 'The field number cannot be negative or greater than the board size'].
+]
+
+{ #category : #reversalCardTests }
+BoardGameTest >> testAPlayerCannotThrowAReversalCradToANegativeFieldNumber [
+	| aBoardGame aGroupOfPlayers aRepeatCard aSpeedCard aSequenceOfDiceResults cards aSecondSpeedCard aSecondRepeatCard aThirdSpeedCard aReversalCard |
+	aRepeatCard := Repetition new.
+	aSpeedCard := Speed new.
+	aSecondSpeedCard:= Speed new.
+	aSecondRepeatCard := Repetition new.
+	aThirdSpeedCard:= Speed new.
+	aReversalCard := Reversal new.
+	aGroupOfPlayers := {#pau . #belu}.
+	aSequenceOfDiceResults := #(1 10 15 8 5 3 10).
+	cards := {aReversalCard. aRepeatCard . aSpeedCard . aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard }.
+	aBoardGame := self generateABoardGameIncludingSprintEffectPlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
+
+	self 
+		should:[	aBoardGame affect: -2 using: aReversalCard by: #pau.	] 
+		raise: Error 
+		withExceptionDo: [:error | self assert: error messageText equals: 'The field number cannot be negative or greater than the board size'].
+]
+
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerHas2CardsAtTheBegginingOfTheGame [
 	| aBoardGame |

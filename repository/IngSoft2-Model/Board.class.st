@@ -56,6 +56,11 @@ Board >> determinateAdditionalRoundsBasingOn: totalFields [
 	
 ]
 
+{ #category : #'error messages' }
+Board >> errorMessageFieldNumberOutOfBand [
+	^ 'The field number cannot be negative or greater than the board size'.
+]
+
 { #category : #private }
 Board >> findNewPositionWhen: player hasMoved: aNumberOfFields from: oldPosition [
 	| totalFields newRoundNumber newFieldNumber |
@@ -75,6 +80,16 @@ Board >> initializeContaining: boardGameFields usedOnAGameBy: players [
 	fields := boardGameFields.
 	positionsTracker := OrderedCollection newFrom: (players collect: [ :aPlayer | Tracker of: aPlayer standingOn: 1 after: 1 ]).
 	effectsHistory:= OrderedCollection new.
+]
+
+{ #category : #validations }
+Board >> itIsGreaterThanZero: aFieldNumber [
+	^ aFieldNumber > 0.
+]
+
+{ #category : #validations }
+Board >> itIsNotGreaterThanBoardSize: aFieldNumber [
+	^ aFieldNumber < self numberOfFields.
 ]
 
 { #category : #private }
@@ -162,6 +177,7 @@ Board >> replaceOldPositioOf: player with: newPosition [
 { #category : #'actions - effects' }
 Board >> reverseTheEffectOf: aFieldNumber [ 
 	| effect reverseEffect |
+	self validateItIsBeetweenTheLimits: aFieldNumber.
 	effect:= self searchFieldFor: aFieldNumber .
 	reverseEffect:= effect reverse.
 	self replace: effect with: reverseEffect at:aFieldNumber.
@@ -176,4 +192,10 @@ Board >> searchFieldFor: aPosition [
 Board >> validate: aPosition [
  (aPosition round <= 0) ifTrue: [^( Tracker of: (aPosition player) standingOn: 1 after: 1)] ifFalse:[^aPosition].
 	
+]
+
+{ #category : #validations }
+Board >> validateItIsBeetweenTheLimits: aFieldNumber [
+	(self itIsGreaterThanZero: aFieldNumber) & (self itIsNotGreaterThanBoardSize: aFieldNumber) ifFalse: [ 
+		Error signal: self errorMessageFieldNumberOutOfBand ].
 ]
