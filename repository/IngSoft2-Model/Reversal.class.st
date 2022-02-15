@@ -7,5 +7,6 @@ Class {
 { #category : #actions }
 Reversal >> thrownBy: aPlayer aims: aTarget on: aBoardGame handledBy: cardHandler [ 
 	aBoardGame validateThrownOfAPermanentCardBy: aPlayer.
-	aBoardGame reverseTheEffectOf: aTarget.
+	cardHandler with: self reverseTheEffectOf: aTarget on: aBoardGame.
+	
 ]

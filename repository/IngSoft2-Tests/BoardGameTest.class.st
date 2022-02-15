@@ -127,7 +127,7 @@ BoardGameTest >> generateManuallyIncludingSprintEffect: aNumberOfFields [
 	|  fields effectDistributionFields effectToDistribute |
 	fields:= OrderedCollection new: aNumberOfFields withAll: NoEffect new.
 	effectToDistribute := {WormHole new. SpeedUp new.AtomicBomb new.MoonWalk with: 16. MoonWalk with: 11. CardDealer new. Sprint new}.
-	effectDistributionFields := {{3 . 17}.{30 . 48}.{44}.{32}.{23}.{10} . {6}}.
+	effectDistributionFields := {{3 . 6 . 17}.{30 . 48}.{44}.{32}.{23}.{10} . {6}}.
 	effectToDistribute with: effectDistributionFields do:[ :effect :effectFields | 
 						effectFields do: 
 								[ :fieldNumber | fields at: fieldNumber put: effect ]].
@@ -609,7 +609,7 @@ BoardGameTest >> testAPlayerCanNotCancelACardAPlayerDoesNotHave [
 	self 
 		should:[aBoardGame affect: speedCard using: cancellationCard by: #pau] 
 		raise: Error 
-		withExceptionDo: [:error | self assert: error messageText equals: 'The player does not have the card to be cancelled.' ].
+		withExceptionDo: [:error | self assert: error messageText equals: 'You cannot cancel a card that is not permanently active.' ].
 	
 ]
 
@@ -1377,6 +1377,30 @@ BoardGameTest >> testWhenAPlayerFellsOnAMoonWalkFieldTheRestOfThePlayersMustGoBa
 			(OrderedCollection
 				newFrom:
 					{ pauPosition . beluPosition . malePosition }).
+]
+
+{ #category : #reversalCardTests }
+BoardGameTest >> testWhenAPlayerFellsOnAReversedWormHoleFieldAndReversesIt [
+	| aBoardGame aGroupOfPlayers aRepeatCard pauPosition beluPosition aSpeedCard aSequenceOfDiceResults cards aReversalCard aCancellationCard |
+	aRepeatCard := Repetition new.
+	aSpeedCard := Speed new.
+	aReversalCard := Reversal new.
+	aCancellationCard := Cancellation new.
+	aGroupOfPlayers := {#pau . #belu}.
+	aSequenceOfDiceResults := #(2).
+	cards := { aReversalCard. aRepeatCard . aSpeedCard . aCancellationCard.}.
+	aBoardGame := self generateABoardGameIncludingSprintEffectPlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
+
+	pauPosition := Tracker of: #pau standingOn: 10 after: 1.
+	beluPosition := Tracker of: #belu standingOn: 2 after: 1.
+
+	aBoardGame affect: 6 using: aReversalCard by: #pau.		
+	aBoardGame nextTurn.
+	aBoardGame affect: aReversalCard using: aCancellationCard by: #belu.	
+	aBoardGame nextTurn.	
+	
+	
+	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
 ]
 
 { #category : #reversalCardTests }

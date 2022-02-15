@@ -44,13 +44,13 @@ CardHandler >> deliverACardTo: player [
 ]
 
 { #category : #'error messages' }
-CardHandler >> errorMessageAPlayerMustHaveTheCardInHand [
-	^ 'A player must have a card in hand in order to use it'
+CardHandler >> errorMessageAPlayerMustCancelACardPermanentlyActive [
+ ^'You cannot cancel a card that is not permanently active.'
 ]
 
 { #category : #'error messages' }
-CardHandler >> errorMessageThePlayerDoesNotHaveTheCardToBeCancel [
- ^'The player does not have the card to be cancelled.'
+CardHandler >> errorMessageAPlayerMustHaveTheCardInHand [
+	^ 'A player must have a card in hand in order to use it'
 ]
 
 { #category : #'actions - cards' }
@@ -120,11 +120,17 @@ CardHandler >> selectAssociationsContaining: cardToBeCancelled [
 CardHandler >> validateIfAnyPlayerHas: cardToBeCancelled [
 	(self selectAssociationsContaining: cardToBeCancelled) isEmpty
 		ifTrue:
-			[ Error signal: self errorMessageThePlayerDoesNotHaveTheCardToBeCancel ]
+			[ Error signal: self errorMessageAPlayerMustCancelACardPermanentlyActive ]
 ]
 
 { #category : #'actions - cards' }
 CardHandler >> with: aCard repeatLastEffectAppliedOn: aBoardGame targeting: aPlayer [
 	aBoardGame repeatLastEffectAppliedOn: aPlayer.
 	self addToCardsRecord: aCard.
+]
+
+{ #category : #'actions - cards' }
+CardHandler >> with: aCard reverseTheEffectOf: aField on: aBoardGame [
+	
+	aBoardGame reverseTheEffectOf: aField.
 ]
