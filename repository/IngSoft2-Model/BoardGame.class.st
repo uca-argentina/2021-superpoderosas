@@ -113,7 +113,7 @@ BoardGame >> initializePlayedBy: aGroupOfPlayers using: aDiceCup and: aDeck onBo
 	self startPlayingOnABoardWith: fields with: aGroupOfPlayers.
 	isFinished := false.
 	lapsToWin := laps.
-	cardHandler:= CardHandler managing: aDeck for: players. 
+	cardHandler:= CardHandler managing: aDeck for: players inABoardWith: fields size.
 ]
 
 { #category : #accessing }
