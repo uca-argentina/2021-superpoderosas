@@ -821,6 +821,30 @@ BoardGameTest >> testAPlayerThrowsACardAndItIsNoLongerInHand [
 	
 ]
 
+{ #category : #reversalCardTests }
+BoardGameTest >> testAPlayerThrowsADoOverCardWhenTheLastCardPlayedWasAReversalCard [
+	| aBoardGame aGroupOfPlayers aRepeatCard aSpeedCard aSequenceOfDiceResults cards aReversalCard aCancellationCard pauPosition beluPosition aDoOverCard |
+	aRepeatCard := Repetition new.
+	aSpeedCard := Speed new.
+	aReversalCard := Reversal new.
+	aCancellationCard := Cancellation new.
+	aDoOverCard := DoOver new.
+	aGroupOfPlayers := {#pau . #belu}.
+	aSequenceOfDiceResults := #(5 7).
+	cards := { aReversalCard. aRepeatCard . aDoOverCard . aCancellationCard}.
+	aBoardGame := self generateABoardGameIncludingSprintEffectPlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
+	
+	pauPosition := Tracker of: #pau standingOn: 5 after: 1.
+	beluPosition := Tracker of: #belu standingOn: 12 after: 1.
+	
+	aBoardGame affect: 6 using: aReversalCard by: #pau.		
+	aBoardGame nextTurn.
+	aBoardGame affect: 8  using: aDoOverCard by: #belu.	
+	aBoardGame nextTurn.	
+	
+	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: { beluPosition . pauPosition }).
+]
+
 { #category : #playingWithCardsTests }
 BoardGameTest >> testAPlayerUsesACancellationCardAndRemovesASpeedCard [
 	| aBoardGame aGroupOfPlayers speedCard cancellationCard aSequenceOfDiceResults cards anotherCancellationCard aThirdSpeedCard |
@@ -1397,7 +1421,9 @@ BoardGameTest >> testWhenAPlayerFellsOnAReversedCardDealerFieldAndReversesIt [
 	self assert: (aBoardGame cardsInHandOf: #pau) size equals: 0.	
 	aBoardGame affect: aReversalCard using: aCancellationCard by: #belu.	
 	aBoardGame nextTurn.	
-	self assert: (aBoardGame cardsInHandOf: #belu) size equals: 2.		
+	self assert: (aBoardGame cardsInHandOf: #belu) size equals: 2.	
+		
+			
 ]
 
 { #category : #reversalCardTests }
