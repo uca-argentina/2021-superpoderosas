@@ -6,5 +6,5 @@ Class {
 
 { #category : #actions }
 Cancellation >> thrownBy: aPlayer aims: aTarget on: aBoardGame handledBy: cardHandler [ 
-	cardHandler cancel: aTarget with: self.
+	cardHandler cancel: aTarget with: self on: aBoardGame.
 ]

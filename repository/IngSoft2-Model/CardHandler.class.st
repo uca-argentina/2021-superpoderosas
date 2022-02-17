@@ -34,10 +34,10 @@ CardHandler >> affect: aTarget using: aCard by: aPlayer on: aBoardGame [
 ]
 
 { #category : #'actions - cards' }
-CardHandler >> cancel: cardToBeCancelled with: aCard [
-	self validateIfAnyPlayerHas: cardToBeCancelled.
+CardHandler >> cancel: cardToBeCancelled with: aCard on: aBoardGame [
+	self validateIfAnyHas: cardToBeCancelled.
 	self removeFromPlayersInfluentialCards: cardToBeCancelled.
-	self removeFromFieldsInfluentialCards: cardToBeCancelled.
+	self removeFromFieldsInfluentialCards: cardToBeCancelled on: aBoardGame.
 	self addToCardsRecord: aCard
 ]
 
@@ -63,10 +63,15 @@ CardHandler >> errorMessageAPlayerMustHaveTheCardInHand [
 
 { #category : #'actions - cards' }
 CardHandler >> influence: player with: card [
-	| playerInfluentialCards |
-	playerInfluentialCards := playersInfluentialCards at:player.
-	playerInfluentialCards add: card.
-	playersInfluentialCards at: player put: playerInfluentialCards.
+	self influence: player with: card on: playersInfluentialCards .
+]
+
+{ #category : #'actions - cards' }
+CardHandler >> influence: target with: card on: targetsInfluentialCards [
+	| targetInfluentialCards |
+	targetInfluentialCards := targetsInfluentialCards at:target.
+	targetInfluentialCards add: card.
+	targetsInfluentialCards at: target put: targetInfluentialCards.
 	self addToCardsRecord: card.
 ]
 
@@ -83,13 +88,14 @@ CardHandler >> influentialCardsOf: player [
 
 { #category : #initialize }
 CardHandler >> initializeManaging: aDeck for: players inABoardWith: aNumberOfFields [ 
-	| influentialCardsOfPlayers |
+	| influentialCardsOfPlayers influentialCardsOfFields |
 	deck:= aDeck.
 	cardsInHand:= OrderedDictionary newFromKeys: players andValues:(players collect:[:player |(aDeck pickUp:2)]).
 	influentialCardsOfPlayers:= players collect: [ :player | OrderedCollection new ].
 	playersInfluentialCards:= OrderedDictionary newFromKeys: players andValues: influentialCardsOfPlayers.
 	cardsHistory:= OrderedCollection new.
-	fieldsInfluentialCards:= Array new: aNumberOfFields withAll: [].
+	influentialCardsOfFields:= (1 to: aNumberOfFields) collect: [ :player | OrderedCollection new ].
+	fieldsInfluentialCards:= OrderedCollection withAll: influentialCardsOfFields.
 
 ]
 
@@ -106,10 +112,12 @@ CardHandler >> removeACardFrom: player [
 ]
 
 { #category : #private }
-CardHandler >> removeFromFieldsInfluentialCards: cardToBeCancelled [
-	fieldsInfluentialCards 
-		do:
-			[ :fieldInfluentialCards | fieldInfluentialCards remove: cardToBeCancelled ifAbsent: [  ] ]
+CardHandler >> removeFromFieldsInfluentialCards: cardToBeCancelled on: aBoardGame [
+
+	| fieldInfluentialCards |
+	1 to: (fieldsInfluentialCards size) do: [ :aFieldNumber |fieldInfluentialCards:= fieldsInfluentialCards at: aFieldNumber .  (fieldInfluentialCards includes: cardToBeCancelled) ifTrue: [ 
+			cardToBeCancelled annulOutcomeAt: aFieldNumber on: aBoardGame handledBy: self.
+			fieldInfluentialCards remove: cardToBeCancelled ]] .
 ]
 
 { #category : #private }
@@ -132,9 +140,17 @@ CardHandler >> selectAssociationsContaining: cardToBeCancelled [
 				anySatisfy: [ :card | card = cardToBeCancelled ] ]
 ]
 
+{ #category : #private }
+CardHandler >> selectAssociationsContaining: cardToBeCancelled from: influentialCards [
+	^ influentialCards
+		select: [ :cards | 
+			cards
+				anySatisfy: [ :card | card = cardToBeCancelled ] ]
+]
+
 { #category : #validations }
-CardHandler >> validateIfAnyPlayerHas: cardToBeCancelled [
-	(self selectAssociationsContaining: cardToBeCancelled) isEmpty
+CardHandler >> validateIfAnyHas: cardToBeCancelled [
+	(self selectAssociationsContaining: cardToBeCancelled from: playersInfluentialCards) isEmpty & (self selectAssociationsContaining: cardToBeCancelled from: fieldsInfluentialCards) isEmpty
 		ifTrue:
 			[ Error signal: self errorMessageAPlayerMustCancelACardPermanentlyActive ]
 ]
@@ -147,6 +163,6 @@ CardHandler >> with: aCard repeatLastEffectAppliedOn: aBoardGame targeting: aPla
 
 { #category : #'actions - cards' }
 CardHandler >> with: aCard reverseTheEffectOf: aField on: aBoardGame [
-	self addToFieldsInfluentialCards: aCard at: aField.
 	aBoardGame reverseTheEffectOf: aField.
+	self influence: aField with: aCard on: fieldsInfluentialCards.
 ]
