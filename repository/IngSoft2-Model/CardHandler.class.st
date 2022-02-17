@@ -21,12 +21,6 @@ CardHandler >> addToCardsRecord: aCard [
 	cardsHistory add: aCard.
 ]
 
-{ #category : #private }
-CardHandler >> addToFieldsInfluentialCards: aCard at: aField [
-	fieldsInfluentialCards at: aField put: aCard.
-
-]
-
 { #category : #'actions - cards' }
 CardHandler >> affect: aTarget using: aCard by: aPlayer on: aBoardGame [
 	self make: aPlayer lay: aCard.
@@ -130,14 +124,6 @@ CardHandler >> removeFromPlayersInfluentialCards: cardToBeCancelled [
 { #category : #'actions - cards' }
 CardHandler >> repeatLastCardThrownBy: aPlayer affecting: aTarget on: aBoardGame [
 	cardsHistory ifNotEmpty: [ (cardsHistory last) thrownBy: aPlayer aims: aTarget on: aBoardGame handledBy: self].
-]
-
-{ #category : #private }
-CardHandler >> selectAssociationsContaining: cardToBeCancelled [
-	^ playersInfluentialCards
-		select: [ :playerInfluentialCards | 
-			playerInfluentialCards
-				anySatisfy: [ :card | card = cardToBeCancelled ] ]
 ]
 
 { #category : #private }
