@@ -127,7 +127,7 @@ BoardGameTest >> generateManuallyIncludingSprintEffect: aNumberOfFields [
 	|  fields effectDistributionFields effectToDistribute |
 	fields:= OrderedCollection new: aNumberOfFields withAll: NoEffect new.
 	effectToDistribute := {WormHole new. SpeedUp new.AtomicBomb new.MoonWalk with: 16. MoonWalk with: 11. CardDealer new. Sprint new . MoonWalk with:3}.
-	effectDistributionFields := {{8 . 17}.{30 . 48}.{44}.{32}.{23}.{10} . {6} . {13}.}.
+	effectDistributionFields := {{8 . 17}.{30 . 48 . 15}.{44}.{32}.{23}.{10} . {6} . {13}.}.
 	effectToDistribute with: effectDistributionFields do:[ :effect :effectFields | 
 						effectFields do: 
 								[ :fieldNumber | fields at: fieldNumber put: effect ]].
@@ -1404,7 +1404,7 @@ BoardGameTest >> testWhenAPlayerFellsOnAMoonWalkFieldTheRestOfThePlayersMustGoBa
 ]
 
 { #category : #reversalCardTests }
-BoardGameTest >> testWhenAPlayerFellsOnAReversedCardDealerFieldAndReversesIt [
+BoardGameTest >> testWhenAPlayerFellsOnAReversedCardDealerFieldAndCancelsIt [
 	| aBoardGame aGroupOfPlayers aRepeatCard aSpeedCard aSequenceOfDiceResults cards aReversalCard aCancellationCard aSecondCancellationCard |
 	aRepeatCard := Repetition new.
 	aSpeedCard := Speed new.
@@ -1427,7 +1427,7 @@ BoardGameTest >> testWhenAPlayerFellsOnAReversedCardDealerFieldAndReversesIt [
 ]
 
 { #category : #reversalCardTests }
-BoardGameTest >> testWhenAPlayerFellsOnAReversedMoonWalkFieldAndReversesIt [
+BoardGameTest >> testWhenAPlayerFellsOnAReversedMoonWalkFieldAndCancelsIt [
 	| aBoardGame aGroupOfPlayers aRepeatCard aSpeedCard aSequenceOfDiceResults cards aReversalCard aCancellationCard aSecondCancellationCard pauPosition beluPosition |
 	aRepeatCard := Repetition new.
 	aSpeedCard := Speed new.
@@ -1452,7 +1452,33 @@ BoardGameTest >> testWhenAPlayerFellsOnAReversedMoonWalkFieldAndReversesIt [
 ]
 
 { #category : #reversalCardTests }
-BoardGameTest >> testWhenAPlayerFellsOnAReversedSprintFieldAndReversesIt [
+BoardGameTest >> testWhenAPlayerFellsOnAReversedSpeedUpFieldAndCancelsIt [
+	| aBoardGame aGroupOfPlayers aRepeatCard aSpeedCard aSequenceOfDiceResults cards aReversalCard aCancellationCard aSecondCancellationCard pauPosition beluPosition |
+	aRepeatCard := Repetition new.
+	aSpeedCard := Speed new.
+	aReversalCard := Reversal new.
+	aCancellationCard := Cancellation new.
+	aSecondCancellationCard := Cancellation new.
+	aGroupOfPlayers := {#pau . #belu}.
+	aSequenceOfDiceResults := #(2 14 12).
+	cards := { aCancellationCard . aRepeatCard . aSpeedCard . aReversalCard. aSecondCancellationCard}.
+	aBoardGame := self generateABoardGameIncludingSprintEffectPlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
+	
+	pauPosition := Tracker of: #pau standingOn: 19  after: 1.
+	beluPosition := Tracker of: #belu standingOn: 11 after: 1.
+	
+	aBoardGame nextTurn.
+	aBoardGame affect: 15 using: aReversalCard by: #belu.		
+	aBoardGame nextTurn.
+	aBoardGame affect: aReversalCard using: aCancellationCard by: #pau.	
+	aBoardGame nextTurn.	
+	
+	
+	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
+]
+
+{ #category : #reversalCardTests }
+BoardGameTest >> testWhenAPlayerFellsOnAReversedSprintFieldAndCancelsIt [
 	| aBoardGame aGroupOfPlayers aRepeatCard aSpeedCard aSequenceOfDiceResults cards aReversalCard aCancellationCard aSecondCancellationCard pauPosition beluPosition |
 	aRepeatCard := Repetition new.
 	aSpeedCard := Speed new.
@@ -1474,7 +1500,7 @@ BoardGameTest >> testWhenAPlayerFellsOnAReversedSprintFieldAndReversesIt [
 ]
 
 { #category : #reversalCardTests }
-BoardGameTest >> testWhenAPlayerFellsOnAReversedWormHoleFieldAndReversesIt [
+BoardGameTest >> testWhenAPlayerFellsOnAReversedWormHoleFieldAndCancelsIt [
 	| aBoardGame aGroupOfPlayers aRepeatCard pauPosition beluPosition aSpeedCard aSequenceOfDiceResults cards aReversalCard aCancellationCard |
 	aRepeatCard := Repetition new.
 	aSpeedCard := Speed new.
