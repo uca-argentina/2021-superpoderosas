@@ -27,11 +27,19 @@ CardHandler >> affect: aTarget using: aCard by: aPlayer on: aBoardGame [
 	aCard thrownBy: aPlayer aims: aTarget on: aBoardGame handledBy: self.
 ]
 
+{ #category : #private }
+CardHandler >> cancel: card at: fieldInfluentialCards in: aBoardGame [
+	| fieldNumber |
+	fieldNumber:= fieldsInfluentialCards indexOf: fieldInfluentialCards.
+	card annulOutcomeAt: fieldNumber on: aBoardGame handledBy: self.
+	fieldInfluentialCards remove: card.
+]
+
 { #category : #'actions - cards' }
 CardHandler >> cancel: cardToBeCancelled with: aCard on: aBoardGame [
 	self validateIfAnyHas: cardToBeCancelled.
 	self removeFromPlayersInfluentialCards: cardToBeCancelled.
-	self removeFromFieldsInfluentialCards: cardToBeCancelled on: aBoardGame.
+	self removeFromFieldsInfluentialCards: cardToBeCancelled in: aBoardGame.
 	self addToCardsRecord: aCard
 ]
 
@@ -106,12 +114,14 @@ CardHandler >> removeACardFrom: player [
 ]
 
 { #category : #private }
-CardHandler >> removeFromFieldsInfluentialCards: cardToBeCancelled on: aBoardGame [
+CardHandler >> removeFromFieldsInfluentialCards: cardToBeCancelled in: aBoardGame [
 
-	| fieldInfluentialCards |
-	1 to: (fieldsInfluentialCards size) do: [ :aFieldNumber |fieldInfluentialCards:= fieldsInfluentialCards at: aFieldNumber .  (fieldInfluentialCards includes: cardToBeCancelled) ifTrue: [ 
-			cardToBeCancelled annulOutcomeAt: aFieldNumber on: aBoardGame handledBy: self.
-			fieldInfluentialCards remove: cardToBeCancelled ]] .
+	fieldsInfluentialCards do: [ :fieldInfluentialCards | 
+		(fieldInfluentialCards includes: cardToBeCancelled) ifTrue: [ 
+			self
+				cancel: cardToBeCancelled
+				at: fieldInfluentialCards
+				in: aBoardGame ] ]
 ]
 
 { #category : #private }
