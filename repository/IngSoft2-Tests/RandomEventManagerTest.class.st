@@ -4,13 +4,13 @@ Class {
 	#category : #'IngSoft2-Tests'
 }
 
-{ #category : #assertions }
+{ #category : #asserting }
 RandomEventManagerTest >> assert: events areDistributedBasedOn: eventsDistribution withTolerance: tolerance [
 	eventsDistribution do:[ :probabilityEvent | self assert: (self relativeEventOcurrenceOf: probabilityEvent in:events) < tolerance] 
 	
 ]
 
-{ #category : #tests }
+{ #category : #helpers }
 RandomEventManagerTest >> groupProbabilityEventsOfCowsWith: cowsProbability piggsWith: piggsProbability horsesWith: horsesProbability andDucksWith: ducksProbability [
 	|eventVaca eventsDistribution eventChanchito eventCaballo eventPato |
 	eventVaca := ProbabilityEvent with: cowsProbability of: #Vaca.

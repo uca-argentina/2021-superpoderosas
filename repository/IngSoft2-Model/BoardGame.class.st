@@ -170,11 +170,6 @@ BoardGame >> ranking [
 	^ board orderPlayersPosition.
 ]
 
-{ #category : #'actions - cards' }
-BoardGame >> removeACardFrom: player [ 
-	cardHandler removeACardFrom: player.
-]
-
 { #category : #'actions - effects' }
 BoardGame >> repeatLastEffectAppliedOn: aPlayer [
 	board repeatAt: self lastEffectAppliedOn: aPlayer.
@@ -194,6 +189,11 @@ BoardGame >> startPlayingOnABoardWith: fields with: aGroupOfPlayers [
 	board := Board containing: fields usedOnAGameBy: aGroupOfPlayers.
 ]
 
+{ #category : #'actions - cards' }
+BoardGame >> takeAwayACardFrom: player [ 
+	cardHandler takeAwayACardFrom: player.
+]
+
 { #category : #validations }
 BoardGame >> validateThrownOfAPermanentCardBy: aPlayer [
 	self verifyIfItIsTheTurnOf: aPlayer.
@@ -207,7 +207,7 @@ BoardGame >> verifyIfItIsTheTurnOf: currentPlayer [
 
 { #category : #validations }
 BoardGame >> verifyIfTheGameHasFinished [
-	(isFinished) 
+	isFinished
 		ifTrue: [ Error signal: self errorMessageTheGameHasFinished] .
 ]
 

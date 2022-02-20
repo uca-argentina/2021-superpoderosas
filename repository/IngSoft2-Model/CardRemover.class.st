@@ -9,7 +9,7 @@ Class {
 
 { #category : #actions }
 CardRemover >> effectTriggeredBy: aPlayer on: aBoard of: aBoardGame [
-	aBoardGame removeACardFrom: aPlayer.
+	aBoardGame takeAwayACardFrom: aPlayer.
 ]
 
 { #category : #initialize }

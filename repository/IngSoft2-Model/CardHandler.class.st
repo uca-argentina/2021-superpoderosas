@@ -36,11 +36,10 @@ CardHandler >> cancel: card at: fieldInfluentialCards in: aBoardGame [
 ]
 
 { #category : #'actions - cards' }
-CardHandler >> cancel: cardToBeCancelled with: aCard on: aBoardGame [
-	self validateIfAnyHas: cardToBeCancelled.
-	self removeFromPlayersInfluentialCards: cardToBeCancelled.
-	self removeFromFieldsInfluentialCards: cardToBeCancelled in: aBoardGame.
-	self addToCardsRecord: aCard
+CardHandler >> cancel: aCard with: anotherCard on: aBoardGame [
+	self validateIfAnyHas: aCard.
+	self takeAwayFromInfluentialCards: aCard in: aBoardGame.
+	self addToCardsRecord: anotherCard.
 ]
 
 { #category : #accessing }
@@ -69,11 +68,11 @@ CardHandler >> influence: player with: card [
 ]
 
 { #category : #'actions - cards' }
-CardHandler >> influence: target with: card on: targetsInfluentialCards [
+CardHandler >> influence: target with: card on: influentialCards [
 	| targetInfluentialCards |
-	targetInfluentialCards := targetsInfluentialCards at:target.
+	targetInfluentialCards := influentialCards at:target.
 	targetInfluentialCards add: card.
-	targetsInfluentialCards at: target put: targetInfluentialCards.
+	influentialCards at: target put: targetInfluentialCards.
 	self addToCardsRecord: card.
 ]
 
@@ -106,29 +105,16 @@ CardHandler >> make: player lay: aCard [
 	(cardsInHand at:player) remove: aCard ifAbsent: [Error signal: self errorMessageAPlayerMustHaveTheCardInHand].
 ]
 
-{ #category : #'actions - cards' }
-CardHandler >> removeACardFrom: player [ 
-	| playerCardsInHand |
-	playerCardsInHand := cardsInHand at:player.
-	playerCardsInHand remove: playerCardsInHand last ifAbsent: [].
+{ #category : #validations }
+CardHandler >> noFieldHas: cardToBeCancelled [
+
+	^ (self selectAssociationsContaining: cardToBeCancelled from: fieldsInfluentialCards) isEmpty.
 ]
 
-{ #category : #private }
-CardHandler >> removeFromFieldsInfluentialCards: cardToBeCancelled in: aBoardGame [
+{ #category : #validations }
+CardHandler >> noPlayerHas: cardToBeCancelled [
 
-	fieldsInfluentialCards do: [ :fieldInfluentialCards | 
-		(fieldInfluentialCards includes: cardToBeCancelled) ifTrue: [ 
-			self
-				cancel: cardToBeCancelled
-				at: fieldInfluentialCards
-				in: aBoardGame ] ]
-]
-
-{ #category : #private }
-CardHandler >> removeFromPlayersInfluentialCards: cardToBeCancelled [
-	playersInfluentialCards
-		do:
-			[ :playerInfluentialCards | playerInfluentialCards remove: cardToBeCancelled ifAbsent: [  ] ]
+		^ (self selectAssociationsContaining: cardToBeCancelled from: playersInfluentialCards) isEmpty.
 ]
 
 { #category : #'actions - cards' }
@@ -144,11 +130,42 @@ CardHandler >> selectAssociationsContaining: cardToBeCancelled from: influential
 				anySatisfy: [ :card | card = cardToBeCancelled ] ]
 ]
 
+{ #category : #'actions - cards' }
+CardHandler >> takeAwayACardFrom: player [ 
+	| playerCardsInHand |
+	playerCardsInHand := cardsInHand at:player.
+	playerCardsInHand remove: playerCardsInHand last ifAbsent: [].
+]
+
+{ #category : #private }
+CardHandler >> takeAwayFromFieldsInfluentialCards: cardToBeCancelled in: aBoardGame [
+
+	fieldsInfluentialCards do: [ :fieldInfluentialCards | 
+		(fieldInfluentialCards includes: cardToBeCancelled) ifTrue: [ 
+			self
+				cancel: cardToBeCancelled
+				at: fieldInfluentialCards
+				in: aBoardGame ] ]
+]
+
+{ #category : #'actions - cards' }
+CardHandler >> takeAwayFromInfluentialCards: aCard in: aBoardGame [
+	self takeAwayFromPlayersInfluentialCards: aCard.
+	self takeAwayFromFieldsInfluentialCards: aCard in: aBoardGame.
+]
+
+{ #category : #private }
+CardHandler >> takeAwayFromPlayersInfluentialCards: cardToBeCancelled [
+	playersInfluentialCards
+		do:
+			[ :playerInfluentialCards | playerInfluentialCards remove: cardToBeCancelled ifAbsent: [  ] ]
+]
+
 { #category : #validations }
 CardHandler >> validateIfAnyHas: cardToBeCancelled [
-	(self selectAssociationsContaining: cardToBeCancelled from: playersInfluentialCards) isEmpty & (self selectAssociationsContaining: cardToBeCancelled from: fieldsInfluentialCards) isEmpty
+	(self noPlayerHas: cardToBeCancelled) & (self noFieldHas: cardToBeCancelled)
 		ifTrue:
-			[ Error signal: self errorMessageAPlayerMustCancelACardPermanentlyActive ]
+			[ Error signal: self errorMessageAPlayerMustCancelACardPermanentlyActive ].
 ]
 
 { #category : #'actions - cards' }
