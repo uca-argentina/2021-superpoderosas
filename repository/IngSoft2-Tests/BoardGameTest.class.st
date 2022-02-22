@@ -802,7 +802,7 @@ BoardGameTest >> testAPlayerParticipatesInABoardGameWhithCardsAndEffects [
 ]
 
 { #category : #playingWithCardsTests }
-BoardGameTest >> testAPlayerThrows2ReversalCardsOnTheSameFieldAndTheEffectDoesNotChange [
+BoardGameTest >> testAPlayerUses2ReversalCardsOnTheSameFieldAndTheEffectDoesNotChange [
 	| aBoardGame aGroupOfPlayers aSpeedCard aSequenceOfDiceResults cards aReversalCard aCancellationCard pauPosition beluPosition aDoOverCard anotherReversalCard |
 	aSpeedCard := Speed new.
 	aReversalCard := Reversal new.
@@ -822,74 +822,6 @@ BoardGameTest >> testAPlayerThrows2ReversalCardsOnTheSameFieldAndTheEffectDoesNo
 	aBoardGame nextTurn.	
 	
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: { pauPosition . beluPosition }).
-]
-
-{ #category : #playingWithCardsTests }
-BoardGameTest >> testAPlayerThrowsACardAndItIsNoLongerInHand [
-	|aBoardGame aGroupOfPlayers repeatCard aSequenceOfDiceResults cards speedCard aSecondSpeedCard aSecondRepeatCard aThirdSpeedCard aThirdRepeatCard |	
-	speedCard:= Speed new.
-	repeatCard := Repetition new.
-	aSecondSpeedCard:= Speed new.
-	aSecondRepeatCard := Repetition new.
-	aThirdSpeedCard:= Speed new.
-	aThirdRepeatCard := Repetition new.
-	cards := { speedCard . repeatCard . aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard . aThirdRepeatCard }.
-	aGroupOfPlayers := {#pau . #belu}.
-	aSequenceOfDiceResults := #(9 10 7 3).
-	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
-		
-	self assert: (aBoardGame cardsInHandOf: #pau) equals: (OrderedCollection newFrom: { speedCard . repeatCard }).
-	aBoardGame affect: #pau using: speedCard by: #pau.	
-	self assert: (aBoardGame cardsInHandOf: #pau) equals: (OrderedCollection newFrom: { repeatCard }).
-	
-]
-
-{ #category : #playingWithCardsTests }
-BoardGameTest >> testAPlayerThrowsADoOverCardWhenTheLastCardPlayedWasAReversalCard [
-	| aBoardGame aGroupOfPlayers aRepeatCard aSpeedCard aSequenceOfDiceResults cards aReversalCard aCancellationCard pauPosition beluPosition aDoOverCard |
-	aRepeatCard := Repetition new.
-	aSpeedCard := Speed new.
-	aReversalCard := Reversal new.
-	aCancellationCard := Cancellation new.
-	aDoOverCard := DoOver new.
-	aGroupOfPlayers := {#pau . #belu}.
-	aSequenceOfDiceResults := #(5 7).
-	cards := { aReversalCard. aRepeatCard . aDoOverCard . aCancellationCard}.
-	aBoardGame := self generateABoardGameIncludingSprintEffectPlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
-	
-	pauPosition := Tracker of: #pau standingOn: 5 after: 1.
-	beluPosition := Tracker of: #belu standingOn: 12 after: 1.
-	
-	aBoardGame affect: 6 using: aReversalCard by: #pau.		
-	aBoardGame nextTurn.
-	aBoardGame affect: 8  using: aDoOverCard by: #belu.	
-	aBoardGame nextTurn.	
-	
-	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: { beluPosition . pauPosition }).
-]
-
-{ #category : #playingWithCardsTests }
-BoardGameTest >> testAPlayerThrowsADoOverCardWhenTheLastCardPlayedWasAReversalCardAndOnTheSameField [
-	| aBoardGame aGroupOfPlayers aRepeatCard aSpeedCard aSequenceOfDiceResults cards aReversalCard aCancellationCard pauPosition beluPosition aDoOverCard |
-	aRepeatCard := Repetition new.
-	aSpeedCard := Speed new.
-	aReversalCard := Reversal new.
-	aCancellationCard := Cancellation new.
-	aDoOverCard := DoOver new.
-	aGroupOfPlayers := {#pau . #belu}.
-	aSequenceOfDiceResults := #(5 5).
-	cards := { aReversalCard. aRepeatCard . aDoOverCard . aCancellationCard}.
-	aBoardGame := self generateABoardGameIncludingSprintEffectPlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
-	
-	pauPosition := Tracker of: #pau standingOn: 5 after: 1.
-	beluPosition := Tracker of: #belu standingOn: 7 after: 1.
-	
-	aBoardGame affect: 6 using: aReversalCard by: #pau.		
-	aBoardGame nextTurn.
-	aBoardGame affect: 6  using: aDoOverCard by: #belu.	
-	aBoardGame nextTurn.	
-	
-	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: { beluPosition . pauPosition }).
 ]
 
 { #category : #playingWithCardsTests }
@@ -937,6 +869,26 @@ BoardGameTest >> testAPlayerUsesACancellationCardAndRemovesAnAccelerationCard [
 	aBoardGame nextTurn.
 	self assert: (aBoardGame influentialCardsOf: #belu) equals: (OrderedCollection new).
 	self assert: (aBoardGame influentialCardsOf: #pau) equals: (OrderedCollection new).
+	
+]
+
+{ #category : #playingWithCardsTests }
+BoardGameTest >> testAPlayerUsesACardAndItIsNoLongerInHand [
+	|aBoardGame aGroupOfPlayers repeatCard aSequenceOfDiceResults cards speedCard aSecondSpeedCard aSecondRepeatCard aThirdSpeedCard aThirdRepeatCard |	
+	speedCard:= Speed new.
+	repeatCard := Repetition new.
+	aSecondSpeedCard:= Speed new.
+	aSecondRepeatCard := Repetition new.
+	aThirdSpeedCard:= Speed new.
+	aThirdRepeatCard := Repetition new.
+	cards := { speedCard . repeatCard . aSecondSpeedCard . aSecondRepeatCard . aThirdSpeedCard . aThirdRepeatCard }.
+	aGroupOfPlayers := {#pau . #belu}.
+	aSequenceOfDiceResults := #(9 10 7 3).
+	aBoardGame := self generateABoardGamePlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
+		
+	self assert: (aBoardGame cardsInHandOf: #pau) equals: (OrderedCollection newFrom: { speedCard . repeatCard }).
+	aBoardGame affect: #pau using: speedCard by: #pau.	
+	self assert: (aBoardGame cardsInHandOf: #pau) equals: (OrderedCollection newFrom: { repeatCard }).
 	
 ]
 
@@ -1071,6 +1023,54 @@ BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedWasARepeatCard [
 		
 	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: {pauPosition . beluPosition }).
 	
+]
+
+{ #category : #playingWithCardsTests }
+BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedWasAReversalCard [
+	| aBoardGame aGroupOfPlayers aRepeatCard aSpeedCard aSequenceOfDiceResults cards aReversalCard aCancellationCard pauPosition beluPosition aDoOverCard |
+	aRepeatCard := Repetition new.
+	aSpeedCard := Speed new.
+	aReversalCard := Reversal new.
+	aCancellationCard := Cancellation new.
+	aDoOverCard := DoOver new.
+	aGroupOfPlayers := {#pau . #belu}.
+	aSequenceOfDiceResults := #(5 7).
+	cards := { aReversalCard. aRepeatCard . aDoOverCard . aCancellationCard}.
+	aBoardGame := self generateABoardGameIncludingSprintEffectPlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
+	
+	pauPosition := Tracker of: #pau standingOn: 5 after: 1.
+	beluPosition := Tracker of: #belu standingOn: 12 after: 1.
+	
+	aBoardGame affect: 6 using: aReversalCard by: #pau.		
+	aBoardGame nextTurn.
+	aBoardGame affect: 8  using: aDoOverCard by: #belu.	
+	aBoardGame nextTurn.	
+	
+	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: { beluPosition . pauPosition }).
+]
+
+{ #category : #playingWithCardsTests }
+BoardGameTest >> testAPlayerUsesADoOverCardWhenTheLastCardPlayedWasAReversalCardAndOnTheSameField [
+	| aBoardGame aGroupOfPlayers aRepeatCard aSpeedCard aSequenceOfDiceResults cards aReversalCard aCancellationCard pauPosition beluPosition aDoOverCard |
+	aRepeatCard := Repetition new.
+	aSpeedCard := Speed new.
+	aReversalCard := Reversal new.
+	aCancellationCard := Cancellation new.
+	aDoOverCard := DoOver new.
+	aGroupOfPlayers := {#pau . #belu}.
+	aSequenceOfDiceResults := #(5 5).
+	cards := { aReversalCard. aRepeatCard . aDoOverCard . aCancellationCard}.
+	aBoardGame := self generateABoardGameIncludingSprintEffectPlayedBy: aGroupOfPlayers  using: cards andBasedOn: aSequenceOfDiceResults.
+	
+	pauPosition := Tracker of: #pau standingOn: 5 after: 1.
+	beluPosition := Tracker of: #belu standingOn: 7 after: 1.
+	
+	aBoardGame affect: 6 using: aReversalCard by: #pau.		
+	aBoardGame nextTurn.
+	aBoardGame affect: 6  using: aDoOverCard by: #belu.	
+	aBoardGame nextTurn.	
+	
+	self assert: aBoardGame ranking equals: (OrderedCollection newFrom: { beluPosition . pauPosition }).
 ]
 
 { #category : #playingWithCardsTests }
