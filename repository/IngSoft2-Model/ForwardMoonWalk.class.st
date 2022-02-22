@@ -18,7 +18,7 @@ ForwardMoonWalk >> effectTriggeredBy: aPlayer on: aBoard of: aBoardGame [
 	aBoard moveAllPlayers: (fieldsToAdvance) except: aPlayer.
 ]
 
-{ #category : #initialize }
+{ #category : #initialization }
 ForwardMoonWalk >> initializeWith: aNumberOfFildes [ 
 	fieldsToAdvance:= aNumberOfFildes .
 	reverse := MoonWalk.

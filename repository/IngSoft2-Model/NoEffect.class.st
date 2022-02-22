@@ -11,7 +11,7 @@ Class {
 NoEffect >> effectTriggeredBy: aPlayer on: aBoard of: aBoardGame [
 ]
 
-{ #category : #initialize }
+{ #category : #initialization }
 NoEffect >> initialize [ 
 	reverse:= self.
 ]

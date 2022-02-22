@@ -12,7 +12,7 @@ BackwardSprint >> effectTriggeredBy: aPlayer on: aBoard of: aBoardGame [
 	aBoardGame moveBackwardsAsManyFieldsAsCardsInHandHas: aPlayer.
 ]
 
-{ #category : #initialize }
+{ #category : #initialization }
 BackwardSprint >> initialize [
 	reverse:= Sprint.
 ]

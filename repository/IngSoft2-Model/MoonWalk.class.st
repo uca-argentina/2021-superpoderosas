@@ -19,7 +19,7 @@ MoonWalk >> effectTriggeredBy: aPlayer on: aBoard of: aBoardGame [
 
 ]
 
-{ #category : #initialize }
+{ #category : #initialization }
 MoonWalk >> initializeWith: aNumberOfFildes [ 
 	fieldsToMoveBackwars := aNumberOfFildes .
 	reverse:= ForwardMoonWalk .

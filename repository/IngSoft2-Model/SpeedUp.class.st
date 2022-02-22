@@ -13,7 +13,7 @@ SpeedUp >> effectTriggeredBy: aPlayer on: aBoard of: aBoardGame [
 
 ]
 
-{ #category : #initialize }
+{ #category : #initialization }
 SpeedUp >> initialize [
 	reverse:= WormHole.
 ]

@@ -139,7 +139,6 @@ CardHandler >> takeAwayACardFrom: player [
 
 { #category : #private }
 CardHandler >> takeAwayFromFieldsInfluentialCards: cardToBeCancelled in: aBoardGame [
-
 	fieldsInfluentialCards do: [ :fieldInfluentialCards | 
 		(fieldInfluentialCards includes: cardToBeCancelled) ifTrue: [ 
 			self

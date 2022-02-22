@@ -12,7 +12,7 @@ CardDealer >> effectTriggeredBy: aPlayer on: aBoard of: aBoardGame [
 	aBoardGame dealACardTo: aPlayer.
 ]
 
-{ #category : #initialize }
+{ #category : #initialization }
 CardDealer >> initialize [
 	reverse:= CardRemover.
 ]
